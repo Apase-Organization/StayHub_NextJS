@@ -3,12 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
-import {
-  CheckCircle2,
-  AlertCircle,
-  Loader2,
-  Star,
-} from "lucide-react";
+import { CheckCircle2, AlertCircle, Loader2, Star } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,7 +65,9 @@ export function AvailabilityChecker({
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.message || "Chỗ ở không còn trống trong khoảng ngày này");
+        throw new Error(
+          data.message || "Chỗ ở không còn trống trong khoảng ngày này"
+        );
       }
       return data;
     },
@@ -99,9 +96,9 @@ export function AvailabilityChecker({
   };
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-6 shadow-lg">
+    <div className="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-lg">
       {/* Price Header */}
-      <div className="flex items-baseline justify-between pb-4 border-b border-border">
+      <div className="flex flex-wrap gap-2 items-baseline justify-between pb-4 border-b border-border">
         <div className="flex items-baseline gap-1">
           <span className="text-2xl font-black text-foreground">
             {formatPrice(pricePerNight)}
@@ -116,7 +113,7 @@ export function AvailabilityChecker({
 
       {/* Date & Guest Selectors */}
       <div className="mt-4 rounded-xl border border-border bg-muted/20 overflow-hidden divide-y divide-border">
-        <div className="grid grid-cols-2 divide-x divide-border">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 divide-y sm:divide-y-0 divide-border">
           <div className="p-2.5">
             <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
               Nhận phòng
@@ -200,7 +197,8 @@ export function AvailabilityChecker({
         >
           {checkMutation.isPending ? (
             <span className="flex items-center gap-1.5">
-              <Loader2 className="size-3.5 animate-spin" /> Đang kiểm tra phòng...
+              <Loader2 className="size-3.5 animate-spin" /> Đang kiểm tra
+              phòng...
             </span>
           ) : (
             "Kiểm tra tình trạng trống"

@@ -28,7 +28,9 @@ export default function RootLayout({
       >
         <Providers>
           <Navbar />
-          <main className="flex-1">{children}</main>
+          <main className="min-w-0 flex-1 [overflow-wrap:anywhere]">
+            {children}
+          </main>
           <Footer />
         </Providers>
       </body>

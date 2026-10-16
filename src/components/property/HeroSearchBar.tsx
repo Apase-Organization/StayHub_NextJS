@@ -52,12 +52,12 @@ export function HeroSearchBar() {
     <div className="relative w-full max-w-4xl mx-auto">
       <form
         onSubmit={handleSearch}
-        className="flex flex-col md:flex-row items-center rounded-3xl md:rounded-full border border-border/80 bg-card p-2 md:p-2.5 shadow-xl backdrop-blur-md"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)_auto] items-center rounded-3xl lg:rounded-full border border-border/80 bg-card p-2 shadow-xl backdrop-blur-md"
       >
         {/* 1. Destination Input */}
         <div
           ref={locationRef}
-          className="relative w-full md:w-1/3 px-4 py-2.5 md:py-2 rounded-full hover:bg-muted/70 transition-colors cursor-pointer"
+          className="relative min-w-0 px-4 py-2 rounded-2xl hover:bg-muted/70 transition-colors cursor-pointer border-b border-border/40 lg:border-b-0 lg:border-r"
         >
           <div
             onClick={() => {
@@ -71,7 +71,7 @@ export function HeroSearchBar() {
             </div>
             <input
               type="text"
-              placeholder="Where would you like to go?"
+              placeholder="Where are you going?"
               aria-label="Destination"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
@@ -81,7 +81,7 @@ export function HeroSearchBar() {
 
           {/* Quick Destination Dropdown */}
           {isLocationOpen && (
-            <div className="absolute left-0 top-full mt-3 w-80 rounded-2xl border border-border bg-card p-4 shadow-xl z-50 animate-in fade-in-0 zoom-in-95">
+            <div className="absolute left-0 top-full mt-3 w-80 max-w-[calc(100vw-2rem)] rounded-2xl border border-border bg-card p-4 shadow-xl z-50 animate-in fade-in-0 zoom-in-95">
               <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
                 Popular destinations
               </p>
@@ -109,10 +109,8 @@ export function HeroSearchBar() {
           )}
         </div>
 
-        <div className="hidden md:block h-8 w-px bg-border" />
-
         {/* 2. Check-in Date */}
-        <div className="w-full md:w-1/4 px-4 py-2.5 md:py-2 rounded-full hover:bg-muted/70 transition-colors">
+        <div className="min-w-0 px-4 py-2 rounded-2xl hover:bg-muted/70 transition-colors border-b border-border/40 lg:border-b-0 lg:border-r">
           <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-foreground">
             <Calendar className="size-3.5 text-primary" />
             <span>Check-in</span>
@@ -126,10 +124,8 @@ export function HeroSearchBar() {
           />
         </div>
 
-        <div className="hidden md:block h-8 w-px bg-border" />
-
         {/* 3. Check-out Date */}
-        <div className="w-full md:w-1/4 px-4 py-2.5 md:py-2 rounded-full hover:bg-muted/70 transition-colors">
+        <div className="min-w-0 px-4 py-2 rounded-2xl hover:bg-muted/70 transition-colors border-b border-border/40 sm:border-b-0 lg:border-r">
           <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-foreground">
             <Calendar className="size-3.5 text-primary" />
             <span>Check-out</span>
@@ -143,19 +139,17 @@ export function HeroSearchBar() {
           />
         </div>
 
-        <div className="hidden md:block h-8 w-px bg-border" />
-
         {/* 4. Guest Count & Search Button */}
         <div
           ref={guestRef}
-          className="relative w-full md:w-auto flex-1 flex items-center justify-between pl-4 pr-1.5 py-2 rounded-full hover:bg-muted/70 transition-colors"
+          className="relative min-w-0 flex items-center justify-between gap-4 pl-4 pr-1.5 py-2 rounded-2xl hover:bg-muted/70 transition-colors"
         >
           <div
             onClick={() => {
               setIsGuestOpen(!isGuestOpen);
               setIsLocationOpen(false);
             }}
-            className="cursor-pointer"
+            className="shrink-0 whitespace-nowrap cursor-pointer"
           >
             <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-foreground">
               <Users className="size-3.5 text-primary" />
@@ -168,14 +162,14 @@ export function HeroSearchBar() {
 
           {/* Guest Selector Popover */}
           {isGuestOpen && (
-            <div className="absolute right-0 top-full mt-3 w-64 rounded-2xl border border-border bg-card p-4 shadow-xl z-50 animate-in fade-in-0 zoom-in-95">
+            <div className="absolute right-0 top-full mt-3 w-64 max-w-[calc(100vw-2rem)] rounded-2xl border border-border bg-card p-4 shadow-xl z-50 animate-in fade-in-0 zoom-in-95">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-semibold text-foreground">
                     Adults
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Ages 13 and up
+                    Ages 13 or above
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -207,10 +201,10 @@ export function HeroSearchBar() {
           <button
             type="submit"
             aria-label="Search stays"
-            className="flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-primary-foreground shadow-md transition-all hover:opacity-95 hover:shadow-lg active:scale-95 cursor-pointer"
+            className="flex h-11 shrink-0 items-center whitespace-nowrap gap-2 rounded-full bg-primary px-4 text-sm font-bold text-primary-foreground shadow-md transition-all hover:opacity-95 hover:shadow-lg active:scale-95 cursor-pointer"
           >
-            <Search className="size-4 stroke-[2.5]" />
-            <span className="hidden sm:inline">Search</span>
+            <Search className="size-4 shrink-0 stroke-[2.5]" />
+            <span className="inline">Search</span>
           </button>
         </div>
       </form>

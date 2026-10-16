@@ -143,9 +143,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           <div className="flex items-center gap-1 text-xs font-semibold text-foreground shrink-0">
             <Star className="size-3.5 fill-[#f59e0b] text-[#f59e0b]" />
             <span>{ratingVal}</span>
-            <span className="text-muted-foreground">
-              ({reviewsCount})
-            </span>
+            <span className="text-muted-foreground">({reviewsCount})</span>
           </div>
         </div>
 
@@ -161,7 +159,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
         </p>
 
         {/* Price & Night */}
-        <div className="mt-4 flex items-baseline justify-between border-t border-border pt-3">
+        <div className="mt-4 flex flex-wrap gap-2 items-baseline justify-between border-t border-border pt-3">
           <div className="flex items-baseline gap-1">
             <span className="text-lg font-bold text-foreground">
               {formatPrice(property.pricePerNight)}

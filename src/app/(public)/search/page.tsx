@@ -15,7 +15,8 @@ interface SearchPageProps {
     guests?: string;
     minPrice?: string;
     maxPrice?: string;
-    type?: "APARTMENT" | "HOUSE" | "VILLA" | "HOTEL_ROOM" | "HOMESTAY" | "RESORT";
+    type?:
+      "APARTMENT" | "HOUSE" | "VILLA" | "HOTEL_ROOM" | "HOMESTAY" | "RESORT";
     bedrooms?: string;
     minRating?: string;
     sort?: "price-asc" | "price-desc" | "rating-desc";
@@ -29,7 +30,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const page = Math.max(1, parseInt(params.page || "1", 10));
   const limit = 9;
 
-  let properties: Awaited<ReturnType<typeof searchProperties>>["properties"] = [];
+  let properties: Awaited<ReturnType<typeof searchProperties>>["properties"] =
+    [];
   let total = 0;
   let totalPages = 1;
 
@@ -102,10 +104,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         </div>
 
         {/* Sort Controls & Mobile Filter Trigger */}
-        <div className="flex items-center gap-2">
-          <SearchFilterSidebar />
+        <div className="flex flex-wrap items-center gap-2">
+          <SearchFilterSidebar mode="mobile" />
 
-          <div className="flex items-center gap-1 rounded-xl border border-border bg-card p-1 text-xs">
+          <div className="flex flex-wrap items-center gap-1 rounded-xl border border-border bg-card p-1 text-xs">
             <span className="px-2 text-muted-foreground font-medium hidden sm:inline">
               Sắp xếp:
             </span>
@@ -148,12 +150,12 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         {/* Sidebar 3/12 Desktop */}
         <aside className="hidden lg:col-span-3 lg:block">
           <div className="sticky top-24">
-            <SearchFilterSidebar />
+            <SearchFilterSidebar mode="desktop" />
           </div>
         </aside>
 
         {/* Property List 9/12 */}
-        <main className="lg:col-span-9">
+        <main className="min-w-0 lg:col-span-9">
           {properties.length === 0 ? (
             <div className="flex min-h-[400px] flex-col items-center justify-center rounded-2xl border border-dashed border-border p-12 text-center">
               <div className="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -163,7 +165,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 Không tìm thấy chỗ ở phù hợp
               </h3>
               <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-                Hãy thử nới lỏng khoảng giá, thay đổi loại hình phòng hoặc chọn địa điểm khác.
+                Hãy thử nới lỏng khoảng giá, thay đổi loại hình phòng hoặc chọn
+                địa điểm khác.
               </p>
               <div className="mt-6">
                 <Button asChild variant="outline">
@@ -173,7 +176,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             </div>
           ) : (
             <div className="space-y-8">
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 {properties.map((property) => (
                   <PropertyCard key={property.id} property={property} />
                 ))}
@@ -181,7 +184,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
               {/* Pagination with Links */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 pt-6 border-t border-border">
+                <div className="flex flex-wrap items-center justify-center gap-2 pt-6 border-t border-border">
                   {page > 1 ? (
                     <Button asChild variant="outline" size="sm">
                       <Link href={createPageUrl(page - 1)}>
