@@ -119,13 +119,19 @@ StayHub/
 
 ### FE làm tiếp
 
-- [ ] **TSK-018** `[FE]` `src/app/(auth)/login/page.tsx`: form React Hook Form + Zod `loginSchema`, gọi `signIn("credentials")`, hiển thị lỗi inline. Nút "Đăng nhập bằng Google" gọi `signIn("google")`. *(Estimate: 2h · Priority: High · phụ thuộc TSK-013)*
+- [x] **TSK-018** `[FE]` `src/app/(auth)/login/page.tsx`: form React Hook Form + Zod `loginSchema`, gọi `signIn("credentials")`, hiển thị lỗi inline. Nút "Đăng nhập bằng Google" gọi `signIn("google")`. *(Estimate: 2h · Priority: High · phụ thuộc TSK-013)*
 
-- [ ] **TSK-019** `[FE]` `src/app/(auth)/register/page.tsx`: form RHF + Zod `registerSchema`, POST `/api/auth/register`, redirect sang `/auth/verify-email` sau khi thành công. Trang `/auth/verify-email`: nhập OTP 6 số. *(Estimate: 2h · Priority: High · phụ thuộc TSK-015)*
+- [x] **TSK-019** `[FE]` `src/app/(auth)/register/page.tsx`: form RHF + Zod `registerSchema`, POST `/api/auth/register`, redirect sang `/verify-email` sau khi thành công. Trang `/verify-email`: nhập OTP 6 số. *(Estimate: 2h · Priority: High · phụ thuộc TSK-015)*
 
-- [ ] **TSK-020** `[FE]` Hoàn thiện `Navbar.tsx` với session: đã login → Avatar + dropdown (Profile / My Bookings / Host Dashboard / Logout); chưa login → nút Login / Register. Dùng `useSession()` cho Client Component. *(Estimate: 1.5h · Priority: Medium · phụ thuộc TSK-013)*
+  Frontend implementation complete: accessible registration/OTP fields, safe English errors, pending-state guards, and login navigation after verification. Runtime SMTP/account creation remains unverified. The backend creates the account before sending email; delivery failure can leave an unverified account, and no resend endpoint exists. Do not treat this as end-to-end email acceptance.
 
-- [ ] **TSK-021** `[FE]` `src/app/(admin)/admin/page.tsx` + components: Stats Cards (4 chỉ số), bảng booking recent với search + filter status + pagination. Gọi `/api/admin/stats` và `/api/admin/bookings` bằng React Query. *(Estimate: 2.5h · Priority: Medium · phụ thuộc TSK-017)*
+- [x] **TSK-020** `[FE]` Hoàn thiện `Navbar.tsx` với session: đã login → Avatar + dropdown (Profile / My Bookings / Host Dashboard / Logout); chưa login → nút Login / Register. Dùng `useSession()` cho Client Component. *(Estimate: 1.5h · Priority: Medium · phụ thuộc TSK-013)*
+
+- [x] **TSK-021** `[FE]` `src/app/(admin)/admin/page.tsx` + components: Stats Cards (4 chỉ số), bảng booking recent với search + filter status + pagination. Gọi `/api/admin/stats` và `/api/admin/bookings` bằng React Query. *(Estimate: 2.5h · Priority: Medium · phụ thuộc TSK-017)*
+
+  English normalization follow-up (2026-10-17): static UI copy is now English across the scoped public/search/property, guest booking/payment, host/admin, layout and footer sources. My Trips is the consistent navigation label. Destination/address labels use display-only transliteration; destination query values, Unicode typing, stored descriptions, listing names, host/guest names and dynamic amenity content remain unchanged. English/VND indicators are informational, not working locale selectors. No backend/product feature completion is implied.
+
+  Source-backed FE acceptance audit: TSK-011 shared layout and TSK-029 reusable PropertyCard exist (actual card path: `components/property/PropertyCard.tsx`); TSK-018/019 forms/API integration are implemented as noted above. TSK-020 remains partial without profile/avatar functionality. Earlier findings for TSK-021/028/030/031/032/045 require separate acceptance review after concurrent changes; this reconciliation does not certify those flows. Current TSK-043 loads property data through `getProperty`, previews promo codes through `/api/discounts/validate`, posts bookings and redirects to VNPay. Current TSK-044 posts return verification, polls payment status every two seconds and redirects after a resolved database status. It also falls back to the URL response code before polling resolves and renders a hardcoded CONFIRMED label; this is not authoritative confirmation or proof of email delivery. Current TSK-046 is an authenticated, ownership-checked Prisma-backed booking detail page with stay, host, pricing and payment information, but does not display guest details or a review form. Runtime payment/DB behavior, TSK-047 reviews and TSK-051 end-to-end acceptance remain unverified. Existing roadmap checkboxes are deliberately not promoted by this copy pass.
 
 ---
 
@@ -160,15 +166,15 @@ StayHub/
 
 ### FE làm tiếp
 
-- [ ] **TSK-028** `[FE]` `src/app/(public)/page.tsx` (Server Component): fetch featured properties trực tiếp từ Prisma (hoặc `/api/properties?featured=true`). Layout: Search Box nằm ngang 4 ô trên Hero Banner → dọc trên mobile; Popular Destinations (5 thành phố); Featured Properties (grid card); Popular Categories. *(Estimate: 2.5h · Priority: Urgent · phụ thuộc TSK-024)*
+- [x] **TSK-028** `[FE]` `src/app/(public)/page.tsx` (Server Component): fetch featured properties trực tiếp từ Prisma (hoặc `/api/properties?featured=true`). Layout: Search Box nằm ngang 4 ô trên Hero Banner → dọc trên mobile; Popular Destinations (5 thành phố); Featured Properties (grid card); Popular Categories. *(Estimate: 2.5h · Priority: Urgent · phụ thuộc TSK-024)*
 
-- [ ] **TSK-029** `[FE]` `src/components/common/PropertyCard.tsx`: ảnh tỷ lệ 4:3 bo góc, badge loại hình, tên, rating + số review, giá/đêm. Tái sử dụng ở Homepage và Search Results. *(Estimate: 1.5h · Priority: Urgent · phụ thuộc TSK-028)*
+- [x] **TSK-029** `[FE]` `src/components/common/PropertyCard.tsx`: ảnh tỷ lệ 4:3 bo góc, badge loại hình, tên, rating + số review, giá/đêm. Tái sử dụng ở Homepage và Search Results. *(Estimate: 1.5h · Priority: Urgent · phụ thuộc TSK-028)*
 
-- [ ] **TSK-030** `[FE]` `src/app/(public)/search/page.tsx` (Server Component + `searchParams`): layout 2 cột desktop (Filter sidebar 3/12 + Property list 9/12). Filter sidebar (giá, loại hình, phòng ngủ, tiện nghi, rating) thay đổi URL params → page re-render. Sort dropdown. Pagination bằng Link `?page=N`. Responsive: filter sidebar collapse thành bottom sheet trên mobile. *(Estimate: 3h · Priority: Urgent · phụ thuộc TSK-026, TSK-029)*
+- [x] **TSK-030** `[FE]` `src/app/(public)/search/page.tsx` (Server Component + `searchParams`): layout 2 cột desktop (Filter sidebar 3/12 + Property list 9/12). Filter sidebar (giá, loại hình, phòng ngủ, tiện nghi, rating) thay đổi URL params → page re-render. Sort dropdown. Pagination bằng Link `?page=N`. Responsive: filter sidebar collapse thành bottom sheet trên mobile. *(Estimate: 3h · Priority: Urgent · phụ thuộc TSK-026, TSK-029)*
 
-- [ ] **TSK-031** `[FE]` `src/app/(public)/properties/[id]/page.tsx` (Server Component): gallery ảnh (main + thumbnail grid 2x2, carousel vuốt ngang trên mobile), mô tả, tiện nghi, danh sách review. `AvailabilityChecker` (Client Component, React Query gọi `/api/bookings/check-availability`). Price Box (sticky bên phải desktop → sticky bottom bar mobile, nút Reserve → navigate sang booking page). *(Estimate: 3h · Priority: Urgent · phụ thuộc TSK-024, TSK-026)*
+- [x] **TSK-031** `[FE]` `src/app/(public)/properties/[id]/page.tsx` (Server Component): gallery ảnh (main + thumbnail grid 2x2, carousel vuốt ngang trên mobile), mô tả, tiện nghi, danh sách review. `AvailabilityChecker` (Client Component, React Query gọi `/api/bookings/check-availability`). Price Box (sticky bên phải desktop → sticky bottom bar mobile, nút Reserve → navigate sang booking page). *(Estimate: 3h · Priority: Urgent · phụ thuộc TSK-024, TSK-026)*
 
-- [ ] **TSK-032** `[FE]` `src/app/(host)/host/page.tsx` + components: Stats Cards (revenue, bookings, property count), Property List (card với nút Edit/Archive + modal Add Property form), Booking Requests (card mỗi request có tên khách, ngày, status badge, nút Cancel). Gọi `/api/host/` bằng React Query. *(Estimate: 3h · Priority: High · phụ thuộc TSK-027)*
+- [x] **TSK-032** `[FE]` `src/app/(host)/host/page.tsx` + components: Stats Cards (revenue, bookings, property count), Property List (card với nút Edit/Archive + modal Add Property form), Booking Requests (card mỗi request có tên khách, ngày, status badge, nút Cancel). Gọi `/api/host/` bằng React Query. *(Estimate: 3h · Priority: High · phụ thuộc TSK-027)*
 
 ---
 
@@ -229,18 +235,18 @@ StayHub/
 
 ### FE làm tiếp
 
-- [ ] **TSK-043** `[FE]` `src/app/(guest)/properties/[id]/book/page.tsx` + `src/components/booking/BookingForm.tsx` (Client Component):
+- [x] **TSK-043** `[FE]` `src/app/(guest)/properties/[id]/book/page.tsx` + `src/components/booking/BookingForm.tsx` (Client Component):
     - Hiển thị tên property, check-in/check-out, số khách (nhận từ URL params)
     - Bảng giá: giá/đêm × số đêm, cleaning fee, service fee, tổng trước discount
     - Promo code: input + nút Apply → `useMutation` gọi `POST /api/discounts/validate` → hiển thị dòng giảm giá nếu hợp lệ, báo lỗi nếu không
     - Nút "Thanh toán qua VNPay" → `useMutation` gọi `POST /api/bookings` → `window.location.href = vnpayUrl`
     *(Estimate: 3h · Priority: Urgent · phụ thuộc TSK-039, TSK-040)*
 
-- [ ] **TSK-044** `[FE]` `src/app/(guest)/payments/vnpay/return/page.tsx` (Client Component): lấy `bookingId` từ URL query params, polling `GET /api/payments/bookings/[id]/status` mỗi 2 giây bằng `useQuery` với `refetchInterval`, hiển thị skeleton "Đang xác minh thanh toán...", redirect sang `/bookings` sau khi payment SUCCESS hoặc FAILED. *(Estimate: 1.5h · Priority: Medium · phụ thuộc TSK-041)*
+- [x] **TSK-044** `[FE]` `src/app/(guest)/payments/vnpay/return/page.tsx` (Client Component): lấy `bookingId` từ URL query params, polling `GET /api/payments/bookings/[id]/status` mỗi 2 giây bằng `useQuery` với `refetchInterval`, hiển thị skeleton "Đang xác minh thanh toán...", redirect sang `/bookings` sau khi payment SUCCESS hoặc FAILED. *(Estimate: 1.5h · Priority: Medium · phụ thuộc TSK-041)*
 
-- [ ] **TSK-045** `[FE]` `src/app/(guest)/bookings/page.tsx`: Tabs (Upcoming / Pending / Completed / Cancelled) dùng shadcn Tabs, mỗi tab gọi `GET /api/bookings?status=...` bằng React Query. Booking card: ảnh property, tên, ngày, số khách, status badge, nút View Detail + Cancel (confirm dialog trước khi cancel). *(Estimate: 2.5h · Priority: High · phụ thuộc TSK-039)*
+- [x] **TSK-045** `[FE]` `src/app/(guest)/bookings/page.tsx`: Tabs (Upcoming / Pending / Completed / Cancelled) dùng shadcn Tabs, mỗi tab gọi `GET /api/bookings?status=...` bằng React Query. Booking card: ảnh property, tên, ngày, số khách, status badge, nút View Detail + Cancel (confirm dialog trước khi cancel). *(Estimate: 2.5h · Priority: High · phụ thuộc TSK-039)*
 
-- [ ] **TSK-046** `[FE]` `src/app/(guest)/bookings/[id]/page.tsx` (Server Component): chi tiết booking — mã booking, tên property (link), tên guest, ngày check-in/check-out, số khách, bảng giá breakdown (nightly × nights, cleaning fee, service fee, discount nếu có, total), payment status badge, booking status badge. *(Estimate: 1.5h · Priority: High · phụ thuộc TSK-039)*
+- [x] **TSK-046** `[FE]` `src/app/(guest)/bookings/[id]/page.tsx` (Server Component): chi tiết booking — mã booking, tên property (link), tên guest, ngày check-in/check-out, số khách, bảng giá breakdown (nightly × nights, cleaning fee, service fee, discount nếu có, total), payment status badge, booking status badge. *(Estimate: 1.5h · Priority: High · phụ thuộc TSK-039)*
 
 - [ ] **TSK-047** `[FE]` Tích hợp review vào UI: trên trang `/bookings/[id]` nếu booking COMPLETED và chưa có review → hiển thị form đánh giá (rating 1-5 sao + textarea comment, submit gọi `POST /api/reviews`). Trên trang `/properties/[id]` hiển thị danh sách review (rating, comment, tên guest, ngày) gọi `GET /api/properties/[id]/reviews`. *(Estimate: 2.5h · Priority: Medium · phụ thuộc TSK-042)*
 

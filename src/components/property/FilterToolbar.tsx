@@ -4,6 +4,7 @@ import * as React from "react";
 import { SlidersHorizontal, ChevronDown, X, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { displayPlace } from "@/lib/auth-ui";
 
 export interface FilterState {
   priceRange: [number, number];
@@ -21,10 +22,10 @@ interface FilterToolbarProps {
 }
 
 const PROPERTY_TYPES = [
-  { id: "APARTMENT", label: "Căn hộ cao cấp" },
-  { id: "VILLA", label: "Biệt thự nguyên căn" },
-  { id: "HOUSE", label: "Nhà phố nguyên căn" },
-  { id: "STUDIO", label: "Căn hộ Studio" },
+  { id: "APARTMENT", label: "Premium apartment" },
+  { id: "VILLA", label: "Entire villa" },
+  { id: "HOUSE", label: "Entire house" },
+  { id: "STUDIO", label: "Studio apartment" },
 ];
 
 const COMMON_AMENITIES = [
@@ -40,11 +41,29 @@ const COMMON_AMENITIES = [
   "Lối đi thẳng ra bãi biển riêng",
 ];
 
+const AMENITY_LABELS: Record<string, string> = Object.fromEntries(
+  COMMON_AMENITIES.map((value, index) => [
+    value,
+    [
+      "Private infinity pool",
+      "360-degree rooftop pool",
+      "High-speed Wi-Fi (150 Mbps)",
+      "Dedicated workspace",
+      "Fully equipped kitchen",
+      "Washer & dryer",
+      "Free parking",
+      "Jacuzzi bathtub",
+      "Ocean-view balcony",
+      "Direct private beach access",
+    ][index],
+  ])
+);
+
 const SORT_OPTIONS = [
-  { id: "recommended", label: "Được đề xuất (Best Match)" },
-  { id: "price_asc", label: "Giá tăng dần (Thấp đến cao)" },
-  { id: "price_desc", label: "Giá giảm dần (Cao đến thấp)" },
-  { id: "rating", label: "Đánh giá cao nhất (Top Rated)" },
+  { id: "recommended", label: "Recommended" },
+  { id: "price_asc", label: "Price: low to high" },
+  { id: "price_desc", label: "Price: high to low" },
+  { id: "rating", label: "Top rated" },
 ];
 
 export function FilterToolbar({
@@ -54,7 +73,9 @@ export function FilterToolbar({
   onFilterChange,
   onClearAll,
 }: FilterToolbarProps) {
-  const [openDropdown, setOpenDropdown] = React.useState<"price" | "type" | "amenity" | "sort" | null>(null);
+  const [openDropdown, setOpenDropdown] = React.useState<
+    "price" | "type" | "amenity" | "sort" | null
+  >(null);
 
   // Active filter chip count
   const activeChips: { type: string; id: string; label: string }[] = [];
@@ -75,7 +96,7 @@ export function FilterToolbar({
   });
 
   filters.amenities.forEach((a) => {
-    activeChips.push({ type: "amenity", id: a, label: a });
+    activeChips.push({ type: "amenity", id: a, label: AMENITY_LABELS[a] ?? a });
   });
 
   const removeChip = (chip: { type: string; id: string }) => {
@@ -102,10 +123,11 @@ export function FilterToolbar({
           {/* Result Title */}
           <div>
             <h1 className="text-xl sm:text-2xl font-extrabold text-foreground">
-              {totalResults} chỗ ở {locationName ? `tại ${locationName}` : "phù hợp"}
+              {totalResults} stays{" "}
+              {locationName ? `in ${displayPlace(locationName)}` : "found"}
             </h1>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Giá công khai đã bao gồm thuế và các khoản phí dịch vụ sàn
+              Listed prices include taxes and platform service fees
             </p>
           </div>
 
@@ -115,25 +137,33 @@ export function FilterToolbar({
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setOpenDropdown(openDropdown === "price" ? null : "price")}
+                onClick={() =>
+                  setOpenDropdown(openDropdown === "price" ? null : "price")
+                }
                 className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold transition-all ${
                   filters.priceRange[0] > 0 || filters.priceRange[1] < 5000000
                     ? "border-primary bg-primary/10 text-primary"
                     : "border-border bg-card text-foreground hover:bg-muted"
                 }`}
               >
-                <span>Khoảng giá (Price)</span>
+                <span>Price range</span>
                 <ChevronDown className="size-3.5" />
               </button>
 
               {openDropdown === "price" && (
                 <div className="absolute right-0 top-full mt-2 w-72 rounded-2xl border border-border bg-card p-4 shadow-xl z-50 animate-in fade-in-0 zoom-in-95">
-                  <p className="text-xs font-bold text-foreground mb-3">Khoảng giá mỗi đêm</p>
+                  <p className="text-xs font-bold text-foreground mb-3">
+                    Price per night
+                  </p>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between text-xs font-semibold">
-                      <span>{filters.priceRange[0].toLocaleString("vi-VN")}₫</span>
+                      <span>
+                        {filters.priceRange[0].toLocaleString("vi-VN")}₫
+                      </span>
                       <span>-</span>
-                      <span>{filters.priceRange[1].toLocaleString("vi-VN")}₫</span>
+                      <span>
+                        {filters.priceRange[1].toLocaleString("vi-VN")}₫
+                      </span>
                     </div>
                     <input
                       type="range"
@@ -144,7 +174,10 @@ export function FilterToolbar({
                       onChange={(e) =>
                         onFilterChange({
                           ...filters,
-                          priceRange: [filters.priceRange[0], parseInt(e.target.value)],
+                          priceRange: [
+                            filters.priceRange[0],
+                            parseInt(e.target.value),
+                          ],
                         })
                       }
                       className="w-full accent-primary cursor-pointer"
@@ -154,16 +187,16 @@ export function FilterToolbar({
                         variant="ghost"
                         size="sm"
                         onClick={() =>
-                          onFilterChange({ ...filters, priceRange: [0, 5000000] })
+                          onFilterChange({
+                            ...filters,
+                            priceRange: [0, 5000000],
+                          })
                         }
                       >
-                        Đặt lại
+                        Reset
                       </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => setOpenDropdown(null)}
-                      >
-                        Áp dụng
+                      <Button size="sm" onClick={() => setOpenDropdown(null)}>
+                        Apply
                       </Button>
                     </div>
                   </div>
@@ -175,16 +208,21 @@ export function FilterToolbar({
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setOpenDropdown(openDropdown === "type" ? null : "type")}
+                onClick={() =>
+                  setOpenDropdown(openDropdown === "type" ? null : "type")
+                }
                 className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold transition-all ${
                   filters.propertyTypes.length > 0
                     ? "border-primary bg-primary/10 text-primary"
                     : "border-border bg-card text-foreground hover:bg-muted"
                 }`}
               >
-                <span>Loại chỗ ở (Property Type)</span>
+                <span>Property type</span>
                 {filters.propertyTypes.length > 0 && (
-                  <Badge variant="secondary" className="size-4 p-0 text-[10px] flex items-center justify-center rounded-full">
+                  <Badge
+                    variant="secondary"
+                    className="size-4 p-0 text-[10px] flex items-center justify-center rounded-full"
+                  >
                     {filters.propertyTypes.length}
                   </Badge>
                 )}
@@ -193,7 +231,9 @@ export function FilterToolbar({
 
               {openDropdown === "type" && (
                 <div className="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-border bg-card p-4 shadow-xl z-50 animate-in fade-in-0 zoom-in-95">
-                  <p className="text-xs font-bold text-foreground mb-3">Chọn loại hình</p>
+                  <p className="text-xs font-bold text-foreground mb-3">
+                    Choose property types
+                  </p>
                   <div className="space-y-2.5">
                     {PROPERTY_TYPES.map((type) => {
                       const isChecked = filters.propertyTypes.includes(type.id);
@@ -207,9 +247,14 @@ export function FilterToolbar({
                             checked={isChecked}
                             onChange={() => {
                               const newTypes = isChecked
-                                ? filters.propertyTypes.filter((t) => t !== type.id)
+                                ? filters.propertyTypes.filter(
+                                    (t) => t !== type.id
+                                  )
                                 : [...filters.propertyTypes, type.id];
-                              onFilterChange({ ...filters, propertyTypes: newTypes });
+                              onFilterChange({
+                                ...filters,
+                                propertyTypes: newTypes,
+                              });
                             }}
                             className="size-4 rounded border-border accent-primary cursor-pointer"
                           />
@@ -220,7 +265,7 @@ export function FilterToolbar({
                   </div>
                   <div className="mt-4 pt-2 border-t border-border flex justify-end">
                     <Button size="sm" onClick={() => setOpenDropdown(null)}>
-                      Đóng
+                      Close
                     </Button>
                   </div>
                 </div>
@@ -231,16 +276,21 @@ export function FilterToolbar({
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setOpenDropdown(openDropdown === "amenity" ? null : "amenity")}
+                onClick={() =>
+                  setOpenDropdown(openDropdown === "amenity" ? null : "amenity")
+                }
                 className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold transition-all ${
                   filters.amenities.length > 0
                     ? "border-primary bg-primary/10 text-primary"
                     : "border-border bg-card text-foreground hover:bg-muted"
                 }`}
               >
-                <span>Tiện nghi (Amenities)</span>
+                <span>Amenities</span>
                 {filters.amenities.length > 0 && (
-                  <Badge variant="secondary" className="size-4 p-0 text-[10px] flex items-center justify-center rounded-full">
+                  <Badge
+                    variant="secondary"
+                    className="size-4 p-0 text-[10px] flex items-center justify-center rounded-full"
+                  >
                     {filters.amenities.length}
                   </Badge>
                 )}
@@ -249,7 +299,9 @@ export function FilterToolbar({
 
               {openDropdown === "amenity" && (
                 <div className="absolute right-0 top-full mt-2 w-72 rounded-2xl border border-border bg-card p-4 shadow-xl z-50 animate-in fade-in-0 zoom-in-95">
-                  <p className="text-xs font-bold text-foreground mb-3">Tiện nghi phổ biến</p>
+                  <p className="text-xs font-bold text-foreground mb-3">
+                    Popular amenities
+                  </p>
                   <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
                     {COMMON_AMENITIES.map((amenity) => {
                       const isChecked = filters.amenities.includes(amenity);
@@ -265,18 +317,23 @@ export function FilterToolbar({
                               const newAmenities = isChecked
                                 ? filters.amenities.filter((a) => a !== amenity)
                                 : [...filters.amenities, amenity];
-                              onFilterChange({ ...filters, amenities: newAmenities });
+                              onFilterChange({
+                                ...filters,
+                                amenities: newAmenities,
+                              });
                             }}
                             className="size-4 rounded border-border accent-primary cursor-pointer"
                           />
-                          <span className="truncate">{amenity}</span>
+                          <span className="truncate">
+                            {AMENITY_LABELS[amenity]}
+                          </span>
                         </label>
                       );
                     })}
                   </div>
                   <div className="mt-4 pt-2 border-t border-border flex justify-end">
                     <Button size="sm" onClick={() => setOpenDropdown(null)}>
-                      Đóng
+                      Close
                     </Button>
                   </div>
                 </div>
@@ -287,12 +344,15 @@ export function FilterToolbar({
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setOpenDropdown(openDropdown === "sort" ? null : "sort")}
+                onClick={() =>
+                  setOpenDropdown(openDropdown === "sort" ? null : "sort")
+                }
                 className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-all"
               >
                 <SlidersHorizontal className="size-3.5 text-muted-foreground" />
                 <span>
-                  {SORT_OPTIONS.find((s) => s.id === filters.sortBy)?.label || "Được đề xuất"}
+                  {SORT_OPTIONS.find((s) => s.id === filters.sortBy)?.label ||
+                    "Recommended"}
                 </span>
                 <ChevronDown className="size-3.5" />
               </button>
@@ -326,7 +386,7 @@ export function FilterToolbar({
         {activeChips.length > 0 && (
           <div className="mt-3.5 flex flex-wrap items-center gap-2 pt-3 border-t border-border">
             <span className="text-xs font-semibold text-muted-foreground mr-1">
-              Đang lọc theo:
+              Filtering by:
             </span>
 
             {activeChips.map((chip) => (
@@ -338,7 +398,7 @@ export function FilterToolbar({
                 <button
                   type="button"
                   onClick={() => removeChip(chip)}
-                  aria-label={`Xóa bộ lọc ${chip.label}`}
+                  aria-label={`Remove filter ${chip.label}`}
                   className="rounded-full hover:bg-primary/20 p-0.5"
                 >
                   <X className="size-3" />
@@ -352,7 +412,7 @@ export function FilterToolbar({
               className="inline-flex items-center gap-1 text-xs font-semibold text-destructive hover:underline ml-2"
             >
               <RotateCcw className="size-3" />
-              <span>Xóa toàn bộ bộ lọc (Clear All)</span>
+              <span>Clear all filters</span>
             </button>
           </div>
         )}

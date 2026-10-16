@@ -11,13 +11,28 @@ export async function GET() {
   if (session.user.role !== "ADMIN")
     return NextResponse.json(fail("Không có quyền"), { status: 403 });
 
-  const [totalUsers, activeHosts] = await Promise.all([
+  const [totalUsers, activeHosts, bookingsToday, revenueAgg] = await Promise.all([
     prisma.user.count(),
     prisma.user.count({ where: { role: "HOST", status: "ACTIVE" } }),
+    prisma.booking.count({
+      where: {
+        createdAt: {
+          gte: new Date(new Date().setHours(0, 0, 0, 0)),
+        },
+      },
+    }),
+    prisma.payment.aggregate({
+      where: { status: "SUCCESS" },
+      _sum: { amount: true },
+    }),
   ]);
 
-  // ponytail: booking/payment schema lands in TSK-033/034; replace zeros with Prisma aggregates then.
   return NextResponse.json(
-    ok({ totalUsers, activeHosts, bookingsToday: 0, platformRevenue: 0 })
+    ok({
+      totalUsers,
+      activeHosts,
+      bookingsToday,
+      platformRevenue: Number(revenueAgg._sum.amount ?? 0),
+    })
   );
 }

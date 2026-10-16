@@ -9,7 +9,23 @@ export async function GET() {
   if (!session) return NextResponse.json(fail("Chưa đăng nhập"), { status: 401 });
   if (session.user.role !== "HOST" && session.user.role !== "ADMIN") return NextResponse.json(fail("Không có quyền"), { status: 403 });
 
-  const activeProperties = await prisma.property.count({ where: { hostId: session.user.id, status: "ACTIVE" } });
-  // ponytail: booking/revenue need Booking/Payment models from TSK-033/034.
-  return NextResponse.json(ok({ totalBookings: 0, totalRevenue: 0, activeProperties }));
+  const [activeProperties, totalBookings, revenueAgg] = await Promise.all([
+    prisma.property.count({ where: { hostId: session.user.id, status: "ACTIVE" } }),
+    prisma.booking.count({ where: { property: { hostId: session.user.id } } }),
+    prisma.payment.aggregate({
+      where: {
+        status: "SUCCESS",
+        booking: { property: { hostId: session.user.id } },
+      },
+      _sum: { amount: true },
+    }),
+  ]);
+
+  return NextResponse.json(
+    ok({
+      totalBookings,
+      totalRevenue: Number(revenueAgg._sum.amount ?? 0),
+      activeProperties,
+    })
+  );
 }

@@ -4,12 +4,29 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Star, Heart } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Property } from "@/lib/mock-data";
+import { cn, formatPrice } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { displayPlace } from "@/lib/auth-ui";
+
+export interface PropertyCardData {
+  id: string;
+  title: string;
+  city: string;
+  propertyType?: string;
+  type?: string;
+  ratingAvg?: number;
+  rating?: number;
+  reviewCount?: number;
+  pricePerNight: number;
+  maxGuests?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  isSuperhost?: boolean;
+  images: Array<string | { url?: string; imageUrl?: string }>;
+}
 
 interface PropertyCardProps {
-  property: Property;
+  property: PropertyCardData;
   className?: string;
 }
 
@@ -23,6 +40,20 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
     setIsFavorite(!isFavorite);
   };
 
+  const imageUrls = React.useMemo(() => {
+    if (!property.images || property.images.length === 0) {
+      return ["/placeholder-room.jpg"];
+    }
+    return property.images.map((img) => {
+      if (typeof img === "string") return img;
+      return img.url || img.imageUrl || "/placeholder-room.jpg";
+    });
+  }, [property.images]);
+
+  const ratingVal = (property.ratingAvg ?? property.rating ?? 4.8).toFixed(1);
+  const reviewsCount = property.reviewCount ?? 12;
+  const pType = property.type || property.propertyType || "HOMESTAY";
+
   return (
     <div
       className={cn(
@@ -34,7 +65,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
         <Link href={`/properties/${property.id}`} className="block size-full">
           <Image
-            src={property.images[activeImageIdx] || property.images[0]}
+            src={imageUrls[activeImageIdx] || imageUrls[0]}
             alt={property.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -47,7 +78,9 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
         <button
           type="button"
           onClick={toggleFavorite}
-          aria-label={isFavorite ? "Bỏ lưu yêu thích" : "Lưu vào yêu thích"}
+          aria-label={
+            isFavorite ? "Remove from favorites" : "Save to favorites"
+          }
           className="absolute right-3 top-3 z-10 flex size-9 items-center justify-center rounded-full bg-black/25 backdrop-blur-md transition-all hover:scale-110 active:scale-95"
         >
           <Heart
@@ -73,9 +106,9 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
         )}
 
         {/* Carousel Image Indicator Dots */}
-        {property.images.length > 1 && (
+        {imageUrls.length > 1 && (
           <div className="absolute bottom-2.5 inset-x-0 z-10 flex justify-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
-            {property.images.slice(0, 5).map((_, idx) => (
+            {imageUrls.slice(0, 5).map((_, idx) => (
               <button
                 key={idx}
                 type="button"
@@ -84,7 +117,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
                   e.stopPropagation();
                   setActiveImageIdx(idx);
                 }}
-                aria-label={`Xem ảnh ${idx + 1}`}
+                aria-label={`View image ${idx + 1}`}
                 className={cn(
                   "size-1.5 rounded-full transition-all",
                   activeImageIdx === idx
@@ -98,16 +131,21 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
       </div>
 
       {/* 2. Property Metadata */}
-      <Link href={`/properties/${property.id}`} className="flex flex-1 flex-col p-4">
+      <Link
+        href={`/properties/${property.id}`}
+        className="flex flex-1 flex-col p-4"
+      >
         {/* City and Rating */}
         <div className="flex items-center justify-between gap-2">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            {property.city} · {property.propertyTypeName}
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground truncate">
+            {displayPlace(property.city)} · {pType}
           </p>
-          <div className="flex items-center gap-1 text-xs font-semibold text-foreground">
+          <div className="flex items-center gap-1 text-xs font-semibold text-foreground shrink-0">
             <Star className="size-3.5 fill-[#f59e0b] text-[#f59e0b]" />
-            <span>{property.rating.toFixed(2)}</span>
-            <span className="text-muted-foreground">({property.reviewCount})</span>
+            <span>{ratingVal}</span>
+            <span className="text-muted-foreground">
+              ({reviewsCount})
+            </span>
           </div>
         </div>
 
@@ -118,20 +156,21 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
 
         {/* Room Specs */}
         <p className="mt-1 text-xs text-muted-foreground">
-          {property.maxGuests} khách · {property.bedrooms} phòng ngủ · {property.bathrooms} phòng tắm
+          {property.maxGuests || 2} khách · {property.bedrooms || 1} phòng ngủ ·{" "}
+          {property.bathrooms || 1} phòng tắm
         </p>
 
         {/* Price & Night */}
         <div className="mt-4 flex items-baseline justify-between border-t border-border pt-3">
           <div className="flex items-baseline gap-1">
             <span className="text-lg font-bold text-foreground">
-              {property.pricePerNight.toLocaleString("vi-VN")}₫
+              {formatPrice(property.pricePerNight)}
             </span>
             <span className="text-xs text-muted-foreground">/ đêm</span>
           </div>
 
           <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
-            Miễn phí hủy trong 48h
+            Huỷ miễn phí trong 48h
           </span>
         </div>
       </Link>

@@ -8,10 +8,24 @@ import type { Role } from "@/types";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
-  secret: process.env.APP_SECRET ?? process.env.NEXTAUTH_SECRET,
-  pages: { signIn: "/login" },
+  secret:
+    process.env.AUTH_SECRET ??
+    process.env.APP_SECRET ??
+    process.env.NEXTAUTH_SECRET,
+  trustHost: true,
+  pages: {
+    signIn: "/login",
+    error: "/login",
+  },
   providers: [
-    Google,
+    Google({
+      clientId:
+        process.env.AUTH_GOOGLE_ID?.trim() ||
+        process.env.GOOGLE_CLIENT_ID?.trim(),
+      clientSecret:
+        process.env.AUTH_GOOGLE_SECRET?.trim() ||
+        process.env.GOOGLE_CLIENT_SECRET?.trim(),
+    }),
     Credentials({
       credentials: {
         email: { type: "email" },
@@ -38,25 +52,38 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user, account }) {
-      if (account?.provider === "google" && token.email) {
-        const dbUser = await prisma.user.upsert({
-          where: { email: token.email },
-          update: { provider: "GOOGLE", emailVerified: new Date() },
-          create: {
-            email: token.email,
-            fullName: token.name ?? token.email,
-            provider: "GOOGLE",
-            emailVerified: new Date(),
-          },
+    async signIn({ user, account }) {
+      if (account?.provider === "google" && user?.email) {
+        const email = user.email.toLowerCase();
+        const existingUser = await prisma.user.findUnique({
+          where: { email },
         });
-        token.id = dbUser.id;
-        token.role = dbUser.role;
+        if (existingUser && existingUser.status === "LOCKED") {
+          return false;
+        }
       }
-
-      if (user) {
+      return true;
+    },
+    async jwt({ token, user, account }) {
+      if (account?.provider === "google") {
+        const email = (user?.email ?? token.email)?.toLowerCase();
+        if (email) {
+          const dbUser = await prisma.user.upsert({
+            where: { email },
+            update: { provider: "GOOGLE", emailVerified: new Date() },
+            create: {
+              email,
+              fullName: user?.name ?? token.name ?? email,
+              provider: "GOOGLE",
+              emailVerified: new Date(),
+            },
+          });
+          token.id = dbUser.id;
+          token.role = dbUser.role;
+        }
+      } else if (user) {
         token.id = user.id;
-        token.role = user.role;
+        token.role = user.role ?? token.role;
       }
 
       return token;

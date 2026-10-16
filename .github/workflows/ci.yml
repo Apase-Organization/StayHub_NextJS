@@ -11,8 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: postgresql://stayhub:password@localhost:5432/stayhub_db
-      APP_LOCAL_URL: http://localhost:3000
+      APP_LOCAL_URL: http://localhost:8080
       APP_SECRET: ci-secret
+      AUTH_SECRET: ci-secret
+      AUTH_URL: http://localhost:8080
+      NEXTAUTH_URL: http://localhost:8080
       GOOGLE_CLIENT_ID: ci-google-client-id
       GOOGLE_CLIENT_SECRET: ci-google-client-secret
       MAIL_HOST: smtp.example.com
