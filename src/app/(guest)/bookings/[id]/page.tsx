@@ -133,7 +133,7 @@ export default async function BookingDetailPage({
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Top Navigation */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap gap-3 items-center justify-between">
         <Link
           href="/bookings"
           className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors"
@@ -160,7 +160,7 @@ export default async function BookingDetailPage({
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
         {/* Left Column: Property & Reservation details (7/12) */}
-        <div className="space-y-6 lg:col-span-7">
+        <div className="min-w-0 space-y-6 lg:col-span-7">
           {/* Property Card */}
           <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
             <div className="relative aspect-[16/9] w-full bg-muted">
@@ -263,8 +263,8 @@ export default async function BookingDetailPage({
         </div>
 
         {/* Right Column: Pricing & Payment Breakdown (5/12) */}
-        <div className="space-y-6 lg:col-span-5">
-          <div className="sticky top-24 rounded-2xl border border-border bg-card p-6 shadow-sm">
+        <div className="min-w-0 space-y-6 lg:col-span-5">
+          <div className="lg:sticky lg:top-24 rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-sm">
             <h3 className="text-lg font-bold text-foreground mb-4">
               Price Breakdown
             </h3>
@@ -306,7 +306,7 @@ export default async function BookingDetailPage({
               )}
             </div>
 
-            <div className="pt-4 flex items-baseline justify-between border-b border-border pb-4">
+            <div className="pt-4 flex flex-wrap gap-2 items-baseline justify-between border-b border-border pb-4">
               <div>
                 <span className="text-base font-bold text-foreground">
                   Total payment

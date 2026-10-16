@@ -150,7 +150,7 @@ export function BookingForm({
   return (
     <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
       {/* Cột trái: Form thông tin & Phương thức thanh toán (7/12) */}
-      <div className="flex flex-col gap-8 lg:col-span-7">
+      <div className="min-w-0 flex flex-col gap-8 lg:col-span-7">
         {/* Guest Summary Card */}
         <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
           <h2 className="text-xl font-bold text-foreground">
@@ -185,7 +185,7 @@ export function BookingForm({
 
         {/* Payment Methods */}
         <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap gap-2 items-center justify-between">
             <h2 className="text-xl font-bold text-foreground">
               2. Payment method
             </h2>
@@ -217,7 +217,7 @@ export function BookingForm({
                   className="size-4 text-primary focus:ring-primary"
                 />
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="font-semibold text-foreground">
                       VNPay QR / Banking app
                     </span>
@@ -291,7 +291,7 @@ export function BookingForm({
 
         <Button
           size="lg"
-          className="w-full text-base font-bold shadow-md hover:shadow-lg transition-all"
+          className="h-auto min-h-11 w-full whitespace-normal text-base font-bold shadow-md hover:shadow-lg transition-all"
           disabled={createBookingMutation.isPending}
           onClick={() => createBookingMutation.mutate()}
         >
@@ -307,8 +307,8 @@ export function BookingForm({
       </div>
 
       {/* Cột phải: Price Breakdown & Property summary (5/12) */}
-      <div className="lg:col-span-5">
-        <div className="sticky top-24 rounded-2xl border border-border bg-card p-6 shadow-sm">
+      <div className="min-w-0 lg:col-span-5 order-first lg:order-last">
+        <div className="lg:sticky lg:top-24 rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-sm">
           {/* Property Card Header */}
           <div className="flex gap-4 pb-6 border-b border-border">
             <div className="relative size-20 shrink-0 overflow-hidden rounded-xl bg-muted">
@@ -338,7 +338,7 @@ export function BookingForm({
 
           {/* Booking Period */}
           <div className="py-4 border-b border-border space-y-2 text-sm">
-            <div className="flex justify-between">
+            <div className="flex flex-wrap gap-2 justify-between">
               <span className="text-muted-foreground">Dates:</span>
               <span className="font-medium text-foreground">
                 {checkIn} → {checkOut} ({nights} nights)
@@ -445,7 +445,7 @@ export function BookingForm({
           </div>
 
           {/* Total */}
-          <div className="pt-4 border-t border-border flex items-baseline justify-between">
+          <div className="pt-4 border-t border-border flex flex-wrap gap-2 items-baseline justify-between">
             <div>
               <span className="text-base font-bold text-foreground">
                 Total payment

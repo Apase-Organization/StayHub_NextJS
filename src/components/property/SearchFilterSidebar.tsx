@@ -24,7 +24,11 @@ const PROPERTY_TYPES = [
   { id: "RESORT", label: "Resort nghỉ dưỡng" },
 ];
 
-export function SearchFilterSidebar() {
+interface SearchFilterSidebarProps {
+  mode?: "desktop" | "mobile" | "both";
+}
+
+export function SearchFilterSidebar({ mode = "both" }: SearchFilterSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -226,35 +230,48 @@ export function SearchFilterSidebar() {
     </div>
   );
 
+  const renderDesktop = mode === "desktop" || mode === "both";
+  const renderMobile = mode === "mobile" || mode === "both";
+
   return (
     <>
       {/* Desktop Sidebar (3/12) */}
-      <div className="hidden lg:block rounded-2xl border border-border bg-card p-5 shadow-sm">
-        {filterContent}
-      </div>
+      {renderDesktop && (
+        <div
+          className={
+            mode === "desktop"
+              ? "rounded-2xl border border-border bg-card p-5 shadow-sm"
+              : "hidden lg:block rounded-2xl border border-border bg-card p-5 shadow-sm"
+          }
+        >
+          {filterContent}
+        </div>
+      )}
 
       {/* Mobile Filter Button & Dialog Bottom Sheet */}
-      <div className="lg:hidden">
-        <Dialog open={isMobileOpen} onOpenChange={setIsMobileOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-2">
-              <SlidersHorizontal className="size-4" />
-              Bộ lọc
-              {hasActiveFilters && (
-                <Badge className="size-5 rounded-full p-0 flex items-center justify-center text-[10px]">
-                  !
-                </Badge>
-              )}
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Bộ lọc tìm kiếm chỗ ở</DialogTitle>
-            </DialogHeader>
-            <div className="py-2">{filterContent}</div>
-          </DialogContent>
-        </Dialog>
-      </div>
+      {renderMobile && (
+        <div className={mode === "mobile" ? "lg:hidden" : "lg:hidden"}>
+          <Dialog open={isMobileOpen} onOpenChange={setIsMobileOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2">
+                <SlidersHorizontal className="size-4" />
+                Bộ lọc
+                {hasActiveFilters && (
+                  <Badge className="size-5 rounded-full p-0 flex items-center justify-center text-[10px]">
+                    !
+                  </Badge>
+                )}
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Bộ lọc tìm kiếm chỗ ở</DialogTitle>
+              </DialogHeader>
+              <div className="py-2">{filterContent}</div>
+            </DialogContent>
+          </Dialog>
+        </div>
+      )}
     </>
   );
 }

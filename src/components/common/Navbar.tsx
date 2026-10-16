@@ -89,7 +89,7 @@ export function Navbar() {
 
         {/* 2. Center: Search Pill (Hidden on Auth Pages) */}
         {!isAuthPage && !isDashboardPage && (
-          <div className="hidden md:flex items-center">
+          <div className="hidden xl:flex items-center">
             <button
               onClick={handleSearchClick}
               type="button"
@@ -113,7 +113,7 @@ export function Navbar() {
             <>
               <Link
                 href="/host"
-                className="hidden rounded-full px-3.5 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted md:inline-block"
+                className="hidden rounded-full px-3.5 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted lg:inline-block"
               >
                 Become a host
               </Link>
@@ -258,7 +258,7 @@ export function Navbar() {
 
       {/* Mobile Search Bar (Below Header on Mobile) */}
       {!isAuthPage && !isDashboardPage && (
-        <div className="border-t border-border px-4 py-2.5 md:hidden">
+        <div className="border-t border-border px-4 py-2.5 xl:hidden">
           <button
             onClick={handleSearchClick}
             type="button"
@@ -284,7 +284,7 @@ export function Navbar() {
             className="fixed inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in-0"
             onClick={() => setIsMobileNavOpen(false)}
           />
-          <div className="fixed inset-y-0 right-0 w-full max-w-xs border-l border-border bg-card p-6 shadow-xl animate-in slide-in-from-right">
+          <div className="fixed inset-y-0 right-0 h-dvh w-full max-w-xs overflow-y-auto border-l border-border bg-card p-6 shadow-xl animate-in slide-in-from-right">
             <div className="flex items-center justify-between pb-4 border-b border-border">
               <Link
                 href="/"

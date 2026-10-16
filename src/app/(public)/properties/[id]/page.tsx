@@ -17,7 +17,8 @@ import { prisma } from "@/lib/prisma";
 import { MOCK_PROPERTIES } from "@/lib/mock-data";
 import { AvailabilityChecker } from "@/components/property/AvailabilityChecker";
 import { displayPlace } from "@/lib/auth-ui";
-import { formatDate } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { formatPrice, formatDate } from "@/lib/utils";
 
 interface PropertyDetailPageProps {
   params: Promise<{ id: string }>;
@@ -30,7 +31,9 @@ export default async function PropertyDetailPage({
 
   // 1. Fetch real property from Prisma or fallback to mock
   const rawProperty = await getProperty(id);
-  const mockProp = !rawProperty ? MOCK_PROPERTIES.find((p) => p.id === id) : null;
+  const mockProp = !rawProperty
+    ? MOCK_PROPERTIES.find((p) => p.id === id)
+    : null;
 
   if (!rawProperty && !mockProp) {
     notFound();
@@ -90,7 +93,7 @@ export default async function PropertyDetailPage({
       : ["/placeholder-room.jpg"];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 py-8 pb-24 lg:pb-8 sm:px-6 lg:px-8">
       {/* 1. Breadcrumbs */}
       <div className="mb-4 flex items-center justify-between">
         <Link
@@ -135,10 +138,10 @@ export default async function PropertyDetailPage({
         </div>
       </div>
 
-      {/* 3. 5-Photo Gallery Grid (TSK-031) */}
-      <section className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-2.5 overflow-hidden rounded-2xl h-[340px] sm:h-[460px]">
+      {/* 3. 5-Photo Gallery Grid & Mobile Carousel (TSK-031) */}
+      <section className="mt-6 flex md:grid md:grid-cols-4 gap-2.5 overflow-x-auto md:overflow-hidden rounded-2xl h-[280px] sm:h-[360px] lg:h-[460px] snap-x snap-mandatory scrollbar-none">
         {/* Main Large Image (2 cols on md) */}
-        <div className="relative md:col-span-2 size-full overflow-hidden bg-muted">
+        <div className="relative shrink-0 md:shrink w-[85vw] sm:w-[70vw] md:w-auto md:col-span-2 size-full overflow-hidden bg-muted snap-center rounded-xl md:rounded-none">
           <Image
             src={galleryImages[0]}
             alt={property.title}
@@ -148,7 +151,7 @@ export default async function PropertyDetailPage({
           />
         </div>
 
-        {/* 4 Small Images (2 cols, 2 rows) */}
+        {/* 4 Small Images (2 cols, 2 rows on desktop; horizontal swipe on mobile) */}
         <div className="hidden md:grid md:col-span-2 grid-cols-2 gap-2.5 size-full">
           {galleryImages.slice(1, 5).map((img, idx) => (
             <div
@@ -165,12 +168,28 @@ export default async function PropertyDetailPage({
             </div>
           ))}
         </div>
+
+        {/* Mobile-only additional slides */}
+        {galleryImages.slice(1, 5).map((img, idx) => (
+          <div
+            key={`mobile-${idx}`}
+            className="relative shrink-0 md:hidden w-[75vw] sm:w-[60vw] size-full overflow-hidden bg-muted snap-center rounded-xl"
+          >
+            <Image
+              src={img}
+              alt={`${property.title} - ảnh ${idx + 2}`}
+              fill
+              sizes="75vw"
+              className="size-full object-cover"
+            />
+          </div>
+        ))}
       </section>
 
       {/* 4. Main Content: Left Column (Details) & Right Column (Availability & Booking) */}
       <div className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-10">
         {/* Left Column (Details) */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="min-w-0 lg:col-span-2 space-y-8">
           {/* Host Profile & Room Specs */}
           <div className="flex items-center justify-between border-b border-border pb-6">
             <div>
@@ -178,12 +197,12 @@ export default async function PropertyDetailPage({
                 Toàn bộ chỗ ở · Chủ nhà {property.host.fullName}
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Tối đa {property.maxGuests} khách · {property.bedrooms} phòng ngủ
-                · {property.beds} giường · {property.bathrooms} phòng tắm
+                Tối đa {property.maxGuests} khách · {property.bedrooms} phòng
+                ngủ · {property.beds} giường · {property.bathrooms} phòng tắm
               </p>
             </div>
 
-            <div className="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xl border-2 border-primary/20 shadow-xs">
+            <div className="flex size-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xl border-2 border-primary/20 shadow-xs">
               {property.host.fullName[0] || "H"}
             </div>
           </div>
@@ -213,7 +232,8 @@ export default async function PropertyDetailPage({
                   Bảo vệ StayCover
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  Bảo đảm hoàn tiền và hỗ trợ đổi phòng nếu thông tin không đúng thực tế.
+                  Bảo đảm hoàn tiền và hỗ trợ đổi phòng nếu thông tin không đúng
+                  thực tế.
                 </p>
               </div>
             </div>
@@ -261,7 +281,8 @@ export default async function PropertyDetailPage({
             {reviews.length === 0 ? (
               <div className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
                 <MessageSquare className="size-6 mx-auto mb-2 opacity-50" />
-                Chưa có đánh giá nào cho chỗ ở này. Hãy là vị khách đầu tiên trải nghiệm!
+                Chưa có đánh giá nào cho chỗ ở này. Hãy là vị khách đầu tiên
+                trải nghiệm!
               </div>
             ) : (
               <div className="space-y-4">
@@ -298,8 +319,8 @@ export default async function PropertyDetailPage({
         </div>
 
         {/* Right Column: Sticky AvailabilityChecker & Price Box (TSK-031) */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-24">
+        <div className="min-w-0 lg:col-span-1">
+          <div className="lg:sticky lg:top-24">
             <AvailabilityChecker
               propertyId={property.id}
               pricePerNight={property.pricePerNight}
@@ -309,6 +330,26 @@ export default async function PropertyDetailPage({
             />
           </div>
         </div>
+      </div>
+
+      {/* Mobile Sticky Booking Bar (TSK-031) */}
+      <div className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur-md p-3.5 px-4 flex items-center justify-between lg:hidden shadow-xl">
+        <div>
+          <div className="flex items-baseline gap-1">
+            <span className="text-lg font-black text-foreground">
+              {formatPrice(property.pricePerNight)}
+            </span>
+            <span className="text-xs text-muted-foreground">/ đêm</span>
+          </div>
+          <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+            <Star className="size-3 fill-amber-400 text-amber-400" />
+            <span className="font-semibold text-foreground">{property.ratingAvg.toFixed(1)}</span>
+            <span>({reviews.length} đánh giá)</span>
+          </div>
+        </div>
+        <Button asChild className="font-bold text-sm px-6 shadow-md">
+          <Link href={`/properties/${property.id}/book`}>Đặt phòng</Link>
+        </Button>
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import { AlertCircle, LogIn } from "lucide-react";
 import { signIn } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 function OAuthErrorMessage() {
   const searchParams = useSearchParams();
@@ -92,11 +93,14 @@ export default function LoginPage() {
 
         <form onSubmit={submit} noValidate className="mt-6 space-y-4 text-left">
           {(["email", "password"] as const).map((name) => (
-            <div key={name}>
-              <label htmlFor={name}>
+            <div key={name} className="space-y-1.5">
+              <label
+                htmlFor={name}
+                className="text-sm font-medium text-foreground"
+              >
                 {name === "email" ? "Email" : "Password"}
               </label>
-              <input
+              <Input
                 id={name}
                 type={name}
                 autoComplete={
@@ -105,11 +109,13 @@ export default function LoginPage() {
                 {...register(name)}
                 aria-invalid={!!errors[name]}
                 aria-describedby={`${name}-error`}
-                className="mt-1 w-full rounded-md border p-2"
+                className="h-10 rounded-xl"
               />
-              <p id={`${name}-error`} className="text-sm text-destructive">
-                {errors[name]?.message}
-              </p>
+              {errors[name] && (
+                <p id={`${name}-error`} className="text-xs text-destructive">
+                  {errors[name]?.message}
+                </p>
+              )}
             </div>
           ))}
           {error && (

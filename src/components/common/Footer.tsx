@@ -221,7 +221,7 @@ export function Footer() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-6 font-medium text-foreground">
+          <div className="flex flex-wrap justify-center items-center gap-4 font-medium text-foreground">
             <span className="flex items-center gap-1.5">
               <Globe className="size-4" />
               <span>English</span>

@@ -64,7 +64,9 @@ interface HostBooking {
 
 export default function HostDashboardPage() {
   const queryClient = useQueryClient();
-  const [activeMenu, setActiveMenu] = React.useState<"dashboard" | "properties" | "requests">("dashboard");
+  const [activeMenu, setActiveMenu] = React.useState<
+    "dashboard" | "properties" | "requests"
+  >("dashboard");
   const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
   const [toastMessage, setToastMessage] = React.useState<string | null>(null);
 
@@ -99,7 +101,9 @@ export default function HostDashboardPage() {
     },
   });
 
-  const { data: properties = [], isLoading: propsLoading } = useQuery<HostProperty[]>({
+  const { data: properties = [], isLoading: propsLoading } = useQuery<
+    HostProperty[]
+  >({
     queryKey: ["hostProperties"],
     queryFn: async () => {
       const res = await fetch("/api/host/properties");
@@ -109,7 +113,9 @@ export default function HostDashboardPage() {
     },
   });
 
-  const { data: bookings = [], isLoading: bookingsLoading } = useQuery<HostBooking[]>({
+  const { data: bookings = [], isLoading: bookingsLoading } = useQuery<
+    HostBooking[]
+  >({
     queryKey: ["hostBookings"],
     queryFn: async () => {
       const res = await fetch("/api/host/bookings");
@@ -159,7 +165,9 @@ export default function HostDashboardPage() {
 
   const archiveMutation = useMutation({
     mutationFn: async (propId: string) => {
-      const res = await fetch(`/api/properties/${propId}`, { method: "DELETE" });
+      const res = await fetch(`/api/properties/${propId}`, {
+        method: "DELETE",
+      });
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || "Lỗi lưu trữ chỗ ở");
       return json;
@@ -173,9 +181,12 @@ export default function HostDashboardPage() {
 
   const cancelBookingMutation = useMutation({
     mutationFn: async (bookingId: string) => {
-      const res = await fetch(`/api/bookings/${bookingId}/cancel`, { method: "PATCH" });
+      const res = await fetch(`/api/bookings/${bookingId}/cancel`, {
+        method: "PATCH",
+      });
       const json = await res.json();
-      if (!res.ok || !json.success) throw new Error(json.message || "Huỷ đơn thất bại");
+      if (!res.ok || !json.success)
+        throw new Error(json.message || "Huỷ đơn thất bại");
       return json;
     },
     onSuccess: () => {
@@ -186,7 +197,7 @@ export default function HostDashboardPage() {
   });
 
   return (
-    <div className="flex min-h-[calc(100vh-72px)] bg-muted/20">
+    <div className="flex flex-col lg:flex-row min-h-[calc(100vh-72px)] bg-muted/20">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 rounded-xl bg-slate-900 text-white px-5 py-3 shadow-xl text-sm flex items-center gap-2 border border-slate-700 animate-in fade-in slide-in-from-bottom-2">
@@ -196,7 +207,7 @@ export default function HostDashboardPage() {
       )}
 
       {/* 1. Host Left Sidebar (TSK-032) */}
-      <aside className="w-64 shrink-0 border-r border-border bg-card p-6 hidden md:flex md:flex-col justify-between">
+      <aside className="w-full lg:w-64 shrink-0 border-r border-border bg-card p-4 lg:p-6 flex flex-col justify-between">
         <div className="space-y-6">
           <div className="flex items-center gap-3 pb-6 border-b border-border">
             <div className="flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold">
@@ -206,7 +217,10 @@ export default function HostDashboardPage() {
               <h2 className="text-sm font-bold text-foreground truncate">
                 Cổng quản lý Host
               </h2>
-              <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary font-bold">
+              <Badge
+                variant="secondary"
+                className="text-[10px] bg-primary/10 text-primary font-bold"
+              >
                 Đối tác StayHub
               </Badge>
             </div>
@@ -248,7 +262,7 @@ export default function HostDashboardPage() {
       </aside>
 
       {/* 2. Main Content Area */}
-      <main className="flex-1 p-6 sm:p-8 overflow-y-auto">
+      <main className="min-w-0 flex-1 p-4 sm:p-8">
         {/* Header */}
         <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -258,7 +272,8 @@ export default function HostDashboardPage() {
               {activeMenu === "requests" && "Yêu cầu & Đơn đặt phòng"}
             </h1>
             <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
-              Theo dõi doanh thu, lịch trình nhận khách và quản lý danh sách phòng cho thuê.
+              Theo dõi doanh thu, lịch trình nhận khách và quản lý danh sách
+              phòng cho thuê.
             </p>
           </div>
 
@@ -271,11 +286,39 @@ export default function HostDashboardPage() {
           </Button>
         </div>
 
+        {/* Mobile Navigation Tabs */}
+        <div className="flex md:hidden items-center gap-1.5 p-1 rounded-xl bg-card border border-border mb-6 overflow-x-auto text-xs font-semibold">
+          {[
+            { id: "dashboard", label: "Tổng quan", icon: LayoutDashboard },
+            { id: "properties", label: "Chỗ ở", icon: Building2 },
+            { id: "requests", label: "Đơn đặt", icon: Calendar },
+          ].map((item) => {
+            const Icon = item.icon;
+            const isActive = activeMenu === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveMenu(item.id as never)}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg transition-colors cursor-pointer ${
+                  isActive
+                    ? "bg-primary text-primary-foreground font-bold shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Icon className="size-3.5" />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
         {/* KPI Stats Cards (TSK-032) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 mb-8">
           <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-muted-foreground">Doanh thu thu về</span>
+              <span className="text-xs font-semibold text-muted-foreground">
+                Doanh thu thu về
+              </span>
               <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600">
                 <DollarSign className="size-5" />
               </div>
@@ -287,12 +330,16 @@ export default function HostDashboardPage() {
                 formatPrice(stats?.totalRevenue ?? 0)
               )}
             </div>
-            <p className="mt-1 text-[11px] text-muted-foreground">Đã tất toán qua VNPay</p>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Đã tất toán qua VNPay
+            </p>
           </div>
 
           <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-muted-foreground">Lượt đặt phòng</span>
+              <span className="text-xs font-semibold text-muted-foreground">
+                Lượt đặt phòng
+              </span>
               <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
                 <Calendar className="size-5" />
               </div>
@@ -301,15 +348,19 @@ export default function HostDashboardPage() {
               {statsLoading ? (
                 <Loader2 className="size-5 animate-spin text-muted-foreground" />
               ) : (
-                stats?.totalBookings ?? 0
+                (stats?.totalBookings ?? 0)
               )}
             </div>
-            <p className="mt-1 text-[11px] text-muted-foreground">Tổng lượt đặt mọi thời điểm</p>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Tổng lượt đặt mọi thời điểm
+            </p>
           </div>
 
           <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-muted-foreground">Chỗ ở đang hoạt động</span>
+              <span className="text-xs font-semibold text-muted-foreground">
+                Chỗ ở đang hoạt động
+              </span>
               <div className="flex size-9 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600">
                 <Building2 className="size-5" />
               </div>
@@ -318,10 +369,12 @@ export default function HostDashboardPage() {
               {statsLoading ? (
                 <Loader2 className="size-5 animate-spin text-muted-foreground" />
               ) : (
-                stats?.activeProperties ?? 0
+                (stats?.activeProperties ?? 0)
               )}
             </div>
-            <p className="mt-1 text-[11px] text-muted-foreground">Sẵn sàng đón khách</p>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Sẵn sàng đón khách
+            </p>
           </div>
         </div>
 
@@ -359,7 +412,7 @@ export default function HostDashboardPage() {
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                 {properties.map((prop) => (
                   <div
                     key={prop.id}
@@ -374,7 +427,9 @@ export default function HostDashboardPage() {
                       />
                       <div className="absolute top-2.5 right-2.5">
                         <Badge
-                          variant={prop.status === "ACTIVE" ? "default" : "secondary"}
+                          variant={
+                            prop.status === "ACTIVE" ? "default" : "secondary"
+                          }
                         >
                           {prop.status}
                         </Badge>
@@ -389,11 +444,17 @@ export default function HostDashboardPage() {
                           {prop.title}
                         </h3>
                         <p className="text-xs text-muted-foreground mt-1">
-                          {prop.maxGuests} khách · {formatPrice(prop.pricePerNight)}/đêm
+                          {prop.maxGuests} khách ·{" "}
+                          {formatPrice(prop.pricePerNight)}/đêm
                         </p>
                       </div>
-                      <div className="mt-4 flex gap-2 pt-2 border-t border-border">
-                        <Button asChild variant="outline" size="sm" className="flex-1 text-xs">
+                      <div className="mt-4 flex flex-wrap gap-2 pt-2 border-t border-border">
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 text-xs"
+                        >
                           <Link href={`/properties/${prop.id}`}>
                             <Eye className="size-3.5 mr-1" /> Xem
                           </Link>
@@ -439,7 +500,7 @@ export default function HostDashboardPage() {
                     className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                   >
                     <div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span className="font-bold text-sm text-foreground">
                           {req.guest.fullName}
                         </span>
@@ -451,8 +512,12 @@ export default function HostDashboardPage() {
                         </Badge>
                       </div>
                       <p className="text-xs text-muted-foreground mt-1">
-                        Chỗ ở: <span className="font-semibold text-foreground">{req.property.title}</span> •{" "}
-                        {formatDate(req.checkInDate)} → {formatDate(req.checkOutDate)} ({req.guests} khách)
+                        Chỗ ở:{" "}
+                        <span className="font-semibold text-foreground">
+                          {req.property.title}
+                        </span>{" "}
+                        • {formatDate(req.checkInDate)} →{" "}
+                        {formatDate(req.checkOutDate)} ({req.guests} khách)
                       </p>
                     </div>
 
@@ -486,7 +551,8 @@ export default function HostDashboardPage() {
           <DialogHeader>
             <DialogTitle>Đăng thông tin chỗ ở mới</DialogTitle>
             <DialogDescription>
-              Điền thông tin chi tiết về căn hộ hoặc nhà của bạn để hiển thị cho du khách trên StayHub.
+              Điền thông tin chi tiết về căn hộ hoặc nhà của bạn để hiển thị cho
+              du khách trên StayHub.
             </DialogDescription>
           </DialogHeader>
 
@@ -498,7 +564,9 @@ export default function HostDashboardPage() {
               <Input
                 placeholder="VD: Căn hộ Studio view hồ Tây lãng mạn"
                 value={newProp.title}
-                onChange={(e) => setNewProp({ ...newProp, title: e.target.value })}
+                onChange={(e) =>
+                  setNewProp({ ...newProp, title: e.target.value })
+                }
               />
             </div>
 
@@ -511,7 +579,9 @@ export default function HostDashboardPage() {
                 className="w-full rounded-md border border-border bg-transparent p-2 text-xs text-foreground focus-visible:ring-1 focus-visible:ring-primary outline-none"
                 placeholder="Mô tả không gian, tiện ích, vị trí và trải nghiệm..."
                 value={newProp.description}
-                onChange={(e) => setNewProp({ ...newProp, description: e.target.value })}
+                onChange={(e) =>
+                  setNewProp({ ...newProp, description: e.target.value })
+                }
               />
             </div>
 
@@ -522,7 +592,9 @@ export default function HostDashboardPage() {
                 </label>
                 <select
                   value={newProp.type}
-                  onChange={(e) => setNewProp({ ...newProp, type: e.target.value })}
+                  onChange={(e) =>
+                    setNewProp({ ...newProp, type: e.target.value })
+                  }
                   className="w-full rounded-md border border-border bg-card p-2 text-xs text-foreground outline-none"
                 >
                   <option value="HOMESTAY">Homestay</option>
@@ -540,7 +612,9 @@ export default function HostDashboardPage() {
                 </label>
                 <Input
                   value={newProp.city}
-                  onChange={(e) => setNewProp({ ...newProp, city: e.target.value })}
+                  onChange={(e) =>
+                    setNewProp({ ...newProp, city: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -552,7 +626,9 @@ export default function HostDashboardPage() {
               <Input
                 placeholder="VD: 123 Đường Yên Phụ, Ba Đình, Hà Nội"
                 value={newProp.address}
-                onChange={(e) => setNewProp({ ...newProp, address: e.target.value })}
+                onChange={(e) =>
+                  setNewProp({ ...newProp, address: e.target.value })
+                }
               />
             </div>
 
@@ -565,7 +641,10 @@ export default function HostDashboardPage() {
                   type="number"
                   value={newProp.pricePerNight}
                   onChange={(e) =>
-                    setNewProp({ ...newProp, pricePerNight: Number(e.target.value) })
+                    setNewProp({
+                      ...newProp,
+                      pricePerNight: Number(e.target.value),
+                    })
                   }
                 />
               </div>
@@ -578,7 +657,10 @@ export default function HostDashboardPage() {
                   type="number"
                   value={newProp.cleaningFee}
                   onChange={(e) =>
-                    setNewProp({ ...newProp, cleaningFee: Number(e.target.value) })
+                    setNewProp({
+                      ...newProp,
+                      cleaningFee: Number(e.target.value),
+                    })
                   }
                 />
               </div>
@@ -593,7 +675,10 @@ export default function HostDashboardPage() {
                   type="number"
                   value={newProp.maxGuests}
                   onChange={(e) =>
-                    setNewProp({ ...newProp, maxGuests: Number(e.target.value) })
+                    setNewProp({
+                      ...newProp,
+                      maxGuests: Number(e.target.value),
+                    })
                   }
                 />
               </div>
@@ -629,7 +714,10 @@ export default function HostDashboardPage() {
                   type="number"
                   value={newProp.bathrooms}
                   onChange={(e) =>
-                    setNewProp({ ...newProp, bathrooms: Number(e.target.value) })
+                    setNewProp({
+                      ...newProp,
+                      bathrooms: Number(e.target.value),
+                    })
                   }
                 />
               </div>
@@ -646,7 +734,11 @@ export default function HostDashboardPage() {
             </Button>
             <Button
               onClick={() => addPropertyMutation.mutate()}
-              disabled={addPropertyMutation.isPending || !newProp.title || !newProp.address}
+              disabled={
+                addPropertyMutation.isPending ||
+                !newProp.title ||
+                !newProp.address
+              }
             >
               {addPropertyMutation.isPending ? (
                 <>

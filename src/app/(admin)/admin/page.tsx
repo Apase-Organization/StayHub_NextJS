@@ -53,7 +53,9 @@ interface AdminBookingsResponse {
 }
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = React.useState<"dashboard" | "bookings">("dashboard");
+  const [activeTab, setActiveTab] = React.useState<"dashboard" | "bookings">(
+    "dashboard"
+  );
   const [searchQuery, setSearchQuery] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState("");
   const [page, setPage] = React.useState(1);
@@ -70,21 +72,22 @@ export default function AdminDashboardPage() {
   });
 
   // 2. Fetch Bookings via React Query (TSK-021)
-  const { data: bookingsData, isLoading: bookingsLoading } = useQuery<AdminBookingsResponse>({
-    queryKey: ["adminBookings", page, searchQuery, statusFilter],
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      params.set("page", page.toString());
-      params.set("limit", "10");
-      if (searchQuery.trim()) params.set("search", searchQuery.trim());
-      if (statusFilter) params.set("status", statusFilter);
+  const { data: bookingsData, isLoading: bookingsLoading } =
+    useQuery<AdminBookingsResponse>({
+      queryKey: ["adminBookings", page, searchQuery, statusFilter],
+      queryFn: async () => {
+        const params = new URLSearchParams();
+        params.set("page", page.toString());
+        params.set("limit", "10");
+        if (searchQuery.trim()) params.set("search", searchQuery.trim());
+        if (statusFilter) params.set("status", statusFilter);
 
-      const res = await fetch(`/api/admin/bookings?${params.toString()}`);
-      if (!res.ok) throw new Error("Không thể tải danh sách đơn đặt phòng");
-      const json = await res.json();
-      return json.data;
-    },
-  });
+        const res = await fetch(`/api/admin/bookings?${params.toString()}`);
+        if (!res.ok) throw new Error("Không thể tải danh sách đơn đặt phòng");
+        const json = await res.json();
+        return json.data;
+      },
+    });
 
   const bookings = bookingsData?.bookings || [];
   const total = bookingsData?.total || 0;
@@ -122,9 +125,9 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-72px)] bg-muted/20">
+    <div className="flex flex-col lg:flex-row min-h-[calc(100vh-72px)] bg-muted/20">
       {/* 1. Admin Left Sidebar */}
-      <aside className="w-64 shrink-0 border-r border-border bg-card p-6 hidden md:flex md:flex-col justify-between">
+      <aside className="w-64 shrink-0 border-r border-border bg-card p-6 hidden lg:flex lg:flex-col justify-between">
         <div className="space-y-6">
           <div className="flex items-center gap-3 pb-6 border-b border-border">
             <div className="flex size-11 items-center justify-center rounded-xl bg-slate-900 text-white font-black text-sm">
@@ -134,7 +137,10 @@ export default function AdminDashboardPage() {
               <h2 className="text-sm font-bold text-foreground">
                 Quản trị viên StayHub
               </h2>
-              <Badge variant="outline" className="text-[10px] text-primary border-primary/30">
+              <Badge
+                variant="outline"
+                className="text-[10px] text-primary border-primary/30"
+              >
                 Super Admin
               </Badge>
             </div>
@@ -142,8 +148,16 @@ export default function AdminDashboardPage() {
 
           <nav className="space-y-1.5 text-xs font-semibold">
             {[
-              { id: "dashboard", label: "Tổng quan hệ thống", icon: LayoutDashboard },
-              { id: "bookings", label: "Đơn đặt phòng toàn sàn", icon: Calendar },
+              {
+                id: "dashboard",
+                label: "Tổng quan hệ thống",
+                icon: LayoutDashboard,
+              },
+              {
+                id: "bookings",
+                label: "Đơn đặt phòng toàn sàn",
+                icon: Calendar,
+              },
             ].map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -169,7 +183,12 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="pt-6 border-t border-border">
-          <Button asChild variant="outline" size="sm" className="w-full text-xs">
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="w-full text-xs"
+          >
             <Link href="/">
               <Home className="mr-2 size-4" /> Về Trang chủ
             </Link>
@@ -178,18 +197,47 @@ export default function AdminDashboardPage() {
       </aside>
 
       {/* 2. Main Content Area */}
-      <main className="flex-1 p-6 sm:p-8 overflow-y-auto">
-        <div className="mb-8">
+      <main className="min-w-0 flex-1 p-4 sm:p-8">
+        <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
             Admin Portal · Quản trị hệ thống
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Theo dõi các chỉ số KPI, lưu lượng giao dịch và quản lý các đơn đặt phòng trên toàn nền tảng.
+            Theo dõi các chỉ số KPI, lưu lượng giao dịch và quản lý các đơn đặt
+            phòng trên toàn nền tảng.
           </p>
         </div>
 
+        {/* Mobile Navigation Tabs */}
+        <div className="flex lg:hidden items-center gap-1.5 p-1 rounded-xl bg-card border border-border mb-6 text-xs font-semibold">
+          {[
+            { id: "dashboard", label: "Tổng quan hệ thống", icon: LayoutDashboard },
+            { id: "bookings", label: "Đơn đặt phòng", icon: Calendar },
+          ].map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setActiveTab(item.id as never);
+                  setPage(1);
+                }}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg transition-colors cursor-pointer ${
+                  isActive
+                    ? "bg-primary text-primary-foreground font-bold shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Icon className="size-3.5" />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
         {/* 4 KPI Cards (TSK-021) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-5 mb-8">
           <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-muted-foreground">
@@ -203,10 +251,12 @@ export default function AdminDashboardPage() {
               {statsLoading ? (
                 <Loader2 className="size-5 animate-spin text-muted-foreground" />
               ) : (
-                stats?.totalUsers ?? 0
+                (stats?.totalUsers ?? 0)
               )}
             </div>
-            <p className="mt-1 text-[11px] text-muted-foreground">Khách & Chủ nhà</p>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Khách & Chủ nhà
+            </p>
           </div>
 
           <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
@@ -222,10 +272,12 @@ export default function AdminDashboardPage() {
               {statsLoading ? (
                 <Loader2 className="size-5 animate-spin text-muted-foreground" />
               ) : (
-                stats?.activeHosts ?? 0
+                (stats?.activeHosts ?? 0)
               )}
             </div>
-            <p className="mt-1 text-[11px] text-muted-foreground">Tài khoản Host ACTIVE</p>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Tài khoản Host ACTIVE
+            </p>
           </div>
 
           <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
@@ -241,10 +293,12 @@ export default function AdminDashboardPage() {
               {statsLoading ? (
                 <Loader2 className="size-5 animate-spin text-muted-foreground" />
               ) : (
-                stats?.bookingsToday ?? 0
+                (stats?.bookingsToday ?? 0)
               )}
             </div>
-            <p className="mt-1 text-[11px] text-muted-foreground">Khởi tạo trong ngày</p>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Khởi tạo trong ngày
+            </p>
           </div>
 
           <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
@@ -263,13 +317,15 @@ export default function AdminDashboardPage() {
                 formatPrice(stats?.platformRevenue ?? 0)
               )}
             </div>
-            <p className="mt-1 text-[11px] text-muted-foreground">Giao dịch VNPay thành công</p>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Giao dịch VNPay thành công
+            </p>
           </div>
         </div>
 
         {/* Recent Bookings Table with Search, Filter & Pagination (TSK-021) */}
         <div className="rounded-2xl border border-border bg-card shadow-xs overflow-hidden">
-          <div className="p-5 border-b border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="p-5 border-b border-border flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
             <div>
               <h2 className="text-lg font-bold text-foreground">
                 Danh sách Đơn đặt phòng toàn hệ thống
@@ -300,11 +356,13 @@ export default function AdminDashboardPage() {
                   setStatusFilter(e.target.value);
                   setPage(1);
                 }}
-                className="rounded-lg border border-border bg-card px-3 py-2 text-xs text-foreground outline-none h-9"
+                className="max-w-full rounded-lg border border-border bg-card px-3 py-2 text-xs text-foreground outline-none h-9"
               >
                 <option value="">Tất cả trạng thái</option>
                 <option value="CONFIRMED">Đã xác nhận (CONFIRMED)</option>
-                <option value="PENDING_PAYMENT">Chờ thanh toán (PENDING)</option>
+                <option value="PENDING_PAYMENT">
+                  Chờ thanh toán (PENDING)
+                </option>
                 <option value="COMPLETED">Hoàn tất (COMPLETED)</option>
                 <option value="CANCELLED">Đã huỷ (CANCELLED)</option>
               </select>
@@ -313,7 +371,7 @@ export default function AdminDashboardPage() {
 
           {/* Table */}
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full min-w-[800px] text-left text-xs">
               <thead className="bg-muted/40 uppercase font-semibold text-muted-foreground border-b border-border">
                 <tr>
                   <th className="px-5 py-3">Mã đơn</th>
@@ -328,20 +386,29 @@ export default function AdminDashboardPage() {
               <tbody className="divide-y divide-border">
                 {bookingsLoading ? (
                   <tr>
-                    <td colSpan={7} className="px-5 py-12 text-center text-muted-foreground">
+                    <td
+                      colSpan={7}
+                      className="px-5 py-12 text-center text-muted-foreground"
+                    >
                       <Loader2 className="size-6 animate-spin mx-auto mb-2 text-primary" />
                       Đang tải danh sách đơn đặt phòng...
                     </td>
                   </tr>
                 ) : bookings.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-5 py-12 text-center text-muted-foreground">
+                    <td
+                      colSpan={7}
+                      className="px-5 py-12 text-center text-muted-foreground"
+                    >
                       Không tìm thấy giao dịch nào phù hợp với bộ lọc.
                     </td>
                   </tr>
                 ) : (
                   bookings.map((b) => (
-                    <tr key={b.id} className="hover:bg-muted/20 transition-colors">
+                    <tr
+                      key={b.id}
+                      className="hover:bg-muted/20 transition-colors"
+                    >
                       <td className="px-5 py-3.5 font-mono font-medium text-foreground">
                         #{b.id.slice(-8).toUpperCase()}
                       </td>
@@ -349,18 +416,30 @@ export default function AdminDashboardPage() {
                         {b.property.title}
                       </td>
                       <td className="px-5 py-3.5">
-                        <div className="font-medium text-foreground">{b.guest.fullName}</div>
-                        <div className="text-[11px] text-muted-foreground">{b.guest.email}</div>
+                        <div className="font-medium text-foreground">
+                          {b.guest.fullName}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground">
+                          {b.guest.email}
+                        </div>
                       </td>
                       <td className="px-5 py-3.5 text-muted-foreground">
-                        {formatDate(b.checkInDate)} → {formatDate(b.checkOutDate)}
+                        {formatDate(b.checkInDate)} →{" "}
+                        {formatDate(b.checkOutDate)}
                       </td>
                       <td className="px-5 py-3.5 font-bold text-primary">
                         {formatPrice(Number(b.totalPrice))}
                       </td>
-                      <td className="px-5 py-3.5">{getStatusBadge(b.status)}</td>
+                      <td className="px-5 py-3.5">
+                        {getStatusBadge(b.status)}
+                      </td>
                       <td className="px-5 py-3.5 text-right">
-                        <Button asChild variant="ghost" size="sm" className="h-7 px-2 text-xs">
+                        <Button
+                          asChild
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 px-2 text-xs"
+                        >
                           <Link href={`/bookings/${b.id}`}>
                             <Eye className="size-3.5 mr-1" /> Xem
                           </Link>
@@ -375,7 +454,7 @@ export default function AdminDashboardPage() {
 
           {/* Pagination Controls (TSK-021) */}
           {totalPages > 1 && (
-            <div className="p-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
+            <div className="p-4 border-t border-border flex flex-wrap gap-3 items-center justify-between text-xs text-muted-foreground">
               <span>
                 Hiển thị trang {page} trên tổng {totalPages}
               </span>
