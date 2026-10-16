@@ -48,7 +48,9 @@ export function Navbar() {
 
   const userRole = session?.user?.role;
   const isAuthPage =
-    pathname.startsWith("/login") || pathname.startsWith("/register");
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/register") ||
+    pathname.startsWith("/verify-email");
   const isDashboardPage =
     pathname.startsWith("/admin") || pathname.startsWith("/host");
 
@@ -93,11 +95,11 @@ export function Navbar() {
               type="button"
               className="group flex items-center rounded-full border border-border bg-card py-2 pl-5 pr-2 text-sm font-medium shadow-sm transition-all hover:border-muted-foreground/30 hover:shadow-md"
             >
-              <span className="font-semibold text-foreground">Mọi nơi</span>
+              <span className="font-semibold text-foreground">Anywhere</span>
               <span className="mx-3 h-4 w-px bg-border" />
-              <span className="font-semibold text-foreground">Mọi tuần</span>
+              <span className="font-semibold text-foreground">Any week</span>
               <span className="mx-3 h-4 w-px bg-border" />
-              <span className="text-muted-foreground">Thêm khách</span>
+              <span className="text-muted-foreground">Add guests</span>
               <div className="ml-3 flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform group-hover:scale-105">
                 <Search className="size-4 stroke-[2.5]" />
               </div>
@@ -113,16 +115,16 @@ export function Navbar() {
                 href="/host"
                 className="hidden rounded-full px-3.5 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted md:inline-block"
               >
-                Đón tiếp khách
+                Become a host
               </Link>
 
-              <button
-                type="button"
-                aria-label="Ngôn ngữ & Tiền tệ"
-                className="hidden rounded-full p-2 text-foreground transition-colors hover:bg-muted md:inline-flex"
+              <span
+                aria-label="English, VND"
+                title="English · VND"
+                className="hidden rounded-full p-2 text-foreground md:inline-flex"
               >
                 <Globe className="size-5" />
-              </button>
+              </span>
             </>
           )}
 
@@ -136,7 +138,7 @@ export function Navbar() {
                 isMenuOpen && "shadow-md"
               )}
               aria-expanded={isMenuOpen}
-              aria-label="Menu tài khoản"
+              aria-label="Account menu"
             >
               <Menu className="size-4 text-foreground" />
               <div className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground">
@@ -151,7 +153,7 @@ export function Navbar() {
                   <>
                     <div className="border-b border-border px-4 py-3">
                       <p className="text-sm font-semibold text-foreground">
-                        {session.user.name || "Người dùng StayHub"}
+                        {session.user.name || "StayHub member"}
                       </p>
                       <p className="truncate text-xs text-muted-foreground">
                         {session.user.email}
@@ -171,7 +173,7 @@ export function Navbar() {
                         className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-muted"
                       >
                         <Calendar className="size-4 text-muted-foreground" />
-                        Chuyến đi của tôi
+                        My Trips
                       </Link>
 
                       {(userRole === "HOST" || userRole === "ADMIN") && (
@@ -180,7 +182,7 @@ export function Navbar() {
                           className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-muted"
                         >
                           <Building2 className="size-4 text-muted-foreground" />
-                          Bảng điều khiển Host
+                          Host Dashboard
                         </Link>
                       )}
 
@@ -190,7 +192,7 @@ export function Navbar() {
                           className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-muted"
                         >
                           <Shield className="size-4 text-muted-foreground" />
-                          Quản trị hệ thống
+                          Admin Portal
                         </Link>
                       )}
                     </div>
@@ -202,7 +204,7 @@ export function Navbar() {
                         className="flex w-full items-center gap-2.5 px-4 py-2 text-left text-sm text-destructive hover:bg-destructive/10"
                       >
                         <LogOut className="size-4" />
-                        Đăng xuất
+                        Log out
                       </button>
                     </div>
                   </>
@@ -213,13 +215,13 @@ export function Navbar() {
                         href="/register"
                         className="block px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted"
                       >
-                        Đăng ký
+                        Register
                       </Link>
                       <Link
                         href="/login"
                         className="block px-4 py-2 text-sm text-foreground hover:bg-muted"
                       >
-                        Đăng nhập
+                        Log in
                       </Link>
                     </div>
                     <div className="border-t border-border py-1">
@@ -227,13 +229,13 @@ export function Navbar() {
                         href="/host"
                         className="block px-4 py-2 text-sm text-foreground hover:bg-muted"
                       >
-                        Đón tiếp khách
+                        Become a host
                       </Link>
                       <Link
                         href="/search"
                         className="block px-4 py-2 text-sm text-foreground hover:bg-muted"
                       >
-                        Khám phá chỗ ở
+                        Explore stays
                       </Link>
                     </div>
                   </>
@@ -247,7 +249,7 @@ export function Navbar() {
             onClick={() => setIsMobileNavOpen(true)}
             type="button"
             className="flex size-9 items-center justify-center rounded-full border border-border text-foreground hover:bg-muted md:hidden"
-            aria-label="Mở menu di động"
+            aria-label="Open mobile menu"
           >
             <Menu className="size-5" />
           </button>
@@ -265,10 +267,10 @@ export function Navbar() {
             <Search className="size-4 text-primary" />
             <div className="flex flex-col">
               <span className="text-xs font-semibold text-foreground">
-                Bạn muốn đi đâu?
+                Where would you like to go?
               </span>
               <span className="text-[11px] text-muted-foreground">
-                Mọi nơi · Mọi tuần · Thêm khách
+                Anywhere · Any week · Add guests
               </span>
             </div>
           </button>
@@ -295,7 +297,7 @@ export function Navbar() {
                 onClick={() => setIsMobileNavOpen(false)}
                 type="button"
                 className="rounded-full p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
-                aria-label="Đóng menu"
+                aria-label="Close menu"
               >
                 <X className="size-5" />
               </button>
@@ -307,14 +309,14 @@ export function Navbar() {
                 className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
               >
                 <Search className="size-4 text-primary" />
-                Tìm kiếm chỗ ở
+                Search stays
               </Link>
               <Link
                 href="/host"
                 className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
               >
                 <Building2 className="size-4 text-primary" />
-                Đón tiếp khách
+                Become a host
               </Link>
 
               {status === "authenticated" ? (
@@ -324,7 +326,7 @@ export function Navbar() {
                     className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
                   >
                     <Calendar className="size-4 text-primary" />
-                    Chuyến đi của tôi
+                    My Trips
                   </Link>
                   {(userRole === "HOST" || userRole === "ADMIN") && (
                     <Link
@@ -351,17 +353,17 @@ export function Navbar() {
                       onClick={() => signOut({ callbackUrl: "/" })}
                     >
                       <LogOut className="size-4 mr-2" />
-                      Đăng xuất
+                      Log out
                     </Button>
                   </div>
                 </>
               ) : (
                 <div className="pt-4 border-t border-border mt-2 flex flex-col gap-2">
                   <Button asChild variant="default" className="w-full">
-                    <Link href="/register">Đăng ký tài khoản</Link>
+                    <Link href="/register">Register</Link>
                   </Button>
                   <Button asChild variant="outline" className="w-full">
-                    <Link href="/login">Đăng nhập</Link>
+                    <Link href="/login">Log in</Link>
                   </Button>
                 </div>
               )}

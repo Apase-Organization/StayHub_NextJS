@@ -11,9 +11,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "StayHub — Đặt phòng Homestay, Căn hộ & Biệt thự nghỉ dưỡng",
+  title: "StayHub — Book Homestays, Apartments & Vacation Villas",
   description:
-    "Tìm kiếm và đặt phòng homestay, căn hộ dịch vụ và biệt thự nghỉ dưỡng tuyệt vời cùng StayHub.",
+    "Find and book your next homestay, serviced apartment or vacation villa with StayHub.",
 };
 
 export default function RootLayout({
@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi">
+    <html lang="en">
       <body
         className={`${inter.variable} antialiased bg-background text-foreground flex min-h-screen flex-col`}
       >

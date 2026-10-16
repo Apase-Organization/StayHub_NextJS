@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Globe, Heart } from "lucide-react";
+import { displayPlace } from "@/lib/auth-ui";
 
 export function Footer() {
   return (
@@ -10,7 +11,7 @@ export function Footer() {
           {/* Column 1: Về StayHub */}
           <div>
             <h3 className="text-sm font-semibold text-foreground">
-              Về StayHub
+              About StayHub
             </h3>
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               <li>
@@ -18,7 +19,7 @@ export function Footer() {
                   href="/"
                   className="hover:text-foreground transition-colors"
                 >
-                  Giới thiệu StayHub
+                  About us
                 </Link>
               </li>
               <li>
@@ -26,7 +27,7 @@ export function Footer() {
                   href="/"
                   className="hover:text-foreground transition-colors"
                 >
-                  Cơ hội nghề nghiệp
+                  Careers
                 </Link>
               </li>
               <li>
@@ -34,7 +35,7 @@ export function Footer() {
                   href="/"
                   className="hover:text-foreground transition-colors"
                 >
-                  Tin tức & Báo chí
+                  News & Press
                 </Link>
               </li>
               <li>
@@ -42,7 +43,7 @@ export function Footer() {
                   href="/"
                   className="hover:text-foreground transition-colors"
                 >
-                  Tính năng mới
+                  New features
                 </Link>
               </li>
               <li>
@@ -50,7 +51,7 @@ export function Footer() {
                   href="/"
                   className="hover:text-foreground transition-colors"
                 >
-                  Nhà đầu tư
+                  Investors
                 </Link>
               </li>
             </ul>
@@ -58,14 +59,14 @@ export function Footer() {
 
           {/* Column 2: Khám phá điểm đến */}
           <div>
-            <h3 className="text-sm font-semibold text-foreground">Khám phá</h3>
+            <h3 className="text-sm font-semibold text-foreground">Explore</h3>
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               <li>
                 <Link
                   href="/search?location=Đà Nẵng"
                   className="hover:text-foreground transition-colors"
                 >
-                  Homestay tại Đà Nẵng
+                  Homestays in {displayPlace("Đà Nẵng")}
                 </Link>
               </li>
               <li>
@@ -73,7 +74,7 @@ export function Footer() {
                   href="/search?location=Hà Nội"
                   className="hover:text-foreground transition-colors"
                 >
-                  Căn hộ tại Hà Nội
+                  Apartments in {displayPlace("Hà Nội")}
                 </Link>
               </li>
               <li>
@@ -81,7 +82,7 @@ export function Footer() {
                   href="/search?location=Đà Lạt"
                   className="hover:text-foreground transition-colors"
                 >
-                  Villa nghỉ dưỡng Đà Lạt
+                  Vacation villas in {displayPlace("Đà Lạt")}
                 </Link>
               </li>
               <li>
@@ -89,7 +90,7 @@ export function Footer() {
                   href="/search?location=Phú Quốc"
                   className="hover:text-foreground transition-colors"
                 >
-                  Biệt thự biển Phú Quốc
+                  Seaside villas in {displayPlace("Phú Quốc")}
                 </Link>
               </li>
               <li>
@@ -97,7 +98,7 @@ export function Footer() {
                   href="/search?location=Hồ Chí Minh"
                   className="hover:text-foreground transition-colors"
                 >
-                  Căn hộ TP. Hồ Chí Minh
+                  Apartments in {displayPlace("Hồ Chí Minh")} City
                 </Link>
               </li>
             </ul>
@@ -105,16 +106,14 @@ export function Footer() {
 
           {/* Column 3: Đón tiếp khách (Hosting) */}
           <div>
-            <h3 className="text-sm font-semibold text-foreground">
-              Đón tiếp khách
-            </h3>
+            <h3 className="text-sm font-semibold text-foreground">Hosting</h3>
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               <li>
                 <Link
                   href="/host"
                   className="hover:text-foreground transition-colors"
                 >
-                  Cho thuê chỗ ở trên StayHub
+                  List your place on StayHub
                 </Link>
               </li>
               <li>
@@ -122,7 +121,7 @@ export function Footer() {
                   href="/host"
                   className="hover:text-foreground transition-colors"
                 >
-                  StayCover bảo vệ Chủ nhà
+                  StayCover for hosts
                 </Link>
               </li>
               <li>
@@ -130,7 +129,7 @@ export function Footer() {
                   href="/host"
                   className="hover:text-foreground transition-colors"
                 >
-                  Tài nguyên đón tiếp khách
+                  Hosting resources
                 </Link>
               </li>
               <li>
@@ -138,7 +137,7 @@ export function Footer() {
                   href="/host"
                   className="hover:text-foreground transition-colors"
                 >
-                  Diễn đàn cộng đồng
+                  Community forum
                 </Link>
               </li>
               <li>
@@ -146,7 +145,7 @@ export function Footer() {
                   href="/host"
                   className="hover:text-foreground transition-colors"
                 >
-                  Tiêu chuẩn chỗ ở an toàn
+                  Stay safety standards
                 </Link>
               </li>
             </ul>
@@ -154,14 +153,14 @@ export function Footer() {
 
           {/* Column 4: Hỗ trợ & Trợ năng */}
           <div>
-            <h3 className="text-sm font-semibold text-foreground">Hỗ trợ</h3>
+            <h3 className="text-sm font-semibold text-foreground">Support</h3>
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               <li>
                 <Link
                   href="/"
                   className="hover:text-foreground transition-colors"
                 >
-                  Trung tâm trợ giúp
+                  Help center
                 </Link>
               </li>
               <li>
@@ -169,7 +168,7 @@ export function Footer() {
                   href="/"
                   className="hover:text-foreground transition-colors"
                 >
-                  Hỗ trợ người khuyết tật
+                  Accessibility support
                 </Link>
               </li>
               <li>
@@ -177,7 +176,7 @@ export function Footer() {
                   href="/"
                   className="hover:text-foreground transition-colors"
                 >
-                  Các tùy chọn hủy phòng
+                  Cancellation options
                 </Link>
               </li>
               <li>
@@ -185,7 +184,7 @@ export function Footer() {
                   href="/"
                   className="hover:text-foreground transition-colors"
                 >
-                  Biện pháp ứng phó sự cố
+                  Emergency assistance
                 </Link>
               </li>
               <li>
@@ -193,7 +192,7 @@ export function Footer() {
                   href="/"
                   className="hover:text-foreground transition-colors"
                 >
-                  Báo cáo quan ngại khu dân cư
+                  Report a neighborhood concern
                 </Link>
               </li>
             </ul>
@@ -206,33 +205,30 @@ export function Footer() {
             <span>© 2026 StayHub, Inc.</span>
             <span>·</span>
             <Link href="/" className="hover:underline">
-              Quyền riêng tư
+              Privacy
             </Link>
             <span>·</span>
             <Link href="/" className="hover:underline">
-              Điều khoản
+              Terms
             </Link>
             <span>·</span>
             <Link href="/" className="hover:underline">
-              Sơ đồ trang web
+              Sitemap
             </Link>
             <span>·</span>
             <Link href="/" className="hover:underline">
-              Thông tin công ty
+              Company information
             </Link>
           </div>
 
           <div className="flex items-center gap-6 font-medium text-foreground">
-            <button
-              type="button"
-              className="flex items-center gap-1.5 hover:underline"
-            >
+            <span className="flex items-center gap-1.5">
               <Globe className="size-4" />
-              <span>Tiếng Việt (VN)</span>
-            </button>
-            <button type="button" className="hover:underline">
+              <span>English</span>
+            </span>
+            <span>
               <span>₫ VND</span>
-            </button>
+            </span>
             <span className="flex items-center gap-1 text-muted-foreground text-[11px]">
               Made with <Heart className="size-3 text-primary fill-primary" />{" "}
               by StayHub Team

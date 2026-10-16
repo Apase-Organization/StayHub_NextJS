@@ -4,6 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Search, MapPin, Calendar, Users } from "lucide-react";
 import { POPULAR_DESTINATIONS } from "@/lib/mock-data";
+import { displayPlace } from "@/lib/auth-ui";
 
 export function HeroSearchBar() {
   const router = useRouter();
@@ -22,7 +23,10 @@ export function HeroSearchBar() {
   // Close dropdown on outside click
   React.useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (locationRef.current && !locationRef.current.contains(e.target as Node)) {
+      if (
+        locationRef.current &&
+        !locationRef.current.contains(e.target as Node)
+      ) {
         setIsLocationOpen(false);
       }
       if (guestRef.current && !guestRef.current.contains(e.target as Node)) {
@@ -51,7 +55,10 @@ export function HeroSearchBar() {
         className="flex flex-col md:flex-row items-center rounded-3xl md:rounded-full border border-border/80 bg-card p-2 md:p-2.5 shadow-xl backdrop-blur-md"
       >
         {/* 1. Destination Input */}
-        <div ref={locationRef} className="relative w-full md:w-1/3 px-4 py-2.5 md:py-2 rounded-full hover:bg-muted/70 transition-colors cursor-pointer">
+        <div
+          ref={locationRef}
+          className="relative w-full md:w-1/3 px-4 py-2.5 md:py-2 rounded-full hover:bg-muted/70 transition-colors cursor-pointer"
+        >
           <div
             onClick={() => {
               setIsLocationOpen(!isLocationOpen);
@@ -60,11 +67,12 @@ export function HeroSearchBar() {
           >
             <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-foreground">
               <MapPin className="size-3.5 text-primary" />
-              <span>Địa điểm</span>
+              <span>Destination</span>
             </div>
             <input
               type="text"
-              placeholder="Bạn muốn đi đâu?"
+              placeholder="Where would you like to go?"
+              aria-label="Destination"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               className="mt-0.5 w-full bg-transparent text-sm font-medium text-foreground placeholder:text-muted-foreground outline-hidden"
@@ -75,7 +83,7 @@ export function HeroSearchBar() {
           {isLocationOpen && (
             <div className="absolute left-0 top-full mt-3 w-80 rounded-2xl border border-border bg-card p-4 shadow-xl z-50 animate-in fade-in-0 zoom-in-95">
               <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
-                Điểm đến phổ biến
+                Popular destinations
               </p>
               <div className="flex flex-col gap-1">
                 {POPULAR_DESTINATIONS.map((dest) => (
@@ -88,9 +96,11 @@ export function HeroSearchBar() {
                     }}
                     className="flex items-center justify-between rounded-xl px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors text-left"
                   >
-                    <span className="font-semibold">{dest.name}</span>
+                    <span className="font-semibold">
+                      {displayPlace(dest.name)}
+                    </span>
                     <span className="text-xs text-muted-foreground">
-                      {dest.propertiesCount} chỗ ở
+                      {dest.propertiesCount} stays
                     </span>
                   </button>
                 ))}
@@ -105,11 +115,12 @@ export function HeroSearchBar() {
         <div className="w-full md:w-1/4 px-4 py-2.5 md:py-2 rounded-full hover:bg-muted/70 transition-colors">
           <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-foreground">
             <Calendar className="size-3.5 text-primary" />
-            <span>Nhận phòng</span>
+            <span>Check-in</span>
           </div>
           <input
             type="date"
             value={checkIn}
+            aria-label="Check-in date"
             onChange={(e) => setCheckIn(e.target.value)}
             className="mt-0.5 w-full bg-transparent text-sm font-medium text-foreground outline-hidden cursor-pointer"
           />
@@ -121,11 +132,12 @@ export function HeroSearchBar() {
         <div className="w-full md:w-1/4 px-4 py-2.5 md:py-2 rounded-full hover:bg-muted/70 transition-colors">
           <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-foreground">
             <Calendar className="size-3.5 text-primary" />
-            <span>Trả phòng</span>
+            <span>Check-out</span>
           </div>
           <input
             type="date"
             value={checkOut}
+            aria-label="Check-out date"
             onChange={(e) => setCheckOut(e.target.value)}
             className="mt-0.5 w-full bg-transparent text-sm font-medium text-foreground outline-hidden cursor-pointer"
           />
@@ -134,7 +146,10 @@ export function HeroSearchBar() {
         <div className="hidden md:block h-8 w-px bg-border" />
 
         {/* 4. Guest Count & Search Button */}
-        <div ref={guestRef} className="relative w-full md:w-auto flex-1 flex items-center justify-between pl-4 pr-1.5 py-2 rounded-full hover:bg-muted/70 transition-colors">
+        <div
+          ref={guestRef}
+          className="relative w-full md:w-auto flex-1 flex items-center justify-between pl-4 pr-1.5 py-2 rounded-full hover:bg-muted/70 transition-colors"
+        >
           <div
             onClick={() => {
               setIsGuestOpen(!isGuestOpen);
@@ -144,10 +159,10 @@ export function HeroSearchBar() {
           >
             <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-foreground">
               <Users className="size-3.5 text-primary" />
-              <span>Khách</span>
+              <span>Guests</span>
             </div>
             <p className="mt-0.5 text-sm font-medium text-foreground">
-              {guests} người lớn
+              {guests} adults
             </p>
           </div>
 
@@ -156,13 +171,18 @@ export function HeroSearchBar() {
             <div className="absolute right-0 top-full mt-3 w-64 rounded-2xl border border-border bg-card p-4 shadow-xl z-50 animate-in fade-in-0 zoom-in-95">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Người lớn</p>
-                  <p className="text-xs text-muted-foreground">Từ 13 tuổi trở lên</p>
+                  <p className="text-sm font-semibold text-foreground">
+                    Adults
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Ages 13 and up
+                  </p>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     disabled={guests <= 1}
+                    aria-label="Remove one guest"
                     onClick={() => setGuests((prev) => Math.max(1, prev - 1))}
                     className="flex size-8 items-center justify-center rounded-full border border-border text-foreground hover:bg-muted disabled:opacity-40"
                   >
@@ -172,6 +192,7 @@ export function HeroSearchBar() {
                   <button
                     type="button"
                     disabled={guests >= 16}
+                    aria-label="Add one guest"
                     onClick={() => setGuests((prev) => Math.min(16, prev + 1))}
                     className="flex size-8 items-center justify-center rounded-full border border-border text-foreground hover:bg-muted disabled:opacity-40"
                   >
@@ -185,10 +206,11 @@ export function HeroSearchBar() {
           {/* Search Button */}
           <button
             type="submit"
+            aria-label="Search stays"
             className="flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-primary-foreground shadow-md transition-all hover:opacity-95 hover:shadow-lg active:scale-95 cursor-pointer"
           >
             <Search className="size-4 stroke-[2.5]" />
-            <span className="hidden sm:inline">Tìm kiếm</span>
+            <span className="hidden sm:inline">Search</span>
           </button>
         </div>
       </form>

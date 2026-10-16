@@ -1,177 +1,220 @@
-"use client";
+import Link from "next/link";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 
-import * as React from "react";
-import { useSearchParams } from "next/navigation";
-import { FilterToolbar, FilterState } from "@/components/property/FilterToolbar";
+import { searchProperties } from "@/services/search.service";
 import { PropertyCard } from "@/components/property/PropertyCard";
-import { MOCK_PROPERTIES } from "@/lib/mock-data";
-import { Search, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react";
+import { SearchFilterSidebar } from "@/components/property/SearchFilterSidebar";
 import { Button } from "@/components/ui/button";
+import { MOCK_PROPERTIES } from "@/lib/mock-data";
 
-function SearchContent() {
-  const searchParams = useSearchParams();
-  const initialLocation = searchParams.get("location") || "";
+interface SearchPageProps {
+  searchParams: Promise<{
+    location?: string;
+    checkIn?: string;
+    checkOut?: string;
+    guests?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    type?: "APARTMENT" | "HOUSE" | "VILLA" | "HOTEL_ROOM" | "HOMESTAY" | "RESORT";
+    bedrooms?: string;
+    minRating?: string;
+    sort?: "price-asc" | "price-desc" | "rating-desc";
+    page?: string;
+  }>;
+}
 
-  const [filters, setFilters] = React.useState<FilterState>({
-    priceRange: [0, 5000000],
-    propertyTypes: [],
-    amenities: [],
-    sortBy: "recommended",
-  });
+export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const params = await searchParams;
 
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const itemsPerPage = 6;
+  const page = Math.max(1, parseInt(params.page || "1", 10));
+  const limit = 9;
 
-  // Filter properties logic
-  const filteredProperties = React.useMemo(() => {
-    return MOCK_PROPERTIES.filter((prop) => {
-      // 1. Location match
-      if (initialLocation && !prop.city.toLowerCase().includes(initialLocation.toLowerCase()) && !prop.title.toLowerCase().includes(initialLocation.toLowerCase())) {
-        return false;
-      }
-      // 2. Price match
-      if (prop.pricePerNight < filters.priceRange[0] || prop.pricePerNight > filters.priceRange[1]) {
-        return false;
-      }
-      // 3. Property type match
-      if (filters.propertyTypes.length > 0 && !filters.propertyTypes.includes(prop.propertyType)) {
-        return false;
-      }
-      // 4. Amenities match
-      if (filters.amenities.length > 0) {
-        const hasAllAmenities = filters.amenities.every((a) => prop.amenities.includes(a));
-        if (!hasAllAmenities) return false;
-      }
-      return true;
-    }).sort((a, b) => {
-      if (filters.sortBy === "price_asc") return a.pricePerNight - b.pricePerNight;
-      if (filters.sortBy === "price_desc") return b.pricePerNight - a.pricePerNight;
-      if (filters.sortBy === "rating") return b.rating - a.rating;
-      return 0; // recommended
+  let properties: Awaited<ReturnType<typeof searchProperties>>["properties"] = [];
+  let total = 0;
+  let totalPages = 1;
+
+  try {
+    const res = await searchProperties({
+      location: params.location,
+      checkIn: params.checkIn,
+      checkOut: params.checkOut,
+      guests: params.guests ? parseInt(params.guests, 10) : undefined,
+      minPrice: params.minPrice ? parseFloat(params.minPrice) : undefined,
+      maxPrice: params.maxPrice ? parseFloat(params.maxPrice) : undefined,
+      type: params.type,
+      bedrooms: params.bedrooms ? parseInt(params.bedrooms, 10) : undefined,
+      minRating: params.minRating ? parseFloat(params.minRating) : undefined,
+      sort: params.sort,
+      page,
+      limit,
     });
-  }, [initialLocation, filters]);
 
-  const totalPages = Math.ceil(filteredProperties.length / itemsPerPage) || 1;
-  const paginatedProperties = filteredProperties.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+    properties = res.properties;
+    total = res.total;
+    totalPages = res.totalPages;
+  } catch {
+    properties = [];
+    total = 0;
+    totalPages = 1;
+  }
 
-  const handleClearAll = () => {
-    setFilters({
-      priceRange: [0, 5000000],
-      propertyTypes: [],
-      amenities: [],
-      sortBy: "recommended",
+  // Fallback to mock data if DB empty
+  if (total === 0 && !params.location && !params.type && !params.minPrice) {
+    properties = MOCK_PROPERTIES as unknown as typeof properties;
+    total = MOCK_PROPERTIES.length;
+    totalPages = Math.ceil(total / limit);
+  }
+
+  // Helper to build pagination links
+  const createPageUrl = (targetPage: number) => {
+    const p = new URLSearchParams();
+    Object.entries(params).forEach(([k, v]) => {
+      if (v && k !== "page") p.set(k, v);
     });
+    p.set("page", targetPage.toString());
+    return `/search?${p.toString()}`;
+  };
+
+  const createSortUrl = (sortVal: string) => {
+    const p = new URLSearchParams();
+    Object.entries(params).forEach(([k, v]) => {
+      if (v && k !== "sort") p.set(k, v);
+    });
+    if (sortVal) p.set("sort", sortVal);
+    p.set("page", "1");
+    return `/search?${p.toString()}`;
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* 1. Filter Toolbar (Figure 5.9 & Table 5.6) */}
-      <FilterToolbar
-        totalResults={filteredProperties.length}
-        locationName={initialLocation}
-        filters={filters}
-        onFilterChange={setFilters}
-        onClearAll={handleClearAll}
-      />
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      {/* Header Info */}
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+            {params.location
+              ? `Chỗ ở tại "${params.location}"`
+              : "Khám phá tất cả chỗ ở"}
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Tìm thấy <span className="font-bold text-foreground">{total}</span>{" "}
+            kết quả phù hợp với tiêu chí của bạn.
+          </p>
+        </div>
 
-      {/* 2. Listings Grid Area */}
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 w-full flex-1">
-        {paginatedProperties.length > 0 ? (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {paginatedProperties.map((prop) => (
-                <PropertyCard key={prop.id} property={prop} />
-              ))}
-            </div>
+        {/* Sort Controls & Mobile Filter Trigger */}
+        <div className="flex items-center gap-2">
+          <SearchFilterSidebar />
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="mt-12 flex items-center justify-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="rounded-full"
-                >
-                  <ChevronLeft className="size-4 mr-1" />
-                  Trang trước
-                </Button>
-
-                <div className="flex items-center gap-1 mx-2">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`flex size-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${
-                        currentPage === page
-                          ? "bg-primary text-primary-foreground"
-                          : "text-foreground hover:bg-muted"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                </div>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  className="rounded-full"
-                >
-                  Trang sau
-                  <ChevronRight className="size-4 ml-1" />
-                </Button>
-              </div>
-            )}
-          </>
-        ) : (
-          /* Empty Results State */
-          <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-border p-16 text-center">
-            <div className="flex size-14 items-center justify-center rounded-full bg-muted text-muted-foreground">
-              <Search className="size-7" />
-            </div>
-            <h2 className="mt-4 text-xl font-bold text-foreground">
-              Không tìm thấy chỗ ở phù hợp
-            </h2>
-            <p className="mt-2 max-w-md text-sm text-muted-foreground">
-              Hãy thử nới lỏng khoảng giá, bỏ bớt tiện nghi hoặc tìm kiếm với địa điểm khác.
-            </p>
-            <Button
-              onClick={handleClearAll}
-              variant="outline"
-              className="mt-6 rounded-full"
+          <div className="flex items-center gap-1 rounded-xl border border-border bg-card p-1 text-xs">
+            <span className="px-2 text-muted-foreground font-medium hidden sm:inline">
+              Sắp xếp:
+            </span>
+            <Link
+              href={createSortUrl("")}
+              className={`rounded-lg px-2.5 py-1 font-medium transition-colors ${
+                !params.sort
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
-              <RotateCcw className="size-4 mr-2" />
-              Xóa toàn bộ bộ lọc
-            </Button>
-          </div>
-        )}
-      </main>
-    </div>
-  );
-}
-
-export default function SearchPage() {
-  return (
-    <React.Suspense
-      fallback={
-        <div className="flex min-h-[60vh] items-center justify-center">
-          <div className="flex flex-col items-center gap-2">
-            <div className="size-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-            <p className="text-sm font-semibold text-muted-foreground">
-              Đang tải kết quả tìm kiếm...
-            </p>
+              Phù hợp
+            </Link>
+            <Link
+              href={createSortUrl("price-asc")}
+              className={`rounded-lg px-2.5 py-1 font-medium transition-colors ${
+                params.sort === "price-asc"
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Giá tăng dần
+            </Link>
+            <Link
+              href={createSortUrl("rating-desc")}
+              className={`rounded-lg px-2.5 py-1 font-medium transition-colors ${
+                params.sort === "rating-desc"
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Đánh giá cao
+            </Link>
           </div>
         </div>
-      }
-    >
-      <SearchContent />
-    </React.Suspense>
+      </div>
+
+      {/* Main 2-Column Grid (3/12 Sidebar + 9/12 Listing) */}
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+        {/* Sidebar 3/12 Desktop */}
+        <aside className="hidden lg:col-span-3 lg:block">
+          <div className="sticky top-24">
+            <SearchFilterSidebar />
+          </div>
+        </aside>
+
+        {/* Property List 9/12 */}
+        <main className="lg:col-span-9">
+          {properties.length === 0 ? (
+            <div className="flex min-h-[400px] flex-col items-center justify-center rounded-2xl border border-dashed border-border p-12 text-center">
+              <div className="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Search className="size-6" />
+              </div>
+              <h3 className="mt-4 text-lg font-bold text-foreground">
+                Không tìm thấy chỗ ở phù hợp
+              </h3>
+              <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+                Hãy thử nới lỏng khoảng giá, thay đổi loại hình phòng hoặc chọn địa điểm khác.
+              </p>
+              <div className="mt-6">
+                <Button asChild variant="outline">
+                  <Link href="/search">Xoá toàn bộ bộ lọc</Link>
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {properties.map((property) => (
+                  <PropertyCard key={property.id} property={property} />
+                ))}
+              </div>
+
+              {/* Pagination with Links */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 pt-6 border-t border-border">
+                  {page > 1 ? (
+                    <Button asChild variant="outline" size="sm">
+                      <Link href={createPageUrl(page - 1)}>
+                        <ChevronLeft className="mr-1 size-4" /> Trang trước
+                      </Link>
+                    </Button>
+                  ) : (
+                    <Button variant="outline" size="sm" disabled>
+                      <ChevronLeft className="mr-1 size-4" /> Trang trước
+                    </Button>
+                  )}
+
+                  <span className="px-3 text-xs font-semibold text-muted-foreground">
+                    Trang {page} / {totalPages}
+                  </span>
+
+                  {page < totalPages ? (
+                    <Button asChild variant="outline" size="sm">
+                      <Link href={createPageUrl(page + 1)}>
+                        Trang sau <ChevronRight className="ml-1 size-4" />
+                      </Link>
+                    </Button>
+                  ) : (
+                    <Button variant="outline" size="sm" disabled>
+                      Trang sau <ChevronRight className="ml-1 size-4" />
+                    </Button>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </main>
+      </div>
+    </div>
   );
 }
