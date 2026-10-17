@@ -34,8 +34,17 @@ export async function POST(request: Request) {
 
     const success = query.vnp_ResponseCode === "00";
 
+    let shouldSendEmail = false;
+
     if (payment.status !== "SUCCESS") {
       await prisma.$transaction(async (tx) => {
+        const currentPayment = await tx.payment.findUnique({
+          where: { id: payment.id },
+        });
+        if (!currentPayment || currentPayment.status === "SUCCESS") {
+          return;
+        }
+
         await tx.payment.update({
           where: { id: payment.id },
           data: {
@@ -60,9 +69,13 @@ export async function POST(request: Request) {
             data: { usedCount: { increment: 1 } },
           });
         }
+
+        if (success) {
+          shouldSendEmail = true;
+        }
       });
 
-      if (success && payment.booking.guest.email) {
+      if (shouldSendEmail && payment.booking.guest?.email) {
         try {
           await sendBookingConfirmed(payment.booking.guest.email, {
             bookingId: payment.booking.id,

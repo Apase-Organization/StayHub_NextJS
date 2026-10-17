@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,14 +17,70 @@ function VerifyForm() {
   const router = useRouter();
   const busy = useRef(false);
   const [error, setError] = useState("");
+  const [resendStatus, setResendStatus] = useState<{
+    loading: boolean;
+    success?: string;
+    error?: string;
+  }>({ loading: false });
+  const [cooldown, setCooldown] = useState(0);
+
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof verifyOtpSchema>>({
     resolver: zodResolver(verifyOtpSchema),
     defaultValues: { email: params.get("email") ?? "", otp: "" },
   });
+
+  // Countdown timer for resend
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => {
+      setCooldown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
+  const handleResend = async () => {
+    const email = getValues("email")?.trim();
+    if (!email) {
+      setResendStatus({ loading: false, error: "Please enter your email above first." });
+      return;
+    }
+
+    setResendStatus({ loading: true });
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/resend-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setResendStatus({
+          loading: false,
+          error: data.message || "Failed to resend code. Please try again later.",
+        });
+        return;
+      }
+
+      setResendStatus({
+        loading: false,
+        success: "A new verification code has been sent to your email.",
+      });
+      setCooldown(60);
+    } catch {
+      setResendStatus({
+        loading: false,
+        error: "Unable to connect. Please try again.",
+      });
+    }
+  };
+
   const submit = handleSubmit(async (values) => {
     if (busy.current) return;
     busy.current = true;
@@ -51,6 +107,7 @@ function VerifyForm() {
       busy.current = false;
     }
   });
+
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-4 py-12">
       <div className="w-full max-w-md rounded-card border border-border bg-card p-6 sm:p-8 shadow-sm text-center">
@@ -90,12 +147,26 @@ function VerifyForm() {
           </div>
 
           <div className="space-y-1.5">
-            <label
-              htmlFor="otp"
-              className="text-sm font-medium text-foreground"
-            >
-              Verification code
-            </label>
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="otp"
+                className="text-sm font-medium text-foreground"
+              >
+                Verification code
+              </label>
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={cooldown > 0 || resendStatus.loading}
+                className="text-xs font-semibold text-primary hover:underline disabled:opacity-50 disabled:no-underline"
+              >
+                {resendStatus.loading
+                  ? "Sending…"
+                  : cooldown > 0
+                  ? `Resend in ${cooldown}s`
+                  : "Resend code"}
+              </button>
+            </div>
             <Input
               id="otp"
               type="text"
@@ -115,6 +186,18 @@ function VerifyForm() {
             )}
           </div>
 
+          {resendStatus.success && (
+            <p className="text-xs font-medium text-emerald-600 bg-emerald-500/10 rounded-lg p-2 border border-emerald-500/20">
+              {resendStatus.success}
+            </p>
+          )}
+
+          {resendStatus.error && (
+            <p className="text-xs font-medium text-destructive bg-destructive/10 rounded-lg p-2 border border-destructive/20">
+              {resendStatus.error}
+            </p>
+          )}
+
           {error && (
             <p role="alert" className="text-sm text-destructive">
               {error}
@@ -131,8 +214,7 @@ function VerifyForm() {
             <Link href="/login">Back to login</Link>
           </Button>
           <p className="text-xs text-muted-foreground">
-            No code? Check your spam folder or contact support. Resending codes
-            is not currently available.
+            No code? Check your spam folder or click &ldquo;Resend code&rdquo; above.
           </p>
         </div>
       </div>

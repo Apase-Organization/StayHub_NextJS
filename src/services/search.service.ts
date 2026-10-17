@@ -1,6 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 
+import { expireOldPendingBookings } from "@/services/booking.service";
 import { listProperties } from "@/services/property.service";
 
 export const searchSchema = z.object({
@@ -20,6 +21,10 @@ export const searchSchema = z.object({
 });
 
 export async function searchProperties(query: z.infer<typeof searchSchema>) {
+  if (query.checkIn && query.checkOut) {
+    await expireOldPendingBookings();
+  }
+  const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
   const amenities = Array.isArray(query.amenities) ? query.amenities : query.amenities ? [query.amenities] : [];
   const where: Prisma.PropertyWhereInput = {
     ...(query.location ? { city: { contains: query.location, mode: "insensitive" } } : {}),
@@ -35,7 +40,13 @@ export async function searchProperties(query: z.infer<typeof searchSchema>) {
       ? {
           bookings: {
             none: {
-              status: { in: ["PENDING_PAYMENT", "CONFIRMED"] },
+              OR: [
+                { status: "CONFIRMED" },
+                {
+                  status: "PENDING_PAYMENT",
+                  createdAt: { gte: fifteenMinutesAgo },
+                },
+              ],
               checkInDate: { lt: new Date(query.checkOut) },
               checkOutDate: { gt: new Date(query.checkIn) },
             },

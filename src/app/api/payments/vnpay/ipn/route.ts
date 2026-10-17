@@ -17,7 +17,16 @@ export async function GET(request: Request) {
 
   const success = query.vnp_ResponseCode === "00" && query.vnp_TransactionStatus === "00";
 
+  let shouldSendEmail = false;
+
   await prisma.$transaction(async (tx) => {
+    const currentPayment = await tx.payment.findUnique({
+      where: { id: payment.id },
+    });
+    if (!currentPayment || currentPayment.status === "SUCCESS") {
+      return;
+    }
+
     await tx.payment.update({
       where: { id: payment.id },
       data: {
@@ -27,20 +36,37 @@ export async function GET(request: Request) {
         paidAt: success ? new Date() : null,
       },
     });
-    await tx.booking.update({ where: { id: payment.bookingId }, data: { status: success ? "CONFIRMED" : "CANCELLED", cancelledAt: success ? null : new Date() } });
+    await tx.booking.update({
+      where: { id: payment.bookingId },
+      data: {
+        status: success ? "CONFIRMED" : "CANCELLED",
+        cancelledAt: success ? null : new Date(),
+      },
+    });
     if (success && payment.booking.discountCodeId) {
-      await tx.discountCode.update({ where: { id: payment.booking.discountCodeId }, data: { usedCount: { increment: 1 } } });
+      await tx.discountCode.update({
+        where: { id: payment.booking.discountCodeId },
+        data: { usedCount: { increment: 1 } },
+      });
+    }
+
+    if (success) {
+      shouldSendEmail = true;
     }
   });
 
-  if (success) {
-    await sendBookingConfirmed(payment.booking.guest.email, {
-      bookingId: payment.booking.id,
-      propertyTitle: payment.booking.property.title,
-      checkInDate: payment.booking.checkInDate,
-      checkOutDate: payment.booking.checkOutDate,
-      totalPrice: Number(payment.booking.totalPrice),
-    });
+  if (shouldSendEmail && payment.booking.guest?.email) {
+    try {
+      await sendBookingConfirmed(payment.booking.guest.email, {
+        bookingId: payment.booking.id,
+        propertyTitle: payment.booking.property.title,
+        checkInDate: payment.booking.checkInDate,
+        checkOutDate: payment.booking.checkOutDate,
+        totalPrice: Number(payment.booking.totalPrice),
+      });
+    } catch {
+      // ignore email error
+    }
   }
 
   return NextResponse.json({ RspCode: "00", Message: "OK" });

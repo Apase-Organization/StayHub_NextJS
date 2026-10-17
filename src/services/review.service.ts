@@ -2,9 +2,20 @@ import { prisma } from "@/lib/prisma";
 
 export async function createReview(data: { bookingId: string; guestId: string; rating: number; comment?: string }) {
   const booking = await prisma.booking.findUnique({ where: { id: data.bookingId }, include: { review: true } });
-  if (!booking || booking.guestId !== data.guestId || booking.status !== "COMPLETED" || booking.review) return null;
+  if (!booking || booking.guestId !== data.guestId || booking.review) return null;
+
+  const now = new Date();
+  const isEligible = booking.status === "COMPLETED" || (booking.status === "CONFIRMED" && booking.checkOutDate <= now);
+  if (!isEligible) return null;
 
   return prisma.$transaction(async (tx) => {
+    if (booking.status !== "COMPLETED") {
+      await tx.booking.update({
+        where: { id: booking.id },
+        data: { status: "COMPLETED" },
+      });
+    }
+
     const review = await tx.review.create({
       data: { bookingId: booking.id, propertyId: booking.propertyId, guestId: data.guestId, rating: data.rating, comment: data.comment },
     });
