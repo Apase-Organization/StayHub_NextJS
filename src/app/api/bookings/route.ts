@@ -4,7 +4,7 @@ import { z } from "zod";
 import { fail, ok } from "@/lib/api-response";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { BookingConflictError, createBooking } from "@/services/booking.service";
+import { BookingConflictError, createBooking, expireOldPendingBookings, syncCompletedBookings } from "@/services/booking.service";
 
 const createSchema = z.object({
   propertyId: z.string(),
@@ -32,6 +32,9 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   const session = await auth();
   if (!session) return NextResponse.json(fail("Chưa đăng nhập"), { status: 401 });
+
+  await syncCompletedBookings();
+  await expireOldPendingBookings();
 
   const status = new URL(request.url).searchParams.get("status") ?? undefined;
   const bookings = await prisma.booking.findMany({

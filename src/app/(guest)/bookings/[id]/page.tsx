@@ -19,6 +19,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice, formatDate } from "@/lib/utils";
 import { displayPlace } from "@/lib/auth-ui";
+import { syncCompletedBookings } from "@/services/booking.service";
+import { BookingReviewSection } from "@/components/booking/BookingReviewSection";
 
 interface BookingDetailPageProps {
   params: Promise<{ id: string }>;
@@ -31,6 +33,8 @@ export default async function BookingDetailPage({
   if (!session?.user) {
     redirect("/login");
   }
+
+  await syncCompletedBookings();
 
   const { id } = await params;
 
@@ -48,6 +52,7 @@ export default async function BookingDetailPage({
       guest: { select: { id: true, fullName: true, email: true, phone: true } },
       payment: true,
       discountCode: true,
+      review: true,
     },
   });
 
@@ -260,6 +265,14 @@ export default async function BookingDetailPage({
               </div>
             </div>
           </div>
+
+          {/* Guest Review Section (TSK-047) */}
+          <BookingReviewSection
+            bookingId={booking.id}
+            bookingStatus={booking.status}
+            checkOutDate={booking.checkOutDate}
+            initialReview={booking.review}
+          />
         </div>
 
         {/* Right Column: Pricing & Payment Breakdown (5/12) */}
