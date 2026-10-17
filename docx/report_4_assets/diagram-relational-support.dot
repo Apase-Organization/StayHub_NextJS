@@ -1,0 +1,14 @@
+digraph G { rankdir=TB; bgcolor=white; nodesep=0.5; ranksep=0.8;
+node [shape=record,fontname="DejaVu Sans",fontsize=12,color=black,fontcolor=black];
+edge [dir=none,fontname="DejaVu Sans",fontsize=10,color=black,fontcolor=black];
+User [label="{User|id [PK]\lemail [UK]\lrole, status\l}"];
+Property [label="{Property|id [PK]\lhostId [FK]\lpricePerNight, status\l}"];
+PropertyImage [label="{PropertyImage|id [PK]\lpropertyId [FK]\l(propertyId, displayOrder) [UK]\l}"];
+Amenity [label="{Amenity|id [PK]\lname [UK]\l}"];
+PropertyAmenity [label="{PropertyAmenity|propertyId [PK, FK]\lamenityId [PK, FK]\l}"];
+VerificationToken [label="{VerificationToken|id [PK]\luserId [FK]\lotpHash, expiresAt, usedAt?\l}"];
+Property -> PropertyImage [taillabel="1",headlabel="0..n",label="propertyId"];
+Property -> PropertyAmenity [taillabel="1",headlabel="0..n",label="propertyId"];
+Amenity -> PropertyAmenity [taillabel="1",headlabel="0..n",label="amenityId"];
+User -> VerificationToken [taillabel="1",headlabel="0..n",label="userId"];
+}

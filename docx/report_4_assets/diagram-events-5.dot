@@ -1,0 +1,20 @@
+digraph G {
+rankdir=LR; bgcolor="white"; pad=0.2; nodesep=0.35; ranksep=0.55;
+node [shape=box, style="rounded,filled", fillcolor=white, color=black, fontcolor=black, fontname="DejaVu Sans", fontsize=12, margin="0.15,0.10"];
+edge [color=black, fontcolor=black, fontname="DejaVu Sans", fontsize=10];
+e0 [label="Đổi tab"];
+a0 [label="GET theo trạng thái và phiên"];
+r0 [label="Hiện danh sách / rỗng / lỗi"];
+e1 [label="Details / tên chỗ ở"];
+a1 [label="Lấy mã đơn / chỗ ở"];
+r1 [label="Mở trang chi tiết tương ứng"];
+e2 [label="Cancel → xác nhận"];
+a2 [label="PATCH hủy; kiểm tra quyền"];
+r2 [label="Thành công: tải lại; lỗi: giữ hộp thoại"];
+e0 -> a0 [label=""];
+a0 -> r0 [label=""];
+e1 -> a1 [label=""];
+a1 -> r1 [label=""];
+e2 -> a2 [label=""];
+a2 -> r2 [label=""];
+}

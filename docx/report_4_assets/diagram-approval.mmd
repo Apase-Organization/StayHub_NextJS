@@ -1,0 +1,17 @@
+%%{init: {"theme":"base","themeVariables":{"actorBkg":"#ffffff","actorTextColor":"#000000","actorBorder":"#000000","signalColor":"#000000","signalTextColor":"#000000","noteBkgColor":"#ffffff","noteTextColor":"#000000","noteBorderColor":"#000000"}}}%%
+sequenceDiagram
+    participant p0 as Host
+    participant p1 as Giao diện
+    participant p2 as Xử lý duyệt
+    participant p3 as Kho dữ liệu
+    p0->>p1: 1. Mở yêu cầu thuộc chỗ ở của mình
+    p1->>p2: 2. Lấy thông tin và quyền thao tác
+    p2->>p3: 3. Đọc yêu cầu và trạng thái
+    p3-->>p2: 4. Dữ liệu yêu cầu
+    p0->>p1: 5. Chọn chấp nhận hoặc từ chối
+    p1->>p2: 6. Gửi quyết định và lý do
+    p2->>p2: 7. Kiểm tra quyền, lịch và trạng thái chờ duyệt
+    p2->>p3: 8. Lưu quyết định theo chính sách
+    p3-->>p2: 9. Kết quả; lỗi thì không xác nhận
+    p2-->>p1: 10. Thông báo khách; đối soát nếu đã trả tiền
+    p1-->>p0: 11. Cập nhật danh sách yêu cầu

@@ -1,0 +1,15 @@
+%%{init: {"theme":"base","themeVariables":{"actorBkg":"#ffffff","actorTextColor":"#000000","actorBorder":"#000000","signalColor":"#000000","signalTextColor":"#000000","noteBkgColor":"#ffffff","noteTextColor":"#000000","noteBorderColor":"#000000"}}}%%
+sequenceDiagram
+    participant p0 as Admin
+    participant p1 as User API
+    participant p2 as Xử lý quyền
+    participant p3 as User / DB
+    p0->>p1: 1. Chọn tài khoản và xác nhận khóa
+    p1->>p2: 2. Kiểm tra phiên ADMIN
+    p2->>p3: 3. Tìm tài khoản mục tiêu
+    p3-->>p2: 4. Tài khoản / không tồn tại
+    p2->>p2: 5. Kiểm tra chính sách tự khóa và phạm vi
+    p2->>p3: 6. Cập nhật status = LOCKED
+    p3-->>p2: 7. Kết quả ghi
+    p2-->>p1: 8. Trả thành công hoặc lỗi
+    p1-->>p0: 9. Cập nhật trạng thái hiển thị

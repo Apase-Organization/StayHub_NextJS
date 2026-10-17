@@ -1,0 +1,14 @@
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#ffffff","primaryTextColor":"#000000","primaryBorderColor":"#000000","lineColor":"#000000","textColor":"#000000","edgeLabelBackground":"#ffffff"}}}%%
+flowchart TD
+    u["Người dùng / Định danh: id; email duy nhất"]
+    p["Chỗ ở / Định danh: id; giá, sức chứa"]
+    b["Đơn đặt phòng / Định danh: id; lịch, giá chốt"]
+    pay["Thanh toán / Định danh: id; tham chiếu duy nhất"]
+    r["Đánh giá / Định danh: id; điểm, nhận xét"]
+    disc["Mã giảm giá / Định danh: id; code duy nhất"]
+    u -->|"1 chủ — 0..n chỗ ở"| p
+    u -->|"1 khách — 0..n đơn"| b
+    p -->|"1 chỗ ở — 0..n đơn"| b
+    b -->|"1 đơn — 0..1 thanh toán"| pay
+    b -->|"1 đơn — 0..1 đánh giá"| r
+    disc -->|"0..1 mã / đơn; 0..n đơn / mã"| b

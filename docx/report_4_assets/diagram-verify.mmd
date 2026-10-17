@@ -1,0 +1,17 @@
+%%{init: {"theme":"base","themeVariables":{"actorBkg":"#ffffff","actorTextColor":"#000000","actorBorder":"#000000","signalColor":"#000000","signalTextColor":"#000000","noteBkgColor":"#ffffff","noteTextColor":"#000000","noteBorderColor":"#000000"}}}%%
+sequenceDiagram
+    participant p0 as Trình duyệt
+    participant p1 as Verify handler
+    participant p2 as Prisma / DB
+    participant p3 as Email
+    p0->>p1: 1. POST query từ kết quả VNPay
+    p1->>p1: 2. Thiếu query / TxnRef: trả 400
+    p1->>p2: 3. Tìm Payment và Booking
+    p2-->>p1: 4. Không thấy: 404; thấy: trả bản ghi
+    p1->>p1: 5. verifyReturn kiểm tra chữ ký; sai: 400
+    p1->>p1: 6. success dựa ResponseCode = 00
+    p1->>p2: 7. Nếu Payment chưa SUCCESS: cập nhật Payment / Booking
+    p1->>p2: 8. Thành công và có mã: tăng usedCount
+    p2-->>p1: 9. Commit
+    p1->>p3: 10. Gửi email; bỏ qua lỗi gửi ở nhánh này
+    p1-->>p0: 11. Trả kết quả success, bookingId và status

@@ -1,0 +1,18 @@
+digraph G { rankdir=TB; bgcolor=white; nodesep=0.5; ranksep=0.8;
+node [shape=record,fontname="DejaVu Sans",fontsize=12,color=black,fontcolor=black];
+edge [dir=none,fontname="DejaVu Sans",fontsize=10,color=black,fontcolor=black];
+User [label="{User|id [PK]\lemail [UK]\lrole, status\l}"];
+Property [label="{Property|id [PK]\lhostId [FK]\lpricePerNight, status\l}"];
+Booking [label="{Booking|id [PK]\lpropertyId, guestId [FK]\ldiscountCodeId? [FK]\lcheckInDate, checkOutDate\ltotalPrice, status\l}"];
+Payment [label="{Payment|id [PK]\lbookingId [FK, UK]\lproviderTxnRef? [UK]\lamount, status\l}"];
+Review [label="{Review|id [PK]\lbookingId [FK, UK]\lpropertyId, guestId [FK]\lrating\l}"];
+DiscountCode [label="{DiscountCode|id [PK]\lcode [UK]\ltype, value\l}"];
+User -> Property [taillabel="1",headlabel="0..n",label="hostId"];
+User -> Booking [taillabel="1",headlabel="0..n",label="guestId"];
+Property -> Booking [taillabel="1",headlabel="0..n",label="propertyId"];
+DiscountCode -> Booking [taillabel="0..1",headlabel="0..n",label="discountCodeId"];
+Booking -> Payment [taillabel="1",headlabel="0..1",label="bookingId"];
+Booking -> Review [taillabel="1",headlabel="0..1",label="bookingId"];
+User -> Review [taillabel="1",headlabel="0..n",label="guestId"];
+Property -> Review [taillabel="1",headlabel="0..n",label="propertyId"];
+}

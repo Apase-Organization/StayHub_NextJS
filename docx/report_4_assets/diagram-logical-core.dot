@@ -1,0 +1,17 @@
+digraph G {
+rankdir=TB; bgcolor="white"; pad=0.2; nodesep=0.35; ranksep=0.55;
+node [shape=box, style="rounded,filled", fillcolor=white, color=black, fontcolor=black, fontname="DejaVu Sans", fontsize=12, margin="0.15,0.10"];
+edge [color=black, fontcolor=black, fontname="DejaVu Sans", fontsize=10];
+u [label="Người dùng\nĐịnh danh: id; email duy nhất"];
+p [label="Chỗ ở\nĐịnh danh: id; giá, sức chứa"];
+b [label="Đơn đặt phòng\nĐịnh danh: id; lịch, giá chốt"];
+pay [label="Thanh toán\nĐịnh danh: id; tham chiếu duy nhất"];
+r [label="Đánh giá\nĐịnh danh: id; điểm, nhận xét"];
+disc [label="Mã giảm giá\nĐịnh danh: id; code duy nhất"];
+u -> p [label="1 chủ — 0..n chỗ ở"];
+u -> b [label="1 khách — 0..n đơn"];
+p -> b [label="1 chỗ ở — 0..n đơn"];
+b -> pay [label="1 đơn — 0..1 thanh toán"];
+b -> r [label="1 đơn — 0..1 đánh giá"];
+disc -> b [label="0..1 mã / đơn; 0..n đơn / mã"];
+}
