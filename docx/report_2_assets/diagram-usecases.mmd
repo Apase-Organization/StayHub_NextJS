@@ -1,0 +1,22 @@
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#ffffff","primaryTextColor":"#000000","primaryBorderColor":"#000000","lineColor":"#000000","textColor":"#000000","edgeLabelBackground":"#ffffff"}}}%%
+flowchart LR
+    v["Khách vãng lai"]
+    g["Người dùng đăng nhập"]
+    h["Host"]
+    a["Admin"]
+    subgraph stayhub["StayHub"]
+        discover(["Tìm kiếm và xem chỗ ở"])
+        auth(["Đăng ký / đăng nhập"])
+        book(["Đặt phòng và VNPay"])
+        trip(["Quản lý chuyến đi / đánh giá"])
+        listing(["Quản lý chỗ ở thuộc sở hữu"])
+        monitor(["Theo dõi đơn và KPI Host"])
+        admin(["Giám sát đơn và tài khoản"])
+    end
+    v --> discover
+    v --> auth
+    g --> book
+    g --> trip
+    h --> listing
+    h --> monitor
+    a --> admin

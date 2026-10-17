@@ -1,0 +1,19 @@
+%%{init: {"theme":"base","themeVariables":{"actorBkg":"#ffffff","actorTextColor":"#000000","actorBorder":"#000000","signalColor":"#000000","signalTextColor":"#000000","noteBkgColor":"#ffffff","noteTextColor":"#000000","noteBorderColor":"#000000"}}}%%
+sequenceDiagram
+    participant p0 as Khách / UI
+    participant p1 as Booking API
+    participant p2 as Booking service
+    participant p3 as Prisma / DB
+    p0->>p1: 1. POST lịch, số khách và mã giảm
+    p1->>p1: 2. Kiểm tra session và payload
+    p1->>p2: 3. createBooking với khách hiện tại
+    p2->>p3: 4. Đọc chỗ ở ACTIVE, sức chứa
+    p3-->>p2: 5. Giá và thông tin chỗ ở
+    p2->>p3: 6. Kiểm tra PENDING_PAYMENT / CONFIRMED giao lịch
+    p3-->>p2: 7. Nếu trùng: dừng, API trả 409
+    p2->>p2: 8. Tính phí 10%, kiểm tra mã giảm
+    p2->>p3: 9. Transaction: tạo Booking + Payment
+    p3-->>p2: 10. Commit; trả mã Booking
+    p2->>p2: 11. Tạo URL VNPay sau commit
+    p2-->>p1: 12. Mã đơn và URL; hoặc lỗi tạo URL
+    p1-->>p0: 13. 201 và chuyển VNPay; lỗi thì hiển thị

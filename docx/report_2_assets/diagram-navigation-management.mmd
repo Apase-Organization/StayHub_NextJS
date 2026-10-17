@@ -1,0 +1,16 @@
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#ffffff","primaryTextColor":"#000000","primaryBorderColor":"#000000","lineColor":"#000000","textColor":"#000000","edgeLabelBackground":"#ffffff"}}}%%
+flowchart TD
+    host["/host"]
+    hp["Chỗ ở của tôi / (trạng thái nội bộ trang)"]
+    hb["Đơn đặt phòng Host / (trạng thái nội bộ trang)"]
+    modal["Hộp thoại đăng chỗ ở"]
+    pd["/properties/{id}"]
+    admin["/admin"]
+    ab["Đơn toàn sàn / (trạng thái nội bộ trang)"]
+    bd["/bookings/{id}"]
+    host -->|"Chọn menu"| hp
+    host -->|"Chọn menu"| hb
+    host -->|"Đăng mới / Thêm mới"| modal
+    hp -->|"Xem"| pd
+    admin -->|"Chọn menu"| ab
+    ab -->|"Xem"| bd

@@ -1,0 +1,17 @@
+graph G { rankdir=LR; bgcolor=white;
+node [fontname="DejaVu Sans",fontsize=12,fontcolor=black,color=black];
+edge [color=black];
+a [shape=plaintext,label="Admin"];
+subgraph cluster_system { label="StayHub"; color=black;
+u20 [shape=ellipse,label="UC20 — Xem tổng quan hệ thống"];
+u21 [shape=ellipse,label="UC21 — Tra cứu đơn toàn sàn"];
+u22 [shape=ellipse,label="UC22 — Khóa tài khoản"];
+u23 [shape=ellipse,label="UC23 — Mở khóa tài khoản"];
+u24 [shape=ellipse,label="UC24 — Thay đổi vai trò (mở\nrộng)"];
+}
+a -- u20;
+a -- u21;
+a -- u22;
+a -- u23;
+a -- u24;
+}

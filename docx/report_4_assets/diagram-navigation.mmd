@@ -1,0 +1,21 @@
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#ffffff","primaryTextColor":"#000000","primaryBorderColor":"#000000","lineColor":"#000000","textColor":"#000000","edgeLabelBackground":"#ffffff"}}}%%
+flowchart TD
+    home["Trang chủ /"]
+    search["Tìm kiếm /search"]
+    detail["Chi tiết /properties/{id}"]
+    login["Đăng nhập"]
+    book["Xác nhận /properties/{id}/book"]
+    vnpay["VNPay (ngoài ứng dụng)"]
+    trips["My Trips /bookings"]
+    bd["Chi tiết đơn /bookings/{id}"]
+    result["Kết quả VNPay / Xác minh trạng thái server"]
+    home -->|"Search / điểm đến"| search
+    search -->|"Chọn thẻ"| detail
+    detail -->|"Reserve; yêu cầu phiên hợp lệ"| book
+    book -->|"API từ chối nếu thiếu phiên"| login
+    book -->|"URL từ server"| vnpay
+    vnpay -->|"Trả query kết quả"| result
+    result -->|"Tra cứu đơn sau xác minh"| trips
+    trips -->|"Details"| bd
+    trips -->|"Tên chỗ ở"| detail
+    trips -->|"Explore stays"| search

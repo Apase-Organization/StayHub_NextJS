@@ -1,34 +1,51 @@
-# Frontend auth and English UI handoff
+# Task: corrected Vietnamese final report (2)
 
-## Project / selection / task lock
-- Project: StayHub_NextJS; revision 602c4c9cec2071568ce2a33fb5547c0da9e4f30c.
-- Selected provider/model: openai/gpt-6.1-sol. Scout agent type explore, ID ses_eb9de65e3ffeUAtwmcExvcU61y. Implementer type general, ID ses_eb9dce899ffeJruhoF8paBzZhA.
-- OpenArms selection preserved: docs (technical-writing + archify loaded earlier). Task locked to frontend auth, task audit, English UI. No additional skills needed or authorized; do not read skill files or spawn tasks.
-- User explicitly requests implement frontend work, especially TSK-019, enable registration, English-only UI labels (My Trips, not bilingual labels), place names unchanged semantically but unaccented for display, retain Vietnamese input/data support.
+## Project, selection, lock
+- Root: /home/hodangthaiduy/Workspace/Projects/StayHub_NextJS
+- Revision: 50b4b9fae41aa49211b6235c86096dda79e7e9fa
+- Provider/model: openai/gpt-6.1-sol. Controller profile delegation only; do not switch models or spawn tasks.
+- OpenArms package: docs (technical-writing and archify loaded). Task lock: this report revision only. No skill filesystem discovery/reading allowed. Already authorized principles: verify against source; clear natural Vietnamese; use focused diagrams with accurate relationships and cardinalities; black text/borders/arrows on white; review structure, correctness, completeness and prose. Do not load unrelated packages.
+- Scouts: explore / ses_eb753ae45ffeQqVjfOIsD3gYeX and ses_eb7531aadffeTMfVAzYP7WGscy.
+- Implementer: general / ses_eb751ac83ffeU7alwy7L9hyA0q (blocked on paths); completed fresh implementer general / ses_eb750ad2fffeBxDRNatVqFmXRH.
 
-## Existing changes: preserve carefully
-Dirty at start: .env.example, .github/workflows/ci.yml, README.md, package.json, src/app/(auth)/login/page.tsx, src/app/(guest)/payments/vnpay/return/page.tsx, src/app/(guest)/properties/[id]/book/page.tsx, src/lib/auth.ts; untracked src/app/api/payments/vnpay/verify/. Do not overwrite/revert these changes. Review current contents before scoped edits. No commits, DB mutations, or exposing secrets.
+## Completion
+Created requested (2).docx and matching 68-page PDF, generator/render scripts and report_2_assets QA/source diagrams. Controller independently reran generator --check: PASS (63 tables, 19 images, 24 UC, seven exact screenshots, monochrome diagrams, headers/TOC, unchanged input hashes). pdfinfo confirms 68 A4 pages. No application files changed. Separate new academic template absent; institution name differs across original and (1); report retains original institution. See docx/report_2_assets/QA.md for visual review and limitations.
 
-## Discovery / confirmed cause
-- docs/planning/task-list.md:122-126 defines TSK-018 credentials+Google login RHF/Zod, TSK-019 RHF/Zod registration + six-digit OTP, TSK-020 session navbar; unchecked.
-- register/page.tsx and verify-email/page.tsx under src/app/(auth) are placeholder pages. Existing endpoints POST /api/auth/register and /api/auth/verify-otp and schemas src/schemas/auth.schema.ts exist.
-- Actual route-group URLs are /register and /verify-email, NOT /auth/verify-email as stale task prose suggests. Verify current routes and links.
-- Login was modified since earlier discovery; use its current contents, not assumptions about Google-only implementation.
-- Major UI copy hotspots: src/app/(public)/page.tsx, search/page.tsx; src/components/common/Navbar.tsx; src/components/property/PropertyCard.tsx and FilterToolbar.tsx; guest/host/admin/auth layouts/pages and shared components. Place values in src/lib/mock-data.ts contain Vietnamese diacritics.
-- No AGENTS.md found by scout; follow any actual project instructions encountered without reading SKILL.md.
+## User scope
+Create docx/Nhom05_BaoCaoCuoiKy (2).docx from original and (1), checking docs and actual source. Preserve both input reports. Windows user paths map to this Linux project.
+Resolve: uppercase cover with suitable spacing and accurate title; review pages and acknowledgments; missing header; business requirements and UC specifications following supplied new academic template; move processing design after UI and improve simplistic sequences; correct logical data model (not confused with logic flow/physical-only schematic); accurate screen navigation; UI analysis matching new template and actual screenshots; work allocation as bullets. Remove prose such as 'nguồn ở', 'nội dung dựa trên mẫu', internal source paths and template/AI metacommentary. Do not remove legitimate bibliography just because user dislikes metacommentary. Every generated diagram uses black text, frames and arrows. User explicitly requests diagrams in DOCX, so rendered image artifacts are appropriate; retain portable Mermaid source if used.
 
-## Implementation scope / acceptance
-1. Read task-list and audit frontend task status vs actual code; prioritize and complete TSK-019 and closely adjacent TSK-018/020 where feasible. Do not interpret request as permission to rewrite entire backend or claim all roadmap done. Report other FE gaps clearly.
-2. Implement usable accessible register and OTP forms using existing schemas/API contracts, RHF + Zod per acceptance (add dependencies/lockfile if needed). Include English validation, errors, loading, duplicate-submit protection, correct links, email passed safely to verification route, six-digit OTP validation, success navigation to login. Never expose OTP or secrets. Understand API email delivery failure behavior and document limitations instead of broad backend rewrites.
-3. Ensure credentials and Google login plus discoverable Register/Login links/session role menus work with current auth implementation. Preserve current callback redirect protections and VNPay work.
-4. Normalize user-facing static UI copy across active frontend pages/components to idiomatic English, remove bilingual parenthetical UI labels (My Trips). Cover guest/host/admin and auth, empty/loading/error states where feasible. Do not translate planning docs or code comments just for consistency. Map backend errors to safe English frontend messages when practical; avoid displaying untranslated backend text blindly.
-5. Display place names unaccented via reusable display normalization (including đ/Đ); do not remove accents globally from user names, descriptions, reviews, form input or stored data. Preserve Vietnamese Unicode support. Search/filter must not break accented city values: retain original query values or normalize comparison appropriately. English locale formatting where appropriate, VND currency remains.
-6. Update task checklist only for genuinely satisfied acceptance; use notes for partial work and include explicit FE audit summary (in existing suitable docs or final report), do not indiscriminately check tasks. TSK-019 route discrepancy can be corrected.
-7. Add focused regression coverage if project supports it; no test framework currently established per scout. Avoid fabricating successful runtime email/Google tests.
+## Discovery/progress and limitations
+Scouts found sources but could not execute shell/archive tooling; DOCX contents/templates/renderers remain UNVERIFIED. Do not assume their speculative instruction to replace (1) or create a new template: neither is requested. Inspect both archives and all supplied templates before choosing edits. Use Python zipfile/python-docx through terminal for binary files, not plain Read. Full source-backed report required, not a short summary.
+- Existing user work: modified docs/product/screen-reference.md; untracked docs/product/image.png and image-1.png through image-6.png. Preserve these.
+- Reports: docx/Nhom05_BaoCaoCuoiKy.docx and docx/Nhom05_BaoCaoCuoiKy (1).docx.
+- Feedback: docx/note.md.
+- Screens: docs/product/screen-reference.md, seven image*.png (home, search, detail, booking/payment, my bookings, host dashboard, admin). Read actual images and reference mapping.
+- Useful docs: docs/business/overview.md, docs/architecture/use-cases.md, docs/data/relational-model.md, docs/contributing/conventions.md.
+- Actual schema: prisma/schema.prisma. Source: src/services/booking.service.ts; src/app/api/payments/vnpay/verify/route.ts; inspect IPN endpoint too.
+- Known concerns to verify: overlap check precedes creation transaction (no concurrency-safe DB exclusion); cancellation changes booking but not necessarily payment; verify return route also mutates payment/booking so do not claim IPN is only mutation path; no automatic COMPLETED transition may block normal reviews. Distinguish scope/design from implemented limitations accurately.
+- No AGENTS.md found by scouts, but mandatory project guidance/checks still need confirmation.
 
-## Verification / mandatory checks
-Run pnpm typecheck, pnpm lint, pnpm build, pnpm format:check (report pre-existing/global failures separately; format only touched files to avoid unrelated churn). Inspect scoped git diff, ensure no secret/generated artifact leakage. Add feasible static/function smoke checks for transliteration/OTP and validate API response shapes. Do not start long-lived services or create accounts to test without necessity/permission. Runtime SMTP/OAuth may be unavailable; state exact limits.
+## Execution
+Confirmed follow-up inventory (scout explore ses_eb7512fe0ffewEjU4WznKo3p7b): NO separate academic template in docs or docx, NO existing report generator scripts, NO AGENTS.md. docx contains exactly two reports and note.md. Do not block on missing template or invent one: inspect both reports, use sensible academic structure and preserve suitable (1) tables; disclose template limitation in delivery, NOT boilerplate in report. User has been informed. Exact IPN source: src/app/api/payments/vnpay/ipn/route.ts. Mandatory named guidance: README.md, docs/contributing/conventions.md, package.json. No app changes/build required. Available tools verified: Python 3.14.7, python-docx, Pillow, libreoffice, dot, pdftoppm, pdfinfo; no fitz/mmdc. You may read named reports with Python zipfile, inspect their full contents/relationships and screenshots, and execute generation/rendering/QA via terminal. Named relevant directories prisma, src/services, src/app, docs and docx are valid implementation inputs; read files needed to substantiate report, do not delegate. Task is not blocked on absent templates. Preserve input files. User requested (2), NOT replacement of (1).
 
-## Progress / unresolved
-- Discovery complete; implementation pending. Existing dirty files require careful incremental changes.
-- Entire frontend roadmap is much broader than this change; auth completion and English normalization are primary deliverables. Return completed/partial task IDs, changed files, commands/results, remaining blockers, and no raw long logs.
+1. Inspect DOCX text/tables/images/sections, academic templates and existing generator scripts/tool availability. Use appropriate terminal tooling if available; if unavailable report concrete blocker immediately, never claim delivery.
+2. Preserve useful academic material and identity/student/lecturer facts from input. Revise structure/content comprehensively using actual template, schema and screens; never invent names or evaluation results.
+3. Produce (2).docx with coherent chapter/figure/table numbering, readable tables/diagrams, headers/footers, acknowledgments and usable TOC. New UI screenshots need purposeful descriptions, control/field tables and behavior/validation per actual supplied template.
+4. Validate file ZIP/XML integrity, presence of required sections/images, absence of forbidden metatext, diagram monochrome and cardinalities. Render DOCX to PDF if a renderer is available, inspect pages for clipping, blank overflow, headers and diagrams; fix problems. Do not claim visual QA if no renderer. Prefer provide optional PDF preview if rendered.
+
+## Mandatory checks
+Identify and obey project instructions; docs-only work should not alter app/source or run unnecessary app build. At minimum run DOCX structural/content QA plus scoped git diff/status to ensure user files preserved. Discover available python-docx, LibreOffice, graphviz/Mermaid and PDF image tools, record actual commands and results. Any generator added must be reproducible and limited to report artifacts. Use apply_patch for edits to text/code. Never commit or push.
+
+## Return
+Exact created files, report changes, template used (or missing-template limitation), source-backed corrections, commands/QA results and any unresolved layout/template issues. Record your agent ID in this handoff when known; do not read skills or spawn tasks.
+
+## Fresh implementation result
+- Provider/model: openai/gpt-6.1-sol; assigned role general. Fresh session ID is not exposed by runtime; not fabricated. Existing controller/scout IDs above retained. No tasks spawned, no model switch, no commit/push.
+- Produced `docx/Nhom05_BaoCaoCuoiKy (2).docx` and matching PDF preview, 68 A4 pages, 24 UC specifications, 63 tables, 19 figures (7 original screenshots + 12 monochrome diagrams).
+- Reproducible generators: `docx/generate_report_2.py`, `docx/render_report_2.py`; diagram sources and evidence in `docx/report_2_assets/`, including `QA.md` and `manifest.json`.
+- Input reports preserved with SHA-256 verification. Existing screenshot/reference work preserved. No app/source modifications or app build.
+- Source correction beyond old report: checkout/My Trips/Host/Admin now call API, search has service plus conditional mock fallback. Host has 3 KPI, Admin 4; no Messages/Reports/Accept-Decline menus on supplied screenshots. Host cancel UI conflicts with guest/admin-only cancel service. Revenue KPI sums successful payment amount, not net Host payout or service-fee revenue.
+- Verified booking overlap before transaction, post-commit URL construction, IPN AND verify mutation paths, missing verify amount check, non-atomic duplicate guards, callback-late state risk, cancellation not payment/refund, and Review COMPLETED prerequisite. Do not retain old test/build results as newly executed evidence.
+- No separate new academic template: use coherent academic layout; disclose limitation in delivery/QA, not template boilerplate in report. School name conflicts between inputs: cover retains original report's Công nghệ Kỹ thuật name.
+- Structural QA after final rendering PASS in 1.646 s; generation 3.20 s; UNO TOC update + DOCX/PDF 4.00 s; rasterization 3.46 s. Final PDF text/bounds/TOC spot checks PASS in 0.211 s: 68 pages, 14,499 extracted words, no out-of-safe-bounds words or blank overflow. All pages visually inspected via contact sheets with enlarged key pages and final changed dictionary pages. No clipping/blank overflow observed. Mermaid source retained but not Mermaid-rendered (mmdc absent).

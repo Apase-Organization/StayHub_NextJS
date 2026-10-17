@@ -1,0 +1,12 @@
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#ffffff","primaryTextColor":"#000000","primaryBorderColor":"#000000","lineColor":"#000000","textColor":"#000000","edgeLabelBackground":"#ffffff"}}}%%
+flowchart TD
+    u["Người dùng"]
+    tok["Mã xác minh / id, hạn dùng, thời điểm sử dụng"]
+    p["Chỗ ở"]
+    img["Ảnh chỗ ở / id, thứ tự, ảnh bìa"]
+    pa["Gán tiện nghi / Khóa: (propertyId, amenityId)"]
+    a["Tiện nghi / id, tên duy nhất"]
+    u -->|"1 — 0..n"| tok
+    p -->|"1 — 0..n"| img
+    p -->|"1 — 0..n"| pa
+    a -->|"1 — 0..n"| pa

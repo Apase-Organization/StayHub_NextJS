@@ -1,0 +1,20 @@
+digraph G {
+rankdir=LR; bgcolor="white"; pad=0.2; nodesep=0.35; ranksep=0.55;
+node [shape=box, style="rounded,filled", fillcolor=white, color=black, fontcolor=black, fontname="DejaVu Sans", fontsize=12, margin="0.15,0.10"];
+edge [color=black, fontcolor=black, fontname="DejaVu Sans", fontsize=10];
+e0 [label="Chọn menu"];
+a0 [label="Đổi vùng nội dung nội bộ"];
+r0 [label="Hiện tổng quan / tin / đơn"];
+e1 [label="Đăng chỗ ở mới"];
+a1 [label="Mở form → POST dữ liệu"];
+r1 [label="Làm mới hoặc báo lỗi; mặc định DRAFT"];
+e2 [label="Lưu trữ"];
+a2 [label="DELETE theo quyền sở hữu"];
+r2 [label="Chuyển INACTIVE; không xóa vật lý"];
+e0 -> a0 [label=""];
+a0 -> r0 [label=""];
+e1 -> a1 [label=""];
+a1 -> r1 [label=""];
+e2 -> a2 [label=""];
+a2 -> r2 [label=""];
+}

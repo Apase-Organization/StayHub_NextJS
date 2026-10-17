@@ -1,0 +1,17 @@
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#ffffff","primaryTextColor":"#000000","primaryBorderColor":"#000000","lineColor":"#000000","textColor":"#000000","edgeLabelBackground":"#ffffff"}}}%%
+flowchart LR
+    e0["Đổi ngày / số khách"]
+    a0["Kiểm tra và tính giá hiển thị"]
+    r0["Cập nhật thẻ đặt phòng"]
+    e1["Kiểm tra trống"]
+    a1["Truy vấn đơn giao lịch"]
+    r1["Báo trống / xung đột / lỗi"]
+    e2["Nhấn Reserve"]
+    a2["Chuyển lịch và số khách"]
+    r2["Mở checkout; API kiểm tra lại"]
+    e0 --> a0
+    a0 --> r0
+    e1 --> a1
+    a1 --> r1
+    e2 --> a2
+    a2 --> r2
