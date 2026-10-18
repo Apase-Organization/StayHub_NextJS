@@ -47,6 +47,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           name: user.fullName,
           role: user.role,
+          image: user.avatarUrl,
         };
       },
     }),
@@ -70,20 +71,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (email) {
           const dbUser = await prisma.user.upsert({
             where: { email },
-            update: { provider: "GOOGLE", emailVerified: new Date() },
+            update: {
+              provider: "GOOGLE",
+              emailVerified: new Date(),
+              ...(user?.image ? { avatarUrl: user.image } : {}),
+            },
             create: {
               email,
               fullName: user?.name ?? token.name ?? email,
               provider: "GOOGLE",
               emailVerified: new Date(),
+              avatarUrl: user?.image ?? null,
             },
           });
           token.id = dbUser.id;
           token.role = dbUser.role;
+          token.image = dbUser.avatarUrl;
         }
       } else if (user) {
         token.id = user.id;
         token.role = user.role ?? token.role;
+        token.image = user.image ?? token.image;
       }
 
       return token;
@@ -91,6 +99,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     session({ session, token }) {
       session.user.id = String(token.id);
       session.user.role = token.role as Role;
+      if (typeof token.image === "string") {
+        session.user.image = token.image;
+      }
       return session;
     },
   },

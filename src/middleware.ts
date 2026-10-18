@@ -17,9 +17,10 @@ export default auth((req) => {
     return Response.redirect(new URL("/", req.url));
   }
 
-  // Protect /bookings and /properties/.../book: Must be logged in
+  // Protect /profile, /bookings, and /properties/.../book: Must be logged in
   if (
-    (pathname.startsWith("/bookings") ||
+    (pathname.startsWith("/profile") ||
+      pathname.startsWith("/bookings") ||
       pathname.endsWith("/book") ||
       pathname.includes("/book/")) &&
     !isLoggedIn
@@ -36,6 +37,8 @@ export const config = {
     "/host/:path*",
     "/admin",
     "/admin/:path*",
+    "/profile",
+    "/profile/:path*",
     "/bookings",
     "/bookings/:path*",
     "/properties/:path*/book",

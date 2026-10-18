@@ -71,6 +71,8 @@ model User {
   passwordHash  String?           @map("password_hash")
   fullName      String            @map("full_name")
   phone         String?
+  avatarUrl     String?           @map("avatar_url")
+  bio           String?
   role          UserRole          @default(GUEST)
   status        UserStatus        @default(ACTIVE)
   provider      UserLoginProvider @default(LOCAL)
