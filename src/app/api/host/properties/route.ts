@@ -7,12 +7,16 @@ import { mapProperty } from "@/services/property.service";
 
 export async function GET() {
   const session = await auth();
-  if (!session) return NextResponse.json(fail("Chưa đăng nhập"), { status: 401 });
-  if (session.user.role !== "HOST" && session.user.role !== "ADMIN") return NextResponse.json(fail("Không có quyền"), { status: 403 });
+  if (!session)
+    return NextResponse.json(fail("Chưa đăng nhập"), { status: 401 });
 
   const properties = await prisma.property.findMany({
     where: { hostId: session.user.id },
-    include: { images: { orderBy: { displayOrder: "asc" } }, amenities: { include: { amenity: true } }, host: { select: { id: true, fullName: true } } },
+    include: {
+      images: { orderBy: { displayOrder: "asc" } },
+      amenities: { include: { amenity: true } },
+      host: { select: { id: true, fullName: true } },
+    },
     orderBy: { createdAt: "desc" },
   });
 

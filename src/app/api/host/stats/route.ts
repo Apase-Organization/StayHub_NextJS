@@ -6,11 +6,13 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   const session = await auth();
-  if (!session) return NextResponse.json(fail("Chưa đăng nhập"), { status: 401 });
-  if (session.user.role !== "HOST" && session.user.role !== "ADMIN") return NextResponse.json(fail("Không có quyền"), { status: 403 });
+  if (!session)
+    return NextResponse.json(fail("Chưa đăng nhập"), { status: 401 });
 
   const [activeProperties, totalBookings, revenueAgg] = await Promise.all([
-    prisma.property.count({ where: { hostId: session.user.id, status: "ACTIVE" } }),
+    prisma.property.count({
+      where: { hostId: session.user.id, status: "ACTIVE" },
+    }),
     prisma.booking.count({ where: { property: { hostId: session.user.id } } }),
     prisma.payment.aggregate({
       where: {

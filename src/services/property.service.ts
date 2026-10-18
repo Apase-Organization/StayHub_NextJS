@@ -1,7 +1,10 @@
 import type { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
-import type { propertySchema, propertyUpdateSchema } from "@/schemas/property.schema";
+import type {
+  propertySchema,
+  propertyUpdateSchema,
+} from "@/schemas/property.schema";
 import type { z } from "zod";
 
 const include = {
@@ -10,7 +13,9 @@ const include = {
   host: { select: { id: true, fullName: true } },
 };
 
-export function mapProperty(property: Prisma.PropertyGetPayload<{ include: typeof include }>) {
+export function mapProperty(
+  property: Prisma.PropertyGetPayload<{ include: typeof include }>
+) {
   return {
     id: property.id,
     title: property.title,
@@ -38,7 +43,11 @@ export function mapProperty(property: Prisma.PropertyGetPayload<{ include: typeo
   };
 }
 
-export async function listProperties(where: Prisma.PropertyWhereInput = {}, page = 1, limit = 12) {
+export async function listProperties(
+  where: Prisma.PropertyWhereInput = {},
+  page = 1,
+  limit = 12
+) {
   const [properties, total] = await Promise.all([
     prisma.property.findMany({
       where: { status: "ACTIVE", ...where },
@@ -50,7 +59,12 @@ export async function listProperties(where: Prisma.PropertyWhereInput = {}, page
     prisma.property.count({ where: { status: "ACTIVE", ...where } }),
   ]);
 
-  return { properties: properties.map(mapProperty), total, page, totalPages: Math.ceil(total / limit) };
+  return {
+    properties: properties.map(mapProperty),
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
 }
 
 export async function getProperty(id: string) {
@@ -58,25 +72,41 @@ export async function getProperty(id: string) {
   return property ? mapProperty(property) : null;
 }
 
-export async function createProperty(hostId: string, data: z.infer<typeof propertySchema>) {
+export async function createProperty(
+  hostId: string,
+  data: z.infer<typeof propertySchema>
+) {
   const property = await prisma.property.create({
     data: {
       ...data,
+      status: "ACTIVE",
       hostId,
-      amenities: { create: data.amenityIds.map((amenityId) => ({ amenityId })) },
+      amenities: {
+        create: data.amenityIds.map((amenityId) => ({ amenityId })),
+      },
     },
     include,
   });
   return mapProperty(property);
 }
 
-export async function updateProperty(id: string, data: z.infer<typeof propertyUpdateSchema>) {
+export async function updateProperty(
+  id: string,
+  data: z.infer<typeof propertyUpdateSchema>
+) {
   const { amenityIds, ...propertyData } = data;
   const property = await prisma.property.update({
     where: { id },
     data: {
       ...propertyData,
-      ...(amenityIds ? { amenities: { deleteMany: {}, create: amenityIds.map((amenityId) => ({ amenityId })) } } : {}),
+      ...(amenityIds
+        ? {
+            amenities: {
+              deleteMany: {},
+              create: amenityIds.map((amenityId) => ({ amenityId })),
+            },
+          }
+        : {}),
     },
     include,
   });
@@ -84,5 +114,15 @@ export async function updateProperty(id: string, data: z.infer<typeof propertyUp
 }
 
 export function archiveProperty(id: string) {
-  return prisma.property.update({ where: { id }, data: { status: "INACTIVE" } });
+  return prisma.property.update({
+    where: { id },
+    data: { status: "INACTIVE" },
+  });
+}
+
+export function setPropertyStatus(id: string, status: "ACTIVE" | "INACTIVE") {
+  return prisma.property.update({
+    where: { id },
+    data: { status },
+  });
 }

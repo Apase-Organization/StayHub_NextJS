@@ -59,7 +59,11 @@ export async function syncCompletedBookings() {
   });
 }
 
-export async function checkOverlap(propertyId: string, checkIn: string | Date, checkOut: string | Date) {
+export async function checkOverlap(
+  propertyId: string,
+  checkIn: string | Date,
+  checkOut: string | Date
+) {
   // Giải phóng trước các booking pending quá hạn
   await expireOldPendingBookings();
 
@@ -80,23 +84,50 @@ export async function checkOverlap(propertyId: string, checkIn: string | Date, c
   });
 }
 
-export function calculatePrice(property: { pricePerNight: unknown; cleaningFee: unknown }, checkIn: string | Date, checkOut: string | Date) {
-  const nights = Math.max(1, Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86_400_000));
+export function calculatePrice(
+  property: { pricePerNight: unknown; cleaningFee: unknown },
+  checkIn: string | Date,
+  checkOut: string | Date
+) {
+  const nights = Math.max(
+    1,
+    Math.ceil(
+      (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86_400_000
+    )
+  );
   const nightlyPrice = Number(property.pricePerNight);
   const cleaningFee = Number(property.cleaningFee);
   const serviceFee = Math.round(nightlyPrice * nights * 0.1);
   const subtotalPrice = nightlyPrice * nights + cleaningFee + serviceFee;
-  return { nightlyPrice, nights, cleaningFee, serviceFee, subtotalPrice, totalPrice: subtotalPrice };
+  return {
+    nightlyPrice,
+    nights,
+    cleaningFee,
+    serviceFee,
+    subtotalPrice,
+    totalPrice: subtotalPrice,
+  };
 }
 
-export async function createBooking(data: CreateBookingInput, session: Session) {
-  const property = await prisma.property.findUnique({ where: { id: data.propertyId } });
-  if (!property || property.status !== "ACTIVE") throw new Error("Property not found");
+export async function createBooking(
+  data: CreateBookingInput,
+  session: Session
+) {
+  const property = await prisma.property.findUnique({
+    where: { id: data.propertyId },
+  });
+  if (!property || property.status !== "ACTIVE")
+    throw new Error("Property not found");
   if (data.guests > property.maxGuests) throw new Error("Too many guests");
-  if (await checkOverlap(data.propertyId, data.checkIn, data.checkOut)) throw new BookingConflictError("Chỗ ở không còn trống trong khoảng ngày này");
+  if (await checkOverlap(data.propertyId, data.checkIn, data.checkOut))
+    throw new BookingConflictError(
+      "Chỗ ở không còn trống trong khoảng ngày này"
+    );
 
   const price = calculatePrice(property, data.checkIn, data.checkOut);
-  const discount = data.discountCode ? await validateDiscount(data.discountCode, price.subtotalPrice) : null;
+  const discount = data.discountCode
+    ? await validateDiscount(data.discountCode, price.subtotalPrice)
+    : null;
   const discountAmount = discount?.discountAmount ?? 0;
   const totalPrice = Math.max(0, price.subtotalPrice - discountAmount);
 
@@ -181,7 +212,13 @@ export async function createBooking(data: CreateBookingInput, session: Session) 
     });
 
     await tx.payment.create({
-      data: { bookingId: created.id, amount: totalPrice, paymentMethod: "VNPAY", status: "PENDING", providerTxnRef: created.id },
+      data: {
+        bookingId: created.id,
+        amount: totalPrice,
+        paymentMethod: "VNPAY",
+        status: "PENDING",
+        providerTxnRef: created.id,
+      },
     });
 
     return created;
@@ -200,7 +237,11 @@ export async function createBooking(data: CreateBookingInput, session: Session) 
   };
 }
 
-export async function cancelBooking(bookingId: string, userId: string, isAdmin = false) {
+export async function cancelBooking(
+  bookingId: string,
+  userId: string,
+  isAdmin = false
+) {
   const booking = await prisma.booking.findUnique({
     where: { id: bookingId },
     include: {
@@ -214,7 +255,8 @@ export async function cancelBooking(bookingId: string, userId: string, isAdmin =
   const isGuest = booking.guestId === userId;
   const isHost = booking.property.hostId === userId;
   if (!isAdmin && !isGuest && !isHost) throw new Error("Forbidden");
-  if (!["PENDING_PAYMENT", "CONFIRMED"].includes(booking.status)) throw new Error("Invalid booking state");
+  if (!["PENDING_PAYMENT", "CONFIRMED"].includes(booking.status))
+    throw new Error("Invalid booking state");
 
   const cancelledBooking = await prisma.$transaction(async (tx) => {
     const updated = await tx.booking.update({

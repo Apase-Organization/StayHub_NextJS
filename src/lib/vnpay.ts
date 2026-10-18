@@ -20,7 +20,10 @@ export function buildPaymentUrl(params: VnpayParams) {
 export function verifyIpn(query: VnpayParams, expectedAmount?: number) {
   const result = verify(query);
   if (!result.valid) return result;
-  if (expectedAmount !== undefined && Number(result.params.vnp_Amount) !== expectedAmount * 100) {
+  if (
+    expectedAmount !== undefined &&
+    Number(result.params.vnp_Amount) !== expectedAmount * 100
+  ) {
     return { valid: false, params: result.params };
   }
   return result;
@@ -41,19 +44,24 @@ function stringify(params: VnpayParams) {
   return Object.fromEntries(
     Object.entries(params)
       .filter(([, value]) => value !== undefined && value !== "")
-      .map(([key, value]) => [key, String(value)]),
+      .map(([key, value]) => [key, String(value)])
   );
 }
 
 function sortedQuery(params: Record<string, string>) {
   return Object.keys(params)
     .sort()
-    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key]).replace(/%20/g, "+")}`)
+    .map(
+      (key) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(params[key]).replace(/%20/g, "+")}`
+    )
     .join("&");
 }
 
 function sign(data: string) {
-  return createHmac("sha512", requiredEnv("VNPAY_HASH_SECRET")).update(data, "utf8").digest("hex");
+  return createHmac("sha512", requiredEnv("VNPAY_HASH_SECRET"))
+    .update(data, "utf8")
+    .digest("hex");
 }
 
 function requiredEnv(name: string) {

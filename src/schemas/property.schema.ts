@@ -3,7 +3,14 @@ import { z } from "zod";
 export const propertySchema = z.object({
   title: z.string().trim().min(1),
   description: z.string().trim().min(1),
-  type: z.enum(["APARTMENT", "HOUSE", "VILLA", "HOTEL_ROOM", "HOMESTAY", "RESORT"]),
+  type: z.enum([
+    "APARTMENT",
+    "HOUSE",
+    "VILLA",
+    "HOTEL_ROOM",
+    "HOMESTAY",
+    "RESORT",
+  ]),
   city: z.string().trim().min(1),
   address: z.string().trim().min(1),
   pricePerNight: z.coerce.number().positive(),
@@ -15,11 +22,15 @@ export const propertySchema = z.object({
   amenityIds: z.array(z.string()).default([]),
 });
 
-export const propertyUpdateSchema = propertySchema.partial();
+export const propertyUpdateSchema = propertySchema.partial().extend({
+  status: z.enum(["ACTIVE", "INACTIVE", "DRAFT"]).optional(),
+});
 
 export const propertyQuerySchema = z.object({
   city: z.string().optional(),
-  type: z.enum(["APARTMENT", "HOUSE", "VILLA", "HOTEL_ROOM", "HOMESTAY", "RESORT"]).optional(),
+  type: z
+    .enum(["APARTMENT", "HOUSE", "VILLA", "HOTEL_ROOM", "HOMESTAY", "RESORT"])
+    .optional(),
   guests: z.coerce.number().int().positive().optional(),
   featured: z.coerce.boolean().optional(),
   page: z.coerce.number().int().positive().default(1),

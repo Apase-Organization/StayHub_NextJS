@@ -48,7 +48,8 @@ export async function POST(request: Request) {
     });
 
     if (recentToken) {
-      const timeSinceCreated = Date.now() - new Date(recentToken.createdAt).getTime();
+      const timeSinceCreated =
+        Date.now() - new Date(recentToken.createdAt).getTime();
       const cooldownMs = 60 * 1000;
       if (timeSinceCreated < cooldownMs) {
         const remainingSec = Math.ceil((cooldownMs - timeSinceCreated) / 1000);
@@ -88,7 +89,10 @@ export async function POST(request: Request) {
     );
   } catch {
     return NextResponse.json(
-      fail("Không thể gửi lại mã xác thực. Vui lòng thử lại sau.", "ERR_INTERNAL"),
+      fail(
+        "Không thể gửi lại mã xác thực. Vui lòng thử lại sau.",
+        "ERR_INTERNAL"
+      ),
       { status: 500 }
     );
   }

@@ -1,11 +1,22 @@
 import { prisma } from "@/lib/prisma";
 
-export async function createReview(data: { bookingId: string; guestId: string; rating: number; comment?: string }) {
-  const booking = await prisma.booking.findUnique({ where: { id: data.bookingId }, include: { review: true } });
-  if (!booking || booking.guestId !== data.guestId || booking.review) return null;
+export async function createReview(data: {
+  bookingId: string;
+  guestId: string;
+  rating: number;
+  comment?: string;
+}) {
+  const booking = await prisma.booking.findUnique({
+    where: { id: data.bookingId },
+    include: { review: true },
+  });
+  if (!booking || booking.guestId !== data.guestId || booking.review)
+    return null;
 
   const now = new Date();
-  const isEligible = booking.status === "COMPLETED" || (booking.status === "CONFIRMED" && booking.checkOutDate <= now);
+  const isEligible =
+    booking.status === "COMPLETED" ||
+    (booking.status === "CONFIRMED" && booking.checkOutDate <= now);
   if (!isEligible) return null;
 
   return prisma.$transaction(async (tx) => {
@@ -17,10 +28,22 @@ export async function createReview(data: { bookingId: string; guestId: string; r
     }
 
     const review = await tx.review.create({
-      data: { bookingId: booking.id, propertyId: booking.propertyId, guestId: data.guestId, rating: data.rating, comment: data.comment },
+      data: {
+        bookingId: booking.id,
+        propertyId: booking.propertyId,
+        guestId: data.guestId,
+        rating: data.rating,
+        comment: data.comment,
+      },
     });
-    const avg = await tx.review.aggregate({ where: { propertyId: booking.propertyId }, _avg: { rating: true } });
-    await tx.property.update({ where: { id: booking.propertyId }, data: { ratingAvg: avg._avg.rating ?? 0 } });
+    const avg = await tx.review.aggregate({
+      where: { propertyId: booking.propertyId },
+      _avg: { rating: true },
+    });
+    await tx.property.update({
+      where: { id: booking.propertyId },
+      data: { ratingAvg: avg._avg.rating ?? 0 },
+    });
     return review;
   });
 }

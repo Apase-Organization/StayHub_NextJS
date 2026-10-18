@@ -1,14 +1,17 @@
-# Graph Report - docs  (2026-09-28)
+# Graph Report - docs (2026-09-28)
 
 ## Corpus Check
+
 - Corpus is ~20,944 words - fits in a single context window. You may not need a graph.
 
 ## Summary
+
 - 40 nodes · 34 edges · 10 communities (7 shown, 3 thin omitted)
 - Extraction: 82% EXTRACTED · 18% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
+
 - Domain Data Model
 - Roles and Setup
 - Payment APIs
@@ -21,6 +24,7 @@
 - Prisma Database
 
 ## God Nodes (most connected - your core abstractions)
+
 1. `Booking` - 6 edges
 2. `StayHub System Overview` - 5 edges
 3. `Property` - 4 edges
@@ -33,18 +37,20 @@
 10. `VNPay IPN Endpoint` - 2 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `High-level Modules` --semantically_similar_to--> `Database Domain Model`  [INFERRED] [semantically similar]
+
+- `High-level Modules` --semantically_similar_to--> `Database Domain Model` [INFERRED] [semantically similar]
   architecture/1_SystemOverview.md → database/1_DomainOverview.md
-- `ApiResponse<T>` --semantically_similar_to--> `Next.js API Standards`  [INFERRED] [semantically similar]
+- `ApiResponse<T>` --semantically_similar_to--> `Next.js API Standards` [INFERRED] [semantically similar]
   architecture/2_TechStack.md → contributors/Rules.md
-- `VNPay Payment Gateway` --conceptually_related_to--> `VNPay Verification Rules`  [INFERRED]
+- `VNPay Payment Gateway` --conceptually_related_to--> `VNPay Verification Rules` [INFERRED]
   architecture/1_SystemOverview.md → database/8_Payment.md
-- `Contributor Setup Guide` --conceptually_related_to--> `Fullstack Next.js Stack`  [INFERRED]
+- `Contributor Setup Guide` --conceptually_related_to--> `Fullstack Next.js Stack` [INFERRED]
   contributors/FirstStep.md → architecture/2_TechStack.md
-- `API Design` --cites--> `Next.js API Standards`  [EXTRACTED]
+- `API Design` --cites--> `Next.js API Standards` [EXTRACTED]
   architecture/3_API_Design.md → contributors/Rules.md
 
 ## Hyperedges (group relationships)
+
 - **Guest Booking Payment Review Flow** — docs_architecture_1_systemoverview_guest, docs_database_1_domainoverview_booking, docs_database_1_domainoverview_payment, docs_database_1_domainoverview_review [EXTRACTED 1.00]
 - **Core Database Relationship Model** — docs_database_1_domainoverview_user, docs_database_1_domainoverview_property, docs_database_1_domainoverview_booking, docs_database_1_domainoverview_payment, docs_database_1_domainoverview_review [EXTRACTED 1.00]
 - **Delivery Tracks** — docs_tasklist_tasklist_infra_track, docs_tasklist_tasklist_backend_track, docs_tasklist_tasklist_frontend_track [EXTRACTED 1.00]
@@ -52,39 +58,48 @@
 ## Communities (10 total, 3 thin omitted)
 
 ### Community 0 - "Domain Data Model"
+
 Cohesion: 0.22
 Nodes (10): Discount Validation Flow, Booking, DiscountCode, Property, Review, User, Property Amenities, Property Images (+2 more)
 
 ### Community 1 - "Roles and Setup"
+
 Cohesion: 0.33
 Nodes (6): Admin, Guest, Host, StayHub System Overview, Fullstack Next.js Stack, Contributor Setup Guide
 
 ### Community 2 - "Payment APIs"
+
 Cohesion: 0.33
 Nodes (6): VNPay Payment Gateway, API Design, Booking API Endpoints, VNPay IPN Endpoint, Payment, VNPay Verification Rules
 
 ### Community 3 - "API Rules"
+
 Cohesion: 0.50
 Nodes (4): ApiResponse<T>, Next.js API Standards, Project Rules and Conventions, Route Protection
 
 ### Community 4 - "Task Tracks"
+
 Cohesion: 0.50
 Nodes (4): Backend Track, Frontend Track, Infra Track, StayHub Task List
 
 ### Community 5 - "Booking Business"
+
 Cohesion: 0.67
 Nodes (3): Booking Lifecycle, StayHub Business Overview, Transaction-based Commission Model
 
 ### Community 6 - "UI Design"
+
 Cohesion: 0.67
 Nodes (3): Application Design References, UI/UX Design System, Responsive Grid System
 
 ## Knowledge Gaps
+
 - **23 isolated node(s):** `Guest`, `Host`, `Admin`, `VNPay Payment Gateway`, `High-level Modules` (+18 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 23 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
+
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `API Design` connect `Payment APIs` to `Roles and Setup`, `API Rules`?**

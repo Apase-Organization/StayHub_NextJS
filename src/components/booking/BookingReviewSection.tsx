@@ -146,8 +146,8 @@ export function BookingReviewSection({
         </h3>
       </div>
       <p className="text-xs text-muted-foreground mb-4">
-        Nhận xét của bạn sẽ giúp những vị khách khác và giúp chủ nhà nâng cao chất
-        lượng phục vụ.
+        Nhận xét của bạn sẽ giúp những vị khách khác và giúp chủ nhà nâng cao
+        chất lượng phục vụ.
       </p>
 
       {successMsg && (

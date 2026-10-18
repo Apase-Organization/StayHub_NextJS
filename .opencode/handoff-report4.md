@@ -1,16 +1,20 @@
 # Report (4): match supplied templates selectively
 
 ## Selection and task lock
+
 Project /home/hodangthaiduy/Workspace/Projects/StayHub_NextJS. Revision 50b4b9fae41aa49211b6235c86096dda79e7e9fa. Provider/model openai/gpt-6.1-sol; scout explore ses_eb6a72673ffe1DeXc0u7R0NM9r. Fresh implementer general ses_eb6a5d154ffe8b9E7IHF1t9Qr3. No model switch, spawning tasks, commits or app changes. OpenArms docs package loaded (technical-writing + archify); lock is report revision only. Never read/discover skill files. Principles: source-backed natural Vietnamese, preserve supported facts, structured focused diagrams, no fabricated implementation/testing results. User explicitly asks diagrams in DOCX so render images as necessary; black text/borders/arrows on white throughout generated diagrams, portable sources retained if used.
 
 ## Completed
+
 Created (4).docx and 84-page matching PDF. Controller independently reran --check: PASS, 71 tables, 40 images, 24 UC, 10 processing scenarios, 7 screenshots, 33 monochrome diagrams, protected inputs unchanged. pdfinfo confirms A4/84 pages. Full selective mapping, exclusions and rendering evidence in docx/report_4_assets/QA.md. No application changes. UC mislabeled outcome row corrected to Điều kiện sau; original institution name retained. Unrelated concurrent (05) artifacts left untouched.
 
 ## Deliverable/user instructions
+
 Create docx/Nhom05_BaoCaoCuoiKy (4).docx and ideally PDF preview. Preserve original, (1), (2), (3), templates and user screenshots. User has now added templates in actual case-sensitive docx/Template (not lowercase template). Apply ONLY template structures that correspond to original report content; do NOT add domains/features/chapters merely present in templates. Complete report, not summary.
 Cover: accurate title, all textual content uppercase and wider spacing. Review pages and acknowledgments present. Header required. Match functional business requirements and NEW UC spec. Put processing chapter AFTER UI, named THIẾT KẾ XỬ LÝ; improve overly simple sequences. Correct logical DATA model, not a logic flowchart. Correct screen transitions; UI presentation must match supplied sample using seven actual screenshots. Work allocation bullets. Remove phrases 'nguồn ở', 'nội dung dựa trên mẫu', internal source/template/AI meta commentary; retain legitimate bibliography.
 
 ## Exact available inputs and tools
+
 - Original baseline scope: docx/Nhom05_BaoCaoCuoiKy.docx
 - Other inputs: docx/Nhom05_BaoCaoCuoiKy (1).docx; (2).docx; (3).docx, docx/note.md. Inspect (3) rather than blindly replacing latest edits.
 - Existing reproducible workflow: docx/generate_report_2.py, docx/render_report_2.py, docx/report_2_assets/QA.md, manifest.json, diagrams. Reuse source content where valid, but create dedicated generator/render/assets for (4); never overwrite (2) artifacts.
@@ -28,6 +32,7 @@ Cover: accurate title, all textual content uppercase and wider spacing. Review p
 - Tools prior report used /tmp/opencode/report-venv/bin/python (python-docx/Pillow/lxml); system python3 UNO, LibreOffice, Graphviz dot, pdftoppm/pdfinfo. No mmdc/fitz then. Check existence before use; no app build needed.
 
 ## Confirmed template mapping (controller extracted DOCX)
+
 1. ORIGINAL Chapter 1 Khảo sát hiện trạng: 1.1 Phân tích hiện trạng, 1.2 Phân tích yêu cầu (functional storage/search/calculation/output, system/roles, nonfunctional), 1.3 workflows. Use relevant structure only of survey template; DO NOT transplant F&B/restaurant survey content, competitors or unsupported interviews/research.
 2. Mau_Danh sach yeu cau: BUSINESS requirements tables have EXACT columns `STT | Công Việc | Loại Công Việc | Quy Định/ Công Thức Liên Quan | Biểu Mẫu Liên Quan | Ghi Chú`, grouped by `Bộ phận: ... Mã số: ...`. Adapt jobs/rules to StayHub, meaningful related form/screen identifiers only, not cinema forms. Existing scope covers these functional categories, so match six-column structure instead of generic input/output table. Do not invent unrelated paper forms.
 3. ORIGINAL Chapter 2: 2.1 actors/functions, 2.2 function list, 2.3 UC diagram, 2.4 24 UC specs. Mau_Mo Hinh Hoa yeu cau actor/function table `Tác nhân | Chức năng`, function summary `STT | Chức năng | Mô tả`. Use this for overview, NOT its older UC table (dedicated new UC template takes precedence).
@@ -39,10 +44,13 @@ Cover: accurate title, all textual content uppercase and wider spacing. Review p
 9. ORIGINAL processing has TEN scenarios login/search/detail+availability/booking/VNPay/cancel/review/create-listing/host accept-reject/lock-user. Preserve these relevant original scenarios in richer sequences, after UI; do not arbitrarily shrink to 3-4 scenarios. Original final chapters installation/testing, summary, references, work allocation remain with accurate scope/no fabricated new test results.
 
 ## Source correctness to recheck
+
 Prior report found availability check before transaction (no DB concurrency-safe overlap exclusion), verify AND IPN can update state, cancellation not automatic refund, Review requires COMPLETED while normal automatic completion lacking. Current implementation reportedly already connects checkout/trips/dashboard APIs, do not reintroduce original stale mock-only claims. Student/teacher/course facts preserved. University name conflicts original vs (1): retain original unless current user-provided evidence resolves it, report conflict outside document.
 
 ## Mandatory implementation/verification
+
 Read full named templates and original sections via Python zipfile/python-docx through terminal, not binary Read. Use apply_patch for text/code edits. Maintain assets in report_4_assets, scripts dedicated to (4). Preserve all user work and compare hashes of inputs/templates/screens. Keep readable typography/tables/captions/numbering, wider uppercase cover, header/footer, updated TOC after reorder. Render using LibreOffice to PDF, inspect contact sheets ALL pages plus detailed screenshots of UC tables, six-column requirements, logical diagram/notation, three-column UI object tables/event diagrams, sequence pages, front matter. Fix clipping, oversized gaps, orphan headings, tiny diagrams. Structural QA must assert exact selected template column/field patterns, original 24 UC coverage and ten processing scenarios, seven screenshots unchanged, monochrome diagrams, no forbidden source/template commentary. Don't claim visual QA absent actual image inspection. Re-run check after final render, pdfinfo and git status; no app modifications/build needed.
 
 ## Return
+
 Created file paths, selected template mapping AND explicit exclusions, counts, QA commands/results, any deviations (especially template's mislabeled pre/post condition) or unresolved issues. No raw history; no skills reads/delegation. Record chosen model/provider and known implementer ID in QA/handoff if available.

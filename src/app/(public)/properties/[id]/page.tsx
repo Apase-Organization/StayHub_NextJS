@@ -14,8 +14,10 @@ import {
 
 import { getProperty } from "@/services/property.service";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 import { MOCK_PROPERTIES } from "@/lib/mock-data";
 import { AvailabilityChecker } from "@/components/property/AvailabilityChecker";
+import { PropertyHostActions } from "@/components/property";
 import { displayPlace } from "@/lib/auth-ui";
 import { Button } from "@/components/ui/button";
 import { formatPrice, formatDate } from "@/lib/utils";
@@ -92,10 +94,41 @@ export default async function PropertyDetailPage({
       ? property.images.map((i) => i.url)
       : ["/placeholder-room.jpg"];
 
+  const session = await auth();
+  const isOwner = Boolean(
+    session?.user?.id &&
+      (session.user.id === property.host?.id || session.user.role === "ADMIN")
+  );
+
+  const hostPropertyForEdit = {
+    id: property.id,
+    title: property.title,
+    description: property.description || "",
+    city: property.city,
+    address: property.address,
+    pricePerNight: property.pricePerNight,
+    cleaningFee: property.cleaningFee,
+    maxGuests: property.maxGuests,
+    bedrooms: property.bedrooms ?? 1,
+    beds: property.beds ?? 1,
+    bathrooms: property.bathrooms ?? 1,
+    type: property.type,
+    status: (property.status === "INACTIVE" ? "INACTIVE" : "ACTIVE") as
+      | "ACTIVE"
+      | "INACTIVE",
+    ratingAvg: property.ratingAvg,
+    images: property.images.map((img) => ({
+      id: img.id,
+      url: img.url,
+      isCover: img.isCover,
+      publicId: img.publicId ?? undefined,
+    })),
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 pb-24 lg:pb-8 sm:px-6 lg:px-8">
-      {/* 1. Breadcrumbs */}
-      <div className="mb-4 flex items-center justify-between">
+      {/* 1. Breadcrumbs & Host Actions */}
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/search"
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
@@ -103,6 +136,8 @@ export default async function PropertyDetailPage({
           <ChevronLeft className="size-4" />
           <span>Về kết quả tìm kiếm</span>
         </Link>
+
+        {isOwner && <PropertyHostActions property={hostPropertyForEdit} />}
       </div>
 
       {/* 2. Title & Metadata */}
@@ -343,7 +378,9 @@ export default async function PropertyDetailPage({
           </div>
           <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
             <Star className="size-3 fill-amber-400 text-amber-400" />
-            <span className="font-semibold text-foreground">{property.ratingAvg.toFixed(1)}</span>
+            <span className="font-semibold text-foreground">
+              {property.ratingAvg.toFixed(1)}
+            </span>
             <span>({reviews.length} đánh giá)</span>
           </div>
         </div>

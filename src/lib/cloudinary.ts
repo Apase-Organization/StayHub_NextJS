@@ -9,8 +9,13 @@ type UploadResult = {
 
 const useCloudinary = process.env.UPLOAD_USE_CLOUDINARY === "true";
 
-export async function uploadImage(buffer: Buffer, folder = "stayhub"): Promise<UploadResult> {
-  return useCloudinary ? uploadToCloudinary(buffer, folder) : uploadLocal(buffer, folder);
+export async function uploadImage(
+  buffer: Buffer,
+  folder = "stayhub"
+): Promise<UploadResult> {
+  return useCloudinary
+    ? uploadToCloudinary(buffer, folder)
+    : uploadLocal(buffer, folder);
 }
 
 export async function deleteImage(publicId: string) {
@@ -18,7 +23,10 @@ export async function deleteImage(publicId: string) {
   return useCloudinary ? deleteFromCloudinary(publicId) : deleteLocal(publicId);
 }
 
-async function uploadLocal(buffer: Buffer, folder: string): Promise<UploadResult> {
+async function uploadLocal(
+  buffer: Buffer,
+  folder: string
+): Promise<UploadResult> {
   const safeFolder = folder.replace(/[^a-zA-Z0-9_-]/g, "-");
   const uploadRoot = process.env.UPLOAD_LOCAL_DIRECTORY ?? "public/uploads";
   const dir = path.join(process.cwd(), uploadRoot, safeFolder);
@@ -36,7 +44,10 @@ async function deleteLocal(publicId: string) {
   await rm(path.join(process.cwd(), uploadRoot, publicId), { force: true });
 }
 
-async function uploadToCloudinary(buffer: Buffer, folder: string): Promise<UploadResult> {
+async function uploadToCloudinary(
+  buffer: Buffer,
+  folder: string
+): Promise<UploadResult> {
   const cloudName = requiredEnv("CLOUDINARY_CLOUD_NAME");
   const apiKey = requiredEnv("CLOUDINARY_API_KEY");
   const timestamp = Math.floor(Date.now() / 1000).toString();
@@ -49,11 +60,18 @@ async function uploadToCloudinary(buffer: Buffer, folder: string): Promise<Uploa
   form.append("api_key", apiKey);
   form.append("signature", signature);
 
-  const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-    method: "POST",
-    body: form,
-  });
-  const data = (await response.json()) as { secure_url?: string; public_id?: string; error?: { message?: string } };
+  const response = await fetch(
+    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+    {
+      method: "POST",
+      body: form,
+    }
+  );
+  const data = (await response.json()) as {
+    secure_url?: string;
+    public_id?: string;
+    error?: { message?: string };
+  };
 
   if (!response.ok || !data.secure_url || !data.public_id) {
     throw new Error(data.error?.message ?? "Cloudinary upload failed");
@@ -74,10 +92,13 @@ async function deleteFromCloudinary(publicId: string) {
   form.append("api_key", apiKey);
   form.append("signature", signature);
 
-  const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`, {
-    method: "POST",
-    body: form,
-  });
+  const response = await fetch(
+    `https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`,
+    {
+      method: "POST",
+      body: form,
+    }
+  );
 
   if (!response.ok) throw new Error("Cloudinary delete failed");
 }

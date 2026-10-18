@@ -127,7 +127,9 @@ function ReturnContent() {
             {/* Transaction Receipt Card */}
             <div className="rounded-2xl border border-border bg-muted/30 p-4 text-left space-y-2.5 text-xs">
               <div className="flex flex-wrap items-baseline gap-2 justify-between">
-                <span className="text-muted-foreground shrink-0">Booking ID:</span>
+                <span className="text-muted-foreground shrink-0">
+                  Booking ID:
+                </span>
                 <span className="font-mono font-bold text-foreground break-all text-right">
                   {bookingId}
                 </span>
@@ -199,7 +201,9 @@ function ReturnContent() {
             {bookingId && (
               <div className="rounded-2xl border border-border bg-muted/30 p-4 text-left space-y-2 text-xs">
                 <div className="flex flex-wrap items-baseline gap-2 justify-between">
-                  <span className="text-muted-foreground shrink-0">Booking ID:</span>
+                  <span className="text-muted-foreground shrink-0">
+                    Booking ID:
+                  </span>
                   <span className="font-mono font-bold text-foreground break-all text-right">
                     {bookingId}
                   </span>
