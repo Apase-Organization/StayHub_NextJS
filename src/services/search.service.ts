@@ -11,7 +11,9 @@ export const searchSchema = z.object({
   guests: z.coerce.number().int().positive().optional(),
   minPrice: z.coerce.number().min(0).optional(),
   maxPrice: z.coerce.number().min(0).optional(),
-  type: z.enum(["APARTMENT", "HOUSE", "VILLA", "HOTEL_ROOM", "HOMESTAY", "RESORT"]).optional(),
+  type: z
+    .enum(["APARTMENT", "HOUSE", "VILLA", "HOTEL_ROOM", "HOMESTAY", "RESORT"])
+    .optional(),
   bedrooms: z.coerce.number().int().min(0).optional(),
   amenities: z.union([z.string(), z.array(z.string())]).optional(),
   minRating: z.coerce.number().min(0).max(5).optional(),
@@ -25,17 +27,34 @@ export async function searchProperties(query: z.infer<typeof searchSchema>) {
     await expireOldPendingBookings();
   }
   const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
-  const amenities = Array.isArray(query.amenities) ? query.amenities : query.amenities ? [query.amenities] : [];
+  const amenities = Array.isArray(query.amenities)
+    ? query.amenities
+    : query.amenities
+      ? [query.amenities]
+      : [];
   const where: Prisma.PropertyWhereInput = {
-    ...(query.location ? { city: { contains: query.location, mode: "insensitive" } } : {}),
+    ...(query.location
+      ? { city: { contains: query.location, mode: "insensitive" } }
+      : {}),
     ...(query.guests ? { maxGuests: { gte: query.guests } } : {}),
     ...(query.type ? { type: query.type } : {}),
-    ...(query.bedrooms !== undefined ? { bedrooms: { gte: query.bedrooms } } : {}),
-    ...(query.minRating !== undefined ? { ratingAvg: { gte: query.minRating } } : {}),
-    ...(query.minPrice !== undefined || query.maxPrice !== undefined
-      ? { pricePerNight: { ...(query.minPrice !== undefined ? { gte: query.minPrice } : {}), ...(query.maxPrice !== undefined ? { lte: query.maxPrice } : {}) } }
+    ...(query.bedrooms !== undefined
+      ? { bedrooms: { gte: query.bedrooms } }
       : {}),
-    ...(amenities.length ? { amenities: { some: { amenityId: { in: amenities } } } } : {}),
+    ...(query.minRating !== undefined
+      ? { ratingAvg: { gte: query.minRating } }
+      : {}),
+    ...(query.minPrice !== undefined || query.maxPrice !== undefined
+      ? {
+          pricePerNight: {
+            ...(query.minPrice !== undefined ? { gte: query.minPrice } : {}),
+            ...(query.maxPrice !== undefined ? { lte: query.maxPrice } : {}),
+          },
+        }
+      : {}),
+    ...(amenities.length
+      ? { amenities: { some: { amenityId: { in: amenities } } } }
+      : {}),
     ...(query.checkIn && query.checkOut
       ? {
           bookings: {

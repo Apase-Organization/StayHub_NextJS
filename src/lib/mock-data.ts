@@ -65,7 +65,8 @@ export const POPULAR_DESTINATIONS: Destination[] = [
     id: "dest-1",
     name: "Đà Nẵng",
     slug: "da-nang",
-    image: "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=800&q=80",
     propertiesCount: 248,
     description: "Thành phố biển đáng sống với bãi biển Mỹ Khê và Cầu Vàng",
   },
@@ -73,7 +74,8 @@ export const POPULAR_DESTINATIONS: Destination[] = [
     id: "dest-2",
     name: "Đà Lạt",
     slug: "da-lat",
-    image: "https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=800&q=80",
     propertiesCount: 312,
     description: "Thành phố ngàn hoa với khí hậu se lạnh và đồi thông lãng mạn",
   },
@@ -81,15 +83,18 @@ export const POPULAR_DESTINATIONS: Destination[] = [
     id: "dest-3",
     name: "Nha Trang",
     slug: "nha-trang",
-    image: "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?auto=format&fit=crop&w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?auto=format&fit=crop&w=800&q=80",
     propertiesCount: 185,
-    description: "Vịnh biển trong xanh, bãi cát dài cùng thiên đường nghỉ dưỡng",
+    description:
+      "Vịnh biển trong xanh, bãi cát dài cùng thiên đường nghỉ dưỡng",
   },
   {
     id: "dest-4",
     name: "Hồ Chí Minh",
     slug: "ho-chi-minh",
-    image: "https://images.unsplash.com/photo-1583417654171-995b0f15c1e9?auto=format&fit=crop&w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1583417654171-995b0f15c1e9?auto=format&fit=crop&w=800&q=80",
     propertiesCount: 420,
     description: "Trung tâm sôi động với các căn hộ cao cấp và văn hóa ẩm thực",
   },
@@ -97,15 +102,18 @@ export const POPULAR_DESTINATIONS: Destination[] = [
     id: "dest-5",
     name: "Hà Nội",
     slug: "ha-noi",
-    image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80",
     propertiesCount: 295,
-    description: "Nét đẹp nghìn năm văn hiến, phố cổ trầm mặc và ẩm thực tinh tế",
+    description:
+      "Nét đẹp nghìn năm văn hiến, phố cổ trầm mặc và ẩm thực tinh tế",
   },
   {
     id: "dest-6",
     name: "Phú Quốc",
     slug: "phu-quoc",
-    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
     propertiesCount: 160,
     description: "Đảo ngọc hoang sơ với hoàng hôn lộng lẫy và resort ven biển",
   },
@@ -153,7 +161,8 @@ export const MOCK_PROPERTIES: Property[] = [
       "Biệt thự nghỉ dưỡng cao cấp tọa lạc ngay sát bãi biển Mỹ Khê danh tiếng. Không gian được thiết kế theo phong cách hiện đại tối giản (Minimalism) đón trọn ánh sáng tự nhiên và gió biển trong lành. Khuôn viên sở hữu bể bơi vô cực riêng tư nhìn ra bờ cát trắng mịn, thích hợp cho nhóm gia đình hoặc bạn bè tìm kiếm kỳ nghỉ dưỡng đẳng cấp.",
     host: {
       name: "Thái Duy & Đức Anh",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
       isSuperhost: true,
       joinedYear: 2023,
       responseRate: "100%",
@@ -198,7 +207,8 @@ export const MOCK_PROPERTIES: Property[] = [
       "Tận hưởng trọn vẹn cái lạnh đặc trưng của Đà Lạt tại căn studio gỗ thông nép mình giữa thung lũng. Cửa sổ kính lớn từ sàn tới trần mở ra bức tranh đồi thông mù sương mỗi sớm mai. Thích hợp cho các cặp đôi hoặc du khách muốn tìm khoảng lặng yên bình.",
     host: {
       name: "Nguyên Đức Huy",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
       isSuperhost: true,
       joinedYear: 2024,
       responseRate: "98%",
@@ -242,7 +252,8 @@ export const MOCK_PROPERTIES: Property[] = [
       "Căn hộ cao cấp tọa lạc tại trục đường vàng Trần Phú đối diện bờ biển Nha Trang. Tầm nhìn panorama ngoạn mục từ tầng cao ngắm trọn vịnh biển và quảng trường 2/4 sôi động. Tiện ích tòa nhà 5 sao với hồ bơi vô cực tầng thượng và sky bar đẳng cấp.",
     host: {
       name: "Minh Trang Host",
-      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80",
       isSuperhost: false,
       joinedYear: 2023,
       responseRate: "95%",
@@ -286,7 +297,8 @@ export const MOCK_PROPERTIES: Property[] = [
       "Đỉnh cao trải nghiệm sống thượng lưu giữa trung tâm thành phố hoa lệ. Tận hưởng ly rượu vang bên bồn sục Jacuzzi ngoài trời ngắm pháo hoa và tòa tháp Landmark 81 rực rỡ về đêm. Thiết kế nội thất đạt giải thưởng kiến trúc quốc tế.",
     host: {
       name: "Hoàng Long Superhost",
-      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
       isSuperhost: true,
       joinedYear: 2022,
       responseRate: "100%",
@@ -329,7 +341,8 @@ export const MOCK_PROPERTIES: Property[] = [
       "Tọa lạc ngay trái tim 36 phố phường Hà Nội, ngôi nhà giao thoa tinh tế giữa kiến trúc Pháp cổ kính và phong cách Indochine thanh lịch. Bước ra khỏi cửa là hương vị phở truyền thống và nhịp sống văn hóa Thủ đô ngàn năm văn hiến.",
     host: {
       name: "Thảo My",
-      avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80",
       isSuperhost: true,
       joinedYear: 2023,
       responseRate: "99%",
@@ -372,7 +385,8 @@ export const MOCK_PROPERTIES: Property[] = [
       "Bungalow lợp mái lá tự nhiên nằm nép mình bên rặng dừa Bãi Ông Lang. Mỗi chiều bạn có thể chiêm ngưỡng hoàng hôn rực đỏ buông xuống mặt biển từ chiếc võng êm ái ngoài hiên nhà. Chốn thiên đường để tái tạo năng lượng.",
     host: {
       name: "Quốc Hưng Resort",
-      avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80",
       isSuperhost: true,
       joinedYear: 2022,
       responseRate: "97%",
@@ -386,7 +400,8 @@ export const MOCK_USER_BOOKINGS: Booking[] = [
     id: "BK-88219",
     propertyId: "prop-1",
     propertyTitle: "Luxury Oceanfront Horizon Villa Mỹ Khê",
-    propertyImage: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=600&q=80",
+    propertyImage:
+      "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=600&q=80",
     propertyCity: "Đà Nẵng",
     propertyAddress: "Đường Võ Nguyên Giáp, Quận Ngũ Hành Sơn, Đà Nẵng",
     checkIn: "2026-10-15",
@@ -407,7 +422,8 @@ export const MOCK_USER_BOOKINGS: Booking[] = [
     id: "BK-77402",
     propertyId: "prop-2",
     propertyTitle: "The Pine Hill Studio Homestay Đà Lạt",
-    propertyImage: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=600&q=80",
+    propertyImage:
+      "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=600&q=80",
     propertyCity: "Đà Lạt",
     propertyAddress: "Đường Triệu Việt Vương, Phường 4, TP. Đà Lạt",
     checkIn: "2026-11-02",
@@ -428,7 +444,8 @@ export const MOCK_USER_BOOKINGS: Booking[] = [
     id: "BK-55210",
     propertyId: "prop-3",
     propertyTitle: "Panoramic Sunset Panorama Suite Nha Trang",
-    propertyImage: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80",
+    propertyImage:
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80",
     propertyCity: "Nha Trang",
     propertyAddress: "Đường Trần Phú, Phường Lộc Thọ, TP. Nha Trang",
     checkIn: "2026-08-10",
@@ -449,7 +466,8 @@ export const MOCK_USER_BOOKINGS: Booking[] = [
     id: "BK-33190",
     propertyId: "prop-6",
     propertyTitle: "Coral Reef Sunset Bungalow Phú Quốc",
-    propertyImage: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
+    propertyImage:
+      "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
     propertyCity: "Phú Quốc",
     propertyAddress: "Bãi Ông Lang, Cửa Dương, TP. Phú Quốc",
     checkIn: "2026-07-01",
@@ -479,7 +497,8 @@ export const MOCK_HOST_BOOKING_REQUESTS = [
   {
     id: "REQ-901",
     guestName: "Nguyễn Văn An",
-    guestAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80",
+    guestAvatar:
+      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80",
     propertyTitle: "Luxury Oceanfront Horizon Villa Mỹ Khê",
     dates: "12/10 - 15/10/2026",
     guests: 4,
@@ -489,7 +508,8 @@ export const MOCK_HOST_BOOKING_REQUESTS = [
   {
     id: "REQ-902",
     guestName: "Lê Hoàng Yến",
-    guestAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80",
+    guestAvatar:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80",
     propertyTitle: "The Song Vung Tau Luxury Seaview",
     dates: "20/10 - 22/10/2026",
     guests: 2,
@@ -499,7 +519,8 @@ export const MOCK_HOST_BOOKING_REQUESTS = [
   {
     id: "REQ-903",
     guestName: "David Miller",
-    guestAvatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=100&q=80",
+    guestAvatar:
+      "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=100&q=80",
     propertyTitle: "Dalat Pine Chalet with Garden",
     dates: "28/10 - 31/10/2026",
     guests: 3,
@@ -509,7 +530,8 @@ export const MOCK_HOST_BOOKING_REQUESTS = [
   {
     id: "REQ-899",
     guestName: "Phạm Minh Tuấn",
-    guestAvatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=100&q=80",
+    guestAvatar:
+      "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=100&q=80",
     propertyTitle: "Luxury Oceanfront Horizon Villa Mỹ Khê",
     dates: "01/10 - 05/10/2026",
     guests: 6,

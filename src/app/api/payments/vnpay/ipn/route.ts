@@ -8,14 +8,20 @@ export async function GET(request: Request) {
   const query = Object.fromEntries(new URL(request.url).searchParams);
   const payment = await prisma.payment.findUnique({
     where: { providerTxnRef: query.vnp_TxnRef },
-    include: { booking: { include: { guest: true, property: true, discountCode: true } } },
+    include: {
+      booking: { include: { guest: true, property: true, discountCode: true } },
+    },
   });
 
-  if (!payment) return NextResponse.json({ RspCode: "01", Message: "Payment not found" });
-  if (!verifyIpn(query, Number(payment.amount)).valid) return NextResponse.json({ RspCode: "97", Message: "Invalid checksum" });
-  if (payment.status === "SUCCESS") return NextResponse.json({ RspCode: "00", Message: "OK" });
+  if (!payment)
+    return NextResponse.json({ RspCode: "01", Message: "Payment not found" });
+  if (!verifyIpn(query, Number(payment.amount)).valid)
+    return NextResponse.json({ RspCode: "97", Message: "Invalid checksum" });
+  if (payment.status === "SUCCESS")
+    return NextResponse.json({ RspCode: "00", Message: "OK" });
 
-  const success = query.vnp_ResponseCode === "00" && query.vnp_TransactionStatus === "00";
+  const success =
+    query.vnp_ResponseCode === "00" && query.vnp_TransactionStatus === "00";
 
   let shouldSendEmail = false;
 

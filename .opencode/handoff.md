@@ -1,51 +1,49 @@
-# Task: corrected Vietnamese final report (2)
+# Demo property replacement
 
-## Project, selection, lock
-- Root: /home/hodangthaiduy/Workspace/Projects/StayHub_NextJS
-- Revision: 50b4b9fae41aa49211b6235c86096dda79e7e9fa
-- Provider/model: openai/gpt-6.1-sol. Controller profile delegation only; do not switch models or spawn tasks.
-- OpenArms package: docs (technical-writing and archify loaded). Task lock: this report revision only. No skill filesystem discovery/reading allowed. Already authorized principles: verify against source; clear natural Vietnamese; use focused diagrams with accurate relationships and cardinalities; black text/borders/arrows on white; review structure, correctness, completeness and prose. Do not load unrelated packages.
-- Scouts: explore / ses_eb753ae45ffeQqVjfOIsD3gYeX and ses_eb7531aadffeTMfVAzYP7WGscy.
-- Implementer: general / ses_eb751ac83ffeU7alwy7L9hyA0q (blocked on paths); completed fresh implementer general / ses_eb750ad2fffeBxDRNatVqFmXRH.
+## Project and selection
 
-## Completion
-Created requested (2).docx and matching 68-page PDF, generator/render scripts and report_2_assets QA/source diagrams. Controller independently reran generator --check: PASS (63 tables, 19 images, 24 UC, seven exact screenshots, monochrome diagrams, headers/TOC, unchanged input hashes). pdfinfo confirms 68 A4 pages. No application files changed. Separate new academic template absent; institution name differs across original and (1); report retains original institution. See docx/report_2_assets/QA.md for visual review and limitations.
+- Project: StayHub_NextJS, revision 592bdf1b5d5e4de659fcf18ad6847ce6d89d578d; initial working tree clean.
+- Provider/model: openai/gpt-6.1-sol. Scouts: explore / ses_eaf7b32fbffeBpF1g2EDl1M1bf and ses_eaf7581fcffeTKcsNVvM0xTJUK. Initial implementer: general / ses_eaf75e328ffegsKruurztj6UV8 (stopped with no changes); fresh replacement implementer session recorded after launch.
+- OpenArms: docs:archify available, not loaded because this is data implementation, not architecture documentation. No skill package active. Task lock: replace demo properties only; do not access skill files or spawn tasks.
 
-## User scope
-Create docx/Nhom05_BaoCaoCuoiKy (2).docx from original and (1), checking docs and actual source. Preserve both input reports. Windows user paths map to this Linux project.
-Resolve: uppercase cover with suitable spacing and accurate title; review pages and acknowledgments; missing header; business requirements and UC specifications following supplied new academic template; move processing design after UI and improve simplistic sequences; correct logical data model (not confused with logic flow/physical-only schematic); accurate screen navigation; UI analysis matching new template and actual screenshots; work allocation as bullets. Remove prose such as 'nguồn ở', 'nội dung dựa trên mẫu', internal source paths and template/AI metacommentary. Do not remove legitimate bibliography just because user dislikes metacommentary. Every generated diagram uses black text, frames and arrows. User explicitly requests diagrams in DOCX, so rendered image artifacts are appropriate; retain portable Mermaid source if used.
+## Authorized scope
 
-## Discovery/progress and limitations
-Scouts found sources but could not execute shell/archive tooling; DOCX contents/templates/renderers remain UNVERIFIED. Do not assume their speculative instruction to replace (1) or create a new template: neither is requested. Inspect both archives and all supplied templates before choosing edits. Use Python zipfile/python-docx through terminal for binary files, not plain Read. Full source-backed report required, not a short summary.
-- Existing user work: modified docs/product/screen-reference.md; untracked docs/product/image.png and image-1.png through image-6.png. Preserve these.
-- Reports: docx/Nhom05_BaoCaoCuoiKy.docx and docx/Nhom05_BaoCaoCuoiKy (1).docx.
-- Feedback: docx/note.md.
-- Screens: docs/product/screen-reference.md, seven image*.png (home, search, detail, booking/payment, my bookings, host dashboard, admin). Read actual images and reference mapping.
-- Useful docs: docs/business/overview.md, docs/architecture/use-cases.md, docs/data/relational-model.md, docs/contributing/conventions.md.
-- Actual schema: prisma/schema.prisma. Source: src/services/booking.service.ts; src/app/api/payments/vnpay/verify/route.ts; inspect IPN endpoint too.
-- Known concerns to verify: overlap check precedes creation transaction (no concurrency-safe DB exclusion); cancellation changes booking but not necessarily payment; verify return route also mutates payment/booking so do not claim IPN is only mutation path; no automatic COMPLETED transition may block normal reviews. Distinguish scope/design from implemented limitations accurately.
-- No AGENTS.md found by scouts, but mandatory project guidance/checks still need confirmation.
+User explicitly confirms configured database is demo and authorizes permanent deletion of ALL old properties and their bookings, payments, reviews. Replace with exactly 20 new plausible demo properties at Vietnamese tourist destinations, each >=3 usable photos, all owned by existing host@stayhub.com. Grant HOST if absent. Preserve existing password; do not reset it or embed plaintext credentials anywhere. Preserve unrelated users, roles and data. If database target or destructive dependencies prove unclear, stop and report.
+User has no images. Use attributable, permitted illustrative images relevant to destination; never imply verified photos of actual accommodation. Prefer reliably downloaded local assets if feasible; verify availability before DB deletion. Disclose illustrative nature in data/documentation. Do not claim location verification without evidence.
 
-## Execution
-Confirmed follow-up inventory (scout explore ses_eb7512fe0ffewEjU4WznKo3p7b): NO separate academic template in docs or docx, NO existing report generator scripts, NO AGENTS.md. docx contains exactly two reports and note.md. Do not block on missing template or invent one: inspect both reports, use sensible academic structure and preserve suitable (1) tables; disclose template limitation in delivery, NOT boilerplate in report. User has been informed. Exact IPN source: src/app/api/payments/vnpay/ipn/route.ts. Mandatory named guidance: README.md, docs/contributing/conventions.md, package.json. No app changes/build required. Available tools verified: Python 3.14.7, python-docx, Pillow, libreoffice, dot, pdftoppm, pdfinfo; no fitz/mmdc. You may read named reports with Python zipfile, inspect their full contents/relationships and screenshots, and execute generation/rendering/QA via terminal. Named relevant directories prisma, src/services, src/app, docs and docx are valid implementation inputs; read files needed to substantiate report, do not delegate. Task is not blocked on absent templates. Preserve input files. User requested (2), NOT replacement of (1).
+## Findings and implementation targets
 
-1. Inspect DOCX text/tables/images/sections, academic templates and existing generator scripts/tool availability. Use appropriate terminal tooling if available; if unavailable report concrete blocker immediately, never claim delivery.
-2. Preserve useful academic material and identity/student/lecturer facts from input. Revise structure/content comprehensively using actual template, schema and screens; never invent names or evaluation results.
-3. Produce (2).docx with coherent chapter/figure/table numbering, readable tables/diagrams, headers/footers, acknowledgments and usable TOC. New UI screenshots need purposeful descriptions, control/field tables and behavior/validation per actual supplied template.
-4. Validate file ZIP/XML integrity, presence of required sections/images, absence of forbidden metatext, diagram monochrome and cardinalities. Render DOCX to PDF if a renderer is available, inspect pages for clipping, blank overflow, headers and diagrams; fix problems. Do not claim visual QA if no renderer. Prefer provide optional PDF preview if rendered.
+- prisma/schema.prisma: properties, images, amenities, users, bookings, payments, reviews. Booking/review FKs restrict deletion; images/amenities cascade. Inspect full dependency graph before deletion.
+- src/app/api/properties/[id]/route.ts and src/services/property.service.ts only archive on DELETE; task requires real database deletion, not archive.
+- src/lib/auth.ts uses bcrypt credential checks and active users. Ensure host role through existing role model without dropping other roles.
+- src/lib/cloudinary.ts and src/app/api/properties/[id]/images/route.ts handle local/Cloudinary assets. Avoid deleting assets shared with unrelated entities. Report orphan cleanup if not safely possible.
+- src/schemas/property.schema.ts for valid property fields. Consult docs/data/properties.md, docs/data/relational-model.md, docs/contributing/getting-started.md, docs/contributing/conventions.md and any project AGENTS instructions. Never inspect skill files.
+- .env exists; load credentials without printing them. No DB inspection or write performed yet. No seed/test scripts exist currently.
 
-## Mandatory checks
-Identify and obey project instructions; docs-only work should not alter app/source or run unnecessary app build. At minimum run DOCX structural/content QA plus scoped git diff/status to ensure user files preserved. Discover available python-docx, LibreOffice, graphviz/Mermaid and PDF image tools, record actual commands and results. Any generator added must be reproducible and limited to report artifacts. Use apply_patch for edits to text/code. Never commit or push.
+## Work required
 
-## Return
-Exact created files, report changes, template used (or missing-template limitation), source-backed corrections, commands/QA results and any unresolved layout/template issues. Record your agent ID in this handoff when known; do not read skills or spawn tasks.
+1. Inspect named sources/instructions and configured DB safely. Read-only preflight counts and host status; avoid credential exposure. Determine image strategy and validate all 60+ images before destructive changes.
+2. Implement maintainable explicit opt-in demo reset/import script and compact provenance/data documentation as needed. Default safe/dry-run, strong destructive confirmation, no secret defaults. Validate dataset uniqueness, meaningful prices/descriptions, geography/coordinates, 3+ images and single cover per listing. Never fabricate an actual hotel identity/photo match.
+3. Execute authorized reset against configured demo DB, using transaction for dependency deletions and insertions. Preserve host password and unrelated records. Existing assets cleanup only when safe. Do not migrate/reset schema or delete unrelated users.
+4. Verify actual resulting DB has exactly 20 properties, sole correct host, >=3 usable images each, valid cover and coordinates, host active/HOST and all intended dependent old data removed. Provide before/after counts without secrets. Check image URLs via requests or local file existence.
+5. Run mandatory checks below; return precise changes, commands/results, DB verification and caveats. No commits.
 
-## Fresh implementation result
-- Provider/model: openai/gpt-6.1-sol; assigned role general. Fresh session ID is not exposed by runtime; not fabricated. Existing controller/scout IDs above retained. No tasks spawned, no model switch, no commit/push.
-- Produced `docx/Nhom05_BaoCaoCuoiKy (2).docx` and matching PDF preview, 68 A4 pages, 24 UC specifications, 63 tables, 19 figures (7 original screenshots + 12 monochrome diagrams).
-- Reproducible generators: `docx/generate_report_2.py`, `docx/render_report_2.py`; diagram sources and evidence in `docx/report_2_assets/`, including `QA.md` and `manifest.json`.
-- Input reports preserved with SHA-256 verification. Existing screenshot/reference work preserved. No app/source modifications or app build.
-- Source correction beyond old report: checkout/My Trips/Host/Admin now call API, search has service plus conditional mock fallback. Host has 3 KPI, Admin 4; no Messages/Reports/Accept-Decline menus on supplied screenshots. Host cancel UI conflicts with guest/admin-only cancel service. Revenue KPI sums successful payment amount, not net Host payout or service-fee revenue.
-- Verified booking overlap before transaction, post-commit URL construction, IPN AND verify mutation paths, missing verify amount check, non-atomic duplicate guards, callback-late state risk, cancellation not payment/refund, and Review COMPLETED prerequisite. Do not retain old test/build results as newly executed evidence.
-- No separate new academic template: use coherent academic layout; disclose limitation in delivery/QA, not template boilerplate in report. School name conflicts between inputs: cover retains original report's Công nghệ Kỹ thuật name.
-- Structural QA after final rendering PASS in 1.646 s; generation 3.20 s; UNO TOC update + DOCX/PDF 4.00 s; rasterization 3.46 s. Final PDF text/bounds/TOC spot checks PASS in 0.211 s: 68 pages, 14,499 extracted words, no out-of-safe-bounds words or blank overflow. All pages visually inspected via contact sheets with enlarged key pages and final changed dictionary pages. No clipping/blank overflow observed. Mermaid source retained but not Mermaid-rendered (mmdc absent).
+## Mandatory verification
+
+- Use package manager from lockfile; package scripts: lint, typecheck, build, format:check. Run lint and typecheck, Prisma validate, targeted prettier checks for changed text/code and build if environment supports. Clearly distinguish preexisting/environment failures.
+- Dry-run before execution; post-reset database invariants and image accessibility checks are mandatory. Never print DB URLs or secrets.
+
+## Progress
+
+- Source/docs scout complete. User destructive authorization and destination/image clarification complete.
+- Implementation and database execution completed by general / ses_eaf74f640ffek7D6VcUlF3fjW1, profile openai/gpt-6.1-sol.
+- Verified committed DB: 8 old properties replaced with 20 ACTIVE properties owned by the existing ACTIVE/HOST account; 60 image references, 3 distinct photos and one cover each. Bookings/payments 2 each -> 0; users preserved at 4; password hash unchanged.
+- Image disclosure: 15 licensed destination photos shared across listings in five destinations, with provenance and explicit fictional-accommodation descriptions. Old storage assets retained to avoid deleting potentially shared files.
+- Implementer reports passing smoke (2 tests), dry-run, committed DB/image decoding verification, lint, typecheck, Prisma validate, targeted formatting, build and diff check. Controller reviewed status/package diff and demo data documentation. No commits/pushes.
+
+## Controller clarifications after initial blocker
+
+- Scout confirmed no applicable AGENTS.md in project, checked ancestor Projects, or nested docs/prisma/public/src. No scripts directory exists yet. Ordinary source discovery is allowed for implementation; do not discover or read skills and do not spawn agents.
+- Property schema stores city/address, not coordinates. Do NOT add coordinate schema fields or migrations. Validate geographic consistency of city/address; optional coordinates in documentation/dataset are not required. All prior coordinate requirements mean city/address consistency where schema permits.
+- User.role is a single enum GUEST/HOST/ADMIN. Preserve HOST if present, promote GUEST to HOST. If existing host is ADMIN, stop and report instead of downgrading.
+- These clarifications resolve all initial implementer blockers; proceed with actual preflight, implementation and authorized DB operation.

@@ -28,17 +28,29 @@ interface SearchFilterSidebarProps {
   mode?: "desktop" | "mobile" | "both";
 }
 
-export function SearchFilterSidebar({ mode = "both" }: SearchFilterSidebarProps) {
+export function SearchFilterSidebar({
+  mode = "both",
+}: SearchFilterSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   // Local state initialized from searchParams
-  const [minPrice, setMinPrice] = React.useState(searchParams.get("minPrice") || "");
-  const [maxPrice, setMaxPrice] = React.useState(searchParams.get("maxPrice") || "");
-  const [selectedType, setSelectedType] = React.useState(searchParams.get("type") || "");
-  const [bedrooms, setBedrooms] = React.useState(searchParams.get("bedrooms") || "");
-  const [minRating, setMinRating] = React.useState(searchParams.get("minRating") || "");
+  const [minPrice, setMinPrice] = React.useState(
+    searchParams.get("minPrice") || ""
+  );
+  const [maxPrice, setMaxPrice] = React.useState(
+    searchParams.get("maxPrice") || ""
+  );
+  const [selectedType, setSelectedType] = React.useState(
+    searchParams.get("type") || ""
+  );
+  const [bedrooms, setBedrooms] = React.useState(
+    searchParams.get("bedrooms") || ""
+  );
+  const [minRating, setMinRating] = React.useState(
+    searchParams.get("minRating") || ""
+  );
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
 
   // Sync with searchParams

@@ -3,6 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Calendar,
@@ -64,7 +66,16 @@ interface BookingItem {
 }
 
 export default function BookingsPage() {
+  const { status: sessionStatus } = useSession();
+  const router = useRouter();
   const queryClient = useQueryClient();
+
+  React.useEffect(() => {
+    if (sessionStatus === "unauthenticated") {
+      router.replace("/login?callbackUrl=/bookings");
+    }
+  }, [sessionStatus, router]);
+
   const [activeTab, setActiveTab] = React.useState<string>("CONFIRMED");
   const [cancelTargetId, setCancelTargetId] = React.useState<string | null>(
     null
@@ -89,6 +100,7 @@ export default function BookingsPage() {
       const json = await res.json();
       return json.data || [];
     },
+    enabled: sessionStatus === "authenticated",
   });
 
   // Cancel booking mutation
@@ -140,6 +152,14 @@ export default function BookingsPage() {
     }
   };
 
+  if (sessionStatus === "loading" || sessionStatus === "unauthenticated") {
+    return (
+      <div className="flex min-h-[calc(100vh-72px)] items-center justify-center">
+        <Loader2 className="size-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Header */}
@@ -170,7 +190,10 @@ export default function BookingsPage() {
           <TabsTrigger value="CONFIRMED" className="shrink-0 sm:shrink px-3">
             Upcoming
           </TabsTrigger>
-          <TabsTrigger value="PENDING_PAYMENT" className="shrink-0 sm:shrink px-3">
+          <TabsTrigger
+            value="PENDING_PAYMENT"
+            className="shrink-0 sm:shrink px-3"
+          >
             Pending
           </TabsTrigger>
           <TabsTrigger value="COMPLETED" className="shrink-0 sm:shrink px-3">

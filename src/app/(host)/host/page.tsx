@@ -3,6 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Building2,
@@ -15,20 +17,17 @@ import {
   Loader2,
   Eye,
   Archive,
+  Edit3,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { formatPrice, formatDate } from "@/lib/utils";
+import {
+  AddPropertyModal,
+  EditPropertyModal,
+  type HostPropertyItem,
+} from "@/components/host";
 
 interface HostStats {
   totalBookings: number;
@@ -36,19 +35,7 @@ interface HostStats {
   activeProperties: number;
 }
 
-interface HostProperty {
-  id: string;
-  title: string;
-  city: string;
-  address: string;
-  pricePerNight: number;
-  cleaningFee: number;
-  maxGuests: number;
-  type: string;
-  status: "ACTIVE" | "INACTIVE";
-  ratingAvg: number;
-  images: { id: string; url: string; isCover: boolean }[];
-}
+type HostProperty = HostPropertyItem;
 
 interface HostBooking {
   id: string;
@@ -63,27 +50,24 @@ interface HostBooking {
 }
 
 export default function HostDashboardPage() {
+  const { status } = useSession();
+  const router = useRouter();
   const queryClient = useQueryClient();
+
+  React.useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/login?callbackUrl=/host");
+    }
+  }, [status, router]);
+
   const [activeMenu, setActiveMenu] = React.useState<
     "dashboard" | "properties" | "requests"
   >("dashboard");
   const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const [selectedPropertyForEdit, setSelectedPropertyForEdit] =
+    React.useState<HostPropertyItem | null>(null);
   const [toastMessage, setToastMessage] = React.useState<string | null>(null);
-
-  // Form State for Add Property Modal
-  const [newProp, setNewProp] = React.useState({
-    title: "",
-    description: "",
-    type: "HOMESTAY",
-    city: "Hà Nội",
-    address: "",
-    pricePerNight: 850000,
-    cleaningFee: 100000,
-    maxGuests: 4,
-    bedrooms: 2,
-    beds: 2,
-    bathrooms: 1,
-  });
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -99,6 +83,7 @@ export default function HostDashboardPage() {
       const json = await res.json();
       return json.data;
     },
+    enabled: status === "authenticated",
   });
 
   const { data: properties = [], isLoading: propsLoading } = useQuery<
@@ -111,6 +96,7 @@ export default function HostDashboardPage() {
       const json = await res.json();
       return json.data || [];
     },
+    enabled: status === "authenticated",
   });
 
   const { data: bookings = [], isLoading: bookingsLoading } = useQuery<
@@ -123,59 +109,40 @@ export default function HostDashboardPage() {
       const json = await res.json();
       return json.data || [];
     },
+    enabled: status === "authenticated",
   });
 
   // Mutations
-  const addPropertyMutation = useMutation({
-    mutationFn: async () => {
-      const res = await fetch("/api/properties", {
-        method: "POST",
+  const toggleStatusMutation = useMutation({
+    mutationFn: async ({
+      propId,
+      newStatus,
+    }: {
+      propId: string;
+      newStatus: "ACTIVE" | "INACTIVE";
+    }) => {
+      const res = await fetch(`/api/properties/${propId}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newProp),
+        body: JSON.stringify({ status: newStatus }),
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        throw new Error(json.message || "Không thể tạo chỗ ở mới");
+        throw new Error(json.message || "Lỗi cập nhật trạng thái chỗ ở");
       }
-      return json.data;
+      return json;
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["hostProperties"] });
       queryClient.invalidateQueries({ queryKey: ["hostStats"] });
-      setIsAddModalOpen(false);
-      showToast("Tạo chỗ ở mới thành công!");
-      setNewProp({
-        title: "",
-        description: "",
-        type: "HOMESTAY",
-        city: "Hà Nội",
-        address: "",
-        pricePerNight: 850000,
-        cleaningFee: 100000,
-        maxGuests: 4,
-        bedrooms: 2,
-        beds: 2,
-        bathrooms: 1,
-      });
+      showToast(
+        variables.newStatus === "ACTIVE"
+          ? "Đã kích hoạt lại chỗ ở thành công."
+          : "Đã lưu trữ chỗ ở thành công."
+      );
     },
     onError: (err: Error) => {
       showToast(err.message);
-    },
-  });
-
-  const archiveMutation = useMutation({
-    mutationFn: async (propId: string) => {
-      const res = await fetch(`/api/properties/${propId}`, {
-        method: "DELETE",
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.message || "Lỗi lưu trữ chỗ ở");
-      return json;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hostProperties"] });
-      queryClient.invalidateQueries({ queryKey: ["hostStats"] });
-      showToast("Đã lưu trữ chỗ ở thành công.");
     },
   });
 
@@ -195,6 +162,14 @@ export default function HostDashboardPage() {
       showToast("Đã cập nhật trạng thái đơn đặt phòng.");
     },
   });
+
+  if (status === "loading" || status === "unauthenticated") {
+    return (
+      <div className="flex min-h-[calc(100vh-72px)] items-center justify-center bg-muted/20">
+        <Loader2 className="size-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col lg:flex-row min-h-[calc(100vh-72px)] bg-muted/20">
@@ -460,13 +435,42 @@ export default function HostDashboardPage() {
                           </Link>
                         </Button>
                         <Button
+                          variant="default"
+                          size="sm"
+                          className="flex-1 text-xs font-bold shadow-xs"
+                          onClick={() => {
+                            setSelectedPropertyForEdit(prop);
+                            setIsEditModalOpen(true);
+                          }}
+                        >
+                          <Edit3 className="size-3.5 mr-1" /> Sửa
+                        </Button>
+                        <Button
                           variant="ghost"
                           size="sm"
-                          className="text-xs text-muted-foreground hover:text-destructive"
-                          onClick={() => archiveMutation.mutate(prop.id)}
-                          disabled={archiveMutation.isPending}
+                          className={`text-xs ${
+                            prop.status === "ACTIVE"
+                              ? "text-muted-foreground hover:text-destructive"
+                              : "text-emerald-600 hover:text-emerald-700 font-semibold"
+                          }`}
+                          onClick={() =>
+                            toggleStatusMutation.mutate({
+                              propId: prop.id,
+                              newStatus:
+                                prop.status === "ACTIVE" ? "INACTIVE" : "ACTIVE",
+                            })
+                          }
+                          disabled={toggleStatusMutation.isPending}
                         >
-                          <Archive className="size-3.5 mr-1" /> Lưu trữ
+                          {prop.status === "ACTIVE" ? (
+                            <>
+                              <Archive className="size-3.5 mr-1" /> Lưu trữ
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle2 className="size-3.5 mr-1" /> Kích hoạt
+                            </>
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -545,212 +549,20 @@ export default function HostDashboardPage() {
         )}
       </main>
 
-      {/* Modal Add Property (TSK-032) */}
-      <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Đăng thông tin chỗ ở mới</DialogTitle>
-            <DialogDescription>
-              Điền thông tin chi tiết về căn hộ hoặc nhà của bạn để hiển thị cho
-              du khách trên StayHub.
-            </DialogDescription>
-          </DialogHeader>
+      {/* Modal Add Property with Cloudinary Upload */}
+      <AddPropertyModal
+        open={isAddModalOpen}
+        onOpenChange={setIsAddModalOpen}
+        onSuccessToast={showToast}
+      />
 
-          <div className="space-y-4 py-2 text-xs">
-            <div>
-              <label className="font-semibold text-muted-foreground block mb-1">
-                Tiêu đề chỗ ở
-              </label>
-              <Input
-                placeholder="VD: Căn hộ Studio view hồ Tây lãng mạn"
-                value={newProp.title}
-                onChange={(e) =>
-                  setNewProp({ ...newProp, title: e.target.value })
-                }
-              />
-            </div>
-
-            <div>
-              <label className="font-semibold text-muted-foreground block mb-1">
-                Mô tả chi tiết
-              </label>
-              <textarea
-                rows={3}
-                className="w-full rounded-md border border-border bg-transparent p-2 text-xs text-foreground focus-visible:ring-1 focus-visible:ring-primary outline-none"
-                placeholder="Mô tả không gian, tiện ích, vị trí và trải nghiệm..."
-                value={newProp.description}
-                onChange={(e) =>
-                  setNewProp({ ...newProp, description: e.target.value })
-                }
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="font-semibold text-muted-foreground block mb-1">
-                  Loại hình
-                </label>
-                <select
-                  value={newProp.type}
-                  onChange={(e) =>
-                    setNewProp({ ...newProp, type: e.target.value })
-                  }
-                  className="w-full rounded-md border border-border bg-card p-2 text-xs text-foreground outline-none"
-                >
-                  <option value="HOMESTAY">Homestay</option>
-                  <option value="APARTMENT">Căn hộ</option>
-                  <option value="VILLA">Biệt thự</option>
-                  <option value="HOUSE">Nhà nguyên căn</option>
-                  <option value="HOTEL_ROOM">Khách sạn</option>
-                  <option value="RESORT">Resort</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="font-semibold text-muted-foreground block mb-1">
-                  Thành phố
-                </label>
-                <Input
-                  value={newProp.city}
-                  onChange={(e) =>
-                    setNewProp({ ...newProp, city: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="font-semibold text-muted-foreground block mb-1">
-                Địa chỉ chi tiết
-              </label>
-              <Input
-                placeholder="VD: 123 Đường Yên Phụ, Ba Đình, Hà Nội"
-                value={newProp.address}
-                onChange={(e) =>
-                  setNewProp({ ...newProp, address: e.target.value })
-                }
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="font-semibold text-muted-foreground block mb-1">
-                  Giá mỗi đêm (VND)
-                </label>
-                <Input
-                  type="number"
-                  value={newProp.pricePerNight}
-                  onChange={(e) =>
-                    setNewProp({
-                      ...newProp,
-                      pricePerNight: Number(e.target.value),
-                    })
-                  }
-                />
-              </div>
-
-              <div>
-                <label className="font-semibold text-muted-foreground block mb-1">
-                  Phí dọn dẹp (VND)
-                </label>
-                <Input
-                  type="number"
-                  value={newProp.cleaningFee}
-                  onChange={(e) =>
-                    setNewProp({
-                      ...newProp,
-                      cleaningFee: Number(e.target.value),
-                    })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-4 gap-2">
-              <div>
-                <label className="font-semibold text-muted-foreground block mb-1">
-                  Khách tối đa
-                </label>
-                <Input
-                  type="number"
-                  value={newProp.maxGuests}
-                  onChange={(e) =>
-                    setNewProp({
-                      ...newProp,
-                      maxGuests: Number(e.target.value),
-                    })
-                  }
-                />
-              </div>
-              <div>
-                <label className="font-semibold text-muted-foreground block mb-1">
-                  Phòng ngủ
-                </label>
-                <Input
-                  type="number"
-                  value={newProp.bedrooms}
-                  onChange={(e) =>
-                    setNewProp({ ...newProp, bedrooms: Number(e.target.value) })
-                  }
-                />
-              </div>
-              <div>
-                <label className="font-semibold text-muted-foreground block mb-1">
-                  Số giường
-                </label>
-                <Input
-                  type="number"
-                  value={newProp.beds}
-                  onChange={(e) =>
-                    setNewProp({ ...newProp, beds: Number(e.target.value) })
-                  }
-                />
-              </div>
-              <div>
-                <label className="font-semibold text-muted-foreground block mb-1">
-                  Phòng tắm
-                </label>
-                <Input
-                  type="number"
-                  value={newProp.bathrooms}
-                  onChange={(e) =>
-                    setNewProp({
-                      ...newProp,
-                      bathrooms: Number(e.target.value),
-                    })
-                  }
-                />
-              </div>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsAddModalOpen(false)}
-              disabled={addPropertyMutation.isPending}
-            >
-              Huỷ
-            </Button>
-            <Button
-              onClick={() => addPropertyMutation.mutate()}
-              disabled={
-                addPropertyMutation.isPending ||
-                !newProp.title ||
-                !newProp.address
-              }
-            >
-              {addPropertyMutation.isPending ? (
-                <>
-                  <Loader2 className="mr-2 size-4 animate-spin" /> Đang tạo...
-                </>
-              ) : (
-                "Xác nhận tạo chỗ ở"
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Modal Edit Property with details and photo gallery */}
+      <EditPropertyModal
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        property={selectedPropertyForEdit}
+        onSuccessToast={showToast}
+      />
     </div>
   );
 }

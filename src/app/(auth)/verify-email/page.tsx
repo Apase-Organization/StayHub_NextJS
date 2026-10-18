@@ -46,7 +46,10 @@ function VerifyForm() {
   const handleResend = async () => {
     const email = getValues("email")?.trim();
     if (!email) {
-      setResendStatus({ loading: false, error: "Please enter your email above first." });
+      setResendStatus({
+        loading: false,
+        error: "Please enter your email above first.",
+      });
       return;
     }
 
@@ -63,7 +66,8 @@ function VerifyForm() {
       if (!res.ok || !data.success) {
         setResendStatus({
           loading: false,
-          error: data.message || "Failed to resend code. Please try again later.",
+          error:
+            data.message || "Failed to resend code. Please try again later.",
         });
         return;
       }
@@ -163,8 +167,8 @@ function VerifyForm() {
                 {resendStatus.loading
                   ? "Sending…"
                   : cooldown > 0
-                  ? `Resend in ${cooldown}s`
-                  : "Resend code"}
+                    ? `Resend in ${cooldown}s`
+                    : "Resend code"}
               </button>
             </div>
             <Input
@@ -214,7 +218,8 @@ function VerifyForm() {
             <Link href="/login">Back to login</Link>
           </Button>
           <p className="text-xs text-muted-foreground">
-            No code? Check your spam folder or click &ldquo;Resend code&rdquo; above.
+            No code? Check your spam folder or click &ldquo;Resend code&rdquo;
+            above.
           </p>
         </div>
       </div>

@@ -15,8 +15,13 @@ import { POPULAR_DESTINATIONS, MOCK_PROPERTIES } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { displayPlace } from "@/lib/auth-ui";
 import { listProperties } from "@/services/property.service";
+import { auth } from "@/lib/auth";
 
 export default async function HomePage() {
+  const session = await auth();
+  const isHostOrAdmin =
+    session?.user?.role === "HOST" || session?.user?.role === "ADMIN";
+
   // Fetch real properties from database using Prisma service (TSK-028)
   let properties: Awaited<ReturnType<typeof listProperties>>["properties"] = [];
   try {
@@ -59,7 +64,8 @@ export default async function HomePage() {
             Khám phá kỳ nghỉ hoàn hảo của bạn
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-sm sm:text-base text-slate-200">
-            Trải nghiệm các homestay duyên dáng, căn hộ cao cấp và biệt thự ven biển trên khắp Việt Nam. Thanh toán an toàn qua cổng VNPay.
+            Trải nghiệm các homestay duyên dáng, căn hộ cao cấp và biệt thự ven
+            biển trên khắp Việt Nam. Thanh toán an toàn qua cổng VNPay.
           </p>
 
           {/* Search Bar Pill */}
@@ -81,7 +87,8 @@ export default async function HomePage() {
               Điểm đến nổi bật (Popular Destinations)
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Các thành phố du lịch được yêu thích nhất với hàng trăm chỗ ở lý tưởng
+              Các thành phố du lịch được yêu thích nhất với hàng trăm chỗ ở lý
+              tưởng
             </p>
           </div>
 
@@ -140,7 +147,8 @@ export default async function HomePage() {
                 Chỗ ở nổi bật (Featured Properties)
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Được đánh giá cao và đặt nhiều nhất bởi cộng đồng du lịch StayHub
+                Được đánh giá cao và đặt nhiều nhất bởi cộng đồng du lịch
+                StayHub
               </p>
             </div>
 
@@ -165,7 +173,8 @@ export default async function HomePage() {
             Du lịch an tâm cùng StayHub
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Bảo vệ toàn diện, thanh toán an toàn và hỗ trợ tận tình trong mỗi chuyến đi
+            Bảo vệ toàn diện, thanh toán an toàn và hỗ trợ tận tình trong mỗi
+            chuyến đi
           </p>
         </div>
 
@@ -178,7 +187,8 @@ export default async function HomePage() {
               Bảo vệ StayCover
             </h3>
             <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-              Cam kết chỗ ở chính xác như hình ảnh mô tả. Đảm bảo hoàn tiền hoặc đổi phòng nếu có vấn đề.
+              Cam kết chỗ ở chính xác như hình ảnh mô tả. Đảm bảo hoàn tiền hoặc
+              đổi phòng nếu có vấn đề.
             </p>
           </div>
 
@@ -190,7 +200,8 @@ export default async function HomePage() {
               Cổng thanh toán VNPay
             </h3>
             <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-              Giao dịch trực tuyến nhanh chóng, bảo mật qua QR-Code và thẻ ngân hàng Việt Nam.
+              Giao dịch trực tuyến nhanh chóng, bảo mật qua QR-Code và thẻ ngân
+              hàng Việt Nam.
             </p>
           </div>
 
@@ -202,45 +213,49 @@ export default async function HomePage() {
               Hỗ trợ khách hàng 24/7
             </h3>
             <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-              Đội ngũ tư vấn luôn sẵn sàng giải đáp thắc mắc và hỗ trợ nhận phòng bất cứ lúc nào.
+              Đội ngũ tư vấn luôn sẵn sàng giải đáp thắc mắc và hỗ trợ nhận
+              phòng bất cứ lúc nào.
             </p>
           </div>
         </div>
       </section>
 
-      {/* 5. Become a Host Banner */}
-      <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8 w-full">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 to-slate-800 p-8 sm:p-14 text-white shadow-xl">
-          <div className="relative z-10 max-w-xl">
-            <span className="text-xs font-bold uppercase tracking-wider text-primary">
-              Cộng tác cùng StayHub
-            </span>
-            <h2 className="mt-2 text-2xl sm:text-4xl font-extrabold leading-tight">
-              Bạn có phòng hoặc nhà muốn cho thuê?
-            </h2>
-            <p className="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed">
-              Gia nhập mạng lưới Host của StayHub để tiếp cận hàng triệu du khách và quản lý doanh thu dễ dàng.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-4">
-              <Button
-                asChild
-                size="lg"
-                className="rounded-full bg-primary text-white hover:bg-primary/90 font-bold px-7"
-              >
-                <Link href="/host">Trở thành Host ngay</Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                size="lg"
-                className="rounded-full border-white/20 bg-white/10 text-white hover:bg-white/20 font-bold px-7"
-              >
-                <Link href="/host">Tìm hiểu thêm</Link>
-              </Button>
+      {/* 5. Become a Host Banner (Hidden for GUEST / unauthenticated visitors) */}
+      {isHostOrAdmin && (
+        <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8 w-full">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 to-slate-800 p-8 sm:p-14 text-white shadow-xl">
+            <div className="relative z-10 max-w-xl">
+              <span className="text-xs font-bold uppercase tracking-wider text-primary">
+                Cộng tác cùng StayHub
+              </span>
+              <h2 className="mt-2 text-2xl sm:text-4xl font-extrabold leading-tight">
+                Bạn có phòng hoặc nhà muốn cho thuê?
+              </h2>
+              <p className="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed">
+                Gia nhập mạng lưới Host của StayHub để tiếp cận hàng triệu du
+                khách và quản lý doanh thu dễ dàng.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-4">
+                <Button
+                  asChild
+                  size="lg"
+                  className="rounded-full bg-primary text-white hover:bg-primary/90 font-bold px-7"
+                >
+                  <Link href="/host">Trở thành Host ngay</Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="rounded-full border-white/20 bg-white/10 text-white hover:bg-white/20 font-bold px-7"
+                >
+                  <Link href="/host">Tìm hiểu thêm</Link>
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

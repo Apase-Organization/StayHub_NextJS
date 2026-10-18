@@ -1,7 +1,8 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
+import { auth } from "@/lib/auth";
 import { getProperty } from "@/services/property.service";
 import { BookingForm } from "@/components/booking/BookingForm";
 
@@ -20,6 +21,17 @@ export default async function BookPropertyPage({
 }: BookPageProps) {
   const { id } = await params;
   const { checkIn, checkOut, guests } = await searchParams;
+
+  const session = await auth();
+  if (!session?.user) {
+    const bookingParams = new URLSearchParams();
+    if (checkIn) bookingParams.set("checkIn", checkIn);
+    if (checkOut) bookingParams.set("checkOut", checkOut);
+    if (guests) bookingParams.set("guests", guests);
+    const query = bookingParams.toString();
+    const callbackUrl = `/properties/${id}/book${query ? `?${query}` : ""}`;
+    redirect(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+  }
 
   const property = await getProperty(id);
   if (!property) {

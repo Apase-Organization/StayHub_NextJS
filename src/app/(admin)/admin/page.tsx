@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Users,
@@ -53,12 +55,24 @@ interface AdminBookingsResponse {
 }
 
 export default function AdminDashboardPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    if (status === "loading") return;
+    if (status === "unauthenticated" || session?.user?.role !== "ADMIN") {
+      router.replace("/");
+    }
+  }, [status, session, router]);
+
   const [activeTab, setActiveTab] = React.useState<"dashboard" | "bookings">(
     "dashboard"
   );
   const [searchQuery, setSearchQuery] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState("");
   const [page, setPage] = React.useState(1);
+
+  const isAdmin = status === "authenticated" && session?.user?.role === "ADMIN";
 
   // 1. Fetch Stats via React Query (TSK-021)
   const { data: stats, isLoading: statsLoading } = useQuery<AdminStats>({
@@ -69,6 +83,7 @@ export default function AdminDashboardPage() {
       const json = await res.json();
       return json.data;
     },
+    enabled: isAdmin,
   });
 
   // 2. Fetch Bookings via React Query (TSK-021)
@@ -87,6 +102,7 @@ export default function AdminDashboardPage() {
         const json = await res.json();
         return json.data;
       },
+      enabled: isAdmin,
     });
 
   const bookings = bookingsData?.bookings || [];
@@ -123,6 +139,14 @@ export default function AdminDashboardPage() {
         return <Badge variant="outline">{status}</Badge>;
     }
   };
+
+  if (!isAdmin) {
+    return (
+      <div className="flex min-h-[calc(100vh-72px)] items-center justify-center bg-muted/20">
+        <Loader2 className="size-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col lg:flex-row min-h-[calc(100vh-72px)] bg-muted/20">
@@ -211,7 +235,11 @@ export default function AdminDashboardPage() {
         {/* Mobile Navigation Tabs */}
         <div className="flex lg:hidden items-center gap-1.5 p-1 rounded-xl bg-card border border-border mb-6 text-xs font-semibold">
           {[
-            { id: "dashboard", label: "Tổng quan hệ thống", icon: LayoutDashboard },
+            {
+              id: "dashboard",
+              label: "Tổng quan hệ thống",
+              icon: LayoutDashboard,
+            },
             { id: "bookings", label: "Đơn đặt phòng", icon: Calendar },
           ].map((item) => {
             const Icon = item.icon;

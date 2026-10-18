@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import {
@@ -109,23 +110,23 @@ export function Navbar() {
 
         {/* 3. Right: Navigation, Host Link, User Menu */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {!isAuthPage && (
-            <>
-              <Link
-                href="/host"
-                className="hidden rounded-full px-3.5 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted lg:inline-block"
-              >
-                Become a host
-              </Link>
+          {!isAuthPage && (userRole === "HOST" || userRole === "ADMIN") && (
+            <Link
+              href="/host"
+              className="hidden rounded-full px-3.5 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted lg:inline-block"
+            >
+              Host Dashboard
+            </Link>
+          )}
 
-              <span
-                aria-label="English, VND"
-                title="English · VND"
-                className="hidden rounded-full p-2 text-foreground md:inline-flex"
-              >
-                <Globe className="size-5" />
-              </span>
-            </>
+          {!isAuthPage && (
+            <span
+              aria-label="English, VND"
+              title="English · VND"
+              className="hidden rounded-full p-2 text-foreground md:inline-flex"
+            >
+              <Globe className="size-5" />
+            </span>
           )}
 
           {/* User Menu Dropdown Button */}
@@ -141,8 +142,17 @@ export function Navbar() {
               aria-label="Account menu"
             >
               <Menu className="size-4 text-foreground" />
-              <div className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                <User className="size-4" />
+              <div className="relative flex size-7 items-center justify-center overflow-hidden rounded-full bg-muted text-muted-foreground">
+                {session?.user?.image ? (
+                  <Image
+                    src={session.user.image}
+                    alt={session.user.name || "Avatar"}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <User className="size-4" />
+                )}
               </div>
             </button>
 
@@ -169,7 +179,17 @@ export function Navbar() {
 
                     <div className="py-1">
                       <Link
+                        href="/profile"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-muted font-medium"
+                      >
+                        <User className="size-4 text-muted-foreground" />
+                        Hồ sơ cá nhân
+                      </Link>
+
+                      <Link
                         href="/bookings"
+                        onClick={() => setIsMenuOpen(false)}
                         className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-muted"
                       >
                         <Calendar className="size-4 text-muted-foreground" />
@@ -225,12 +245,6 @@ export function Navbar() {
                       </Link>
                     </div>
                     <div className="border-t border-border py-1">
-                      <Link
-                        href="/host"
-                        className="block px-4 py-2 text-sm text-foreground hover:bg-muted"
-                      >
-                        Become a host
-                      </Link>
                       <Link
                         href="/search"
                         className="block px-4 py-2 text-sm text-foreground hover:bg-muted"
@@ -311,18 +325,20 @@ export function Navbar() {
                 <Search className="size-4 text-primary" />
                 Search stays
               </Link>
-              <Link
-                href="/host"
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
-              >
-                <Building2 className="size-4 text-primary" />
-                Become a host
-              </Link>
 
               {status === "authenticated" ? (
                 <>
                   <Link
+                    href="/profile"
+                    onClick={() => setIsMobileNavOpen(false)}
+                    className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+                  >
+                    <User className="size-4 text-primary" />
+                    Hồ sơ cá nhân
+                  </Link>
+                  <Link
                     href="/bookings"
+                    onClick={() => setIsMobileNavOpen(false)}
                     className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
                   >
                     <Calendar className="size-4 text-primary" />

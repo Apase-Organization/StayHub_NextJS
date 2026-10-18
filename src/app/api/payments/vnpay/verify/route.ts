@@ -11,7 +11,9 @@ export async function POST(request: Request) {
     const query = body.query as Record<string, string>;
 
     if (!query || !query.vnp_TxnRef) {
-      return NextResponse.json(fail("Thiếu thông tin giao dịch"), { status: 400 });
+      return NextResponse.json(fail("Thiếu thông tin giao dịch"), {
+        status: 400,
+      });
     }
 
     const payment = await prisma.payment.findUnique({
@@ -24,12 +26,16 @@ export async function POST(request: Request) {
     });
 
     if (!payment) {
-      return NextResponse.json(fail("Không tìm thấy giao dịch thanh toán"), { status: 404 });
+      return NextResponse.json(fail("Không tìm thấy giao dịch thanh toán"), {
+        status: 404,
+      });
     }
 
     const verifyResult = verifyReturn(query);
     if (!verifyResult.valid) {
-      return NextResponse.json(fail("Chữ ký VNPay không hợp lệ"), { status: 400 });
+      return NextResponse.json(fail("Chữ ký VNPay không hợp lệ"), {
+        status: 400,
+      });
     }
 
     const success = query.vnp_ResponseCode === "00";
@@ -98,6 +104,8 @@ export async function POST(request: Request) {
       })
     );
   } catch {
-    return NextResponse.json(fail("Lỗi hệ thống khi xác minh thanh toán"), { status: 500 });
+    return NextResponse.json(fail("Lỗi hệ thống khi xác minh thanh toán"), {
+      status: 500,
+    });
   }
 }

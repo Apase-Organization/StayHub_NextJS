@@ -11,21 +11,22 @@ export async function GET() {
   if (session.user.role !== "ADMIN")
     return NextResponse.json(fail("Không có quyền"), { status: 403 });
 
-  const [totalUsers, activeHosts, bookingsToday, revenueAgg] = await Promise.all([
-    prisma.user.count(),
-    prisma.user.count({ where: { role: "HOST", status: "ACTIVE" } }),
-    prisma.booking.count({
-      where: {
-        createdAt: {
-          gte: new Date(new Date().setHours(0, 0, 0, 0)),
+  const [totalUsers, activeHosts, bookingsToday, revenueAgg] =
+    await Promise.all([
+      prisma.user.count(),
+      prisma.user.count({ where: { role: "HOST", status: "ACTIVE" } }),
+      prisma.booking.count({
+        where: {
+          createdAt: {
+            gte: new Date(new Date().setHours(0, 0, 0, 0)),
+          },
         },
-      },
-    }),
-    prisma.payment.aggregate({
-      where: { status: "SUCCESS" },
-      _sum: { amount: true },
-    }),
-  ]);
+      }),
+      prisma.payment.aggregate({
+        where: { status: "SUCCESS" },
+        _sum: { amount: true },
+      }),
+    ]);
 
   return NextResponse.json(
     ok({
