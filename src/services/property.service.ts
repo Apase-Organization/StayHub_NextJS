@@ -76,13 +76,14 @@ export async function createProperty(
   hostId: string,
   data: z.infer<typeof propertySchema>
 ) {
+  const { amenityIds, ...propertyData } = data;
   const property = await prisma.property.create({
     data: {
-      ...data,
+      ...propertyData,
       status: "ACTIVE",
       hostId,
       amenities: {
-        create: data.amenityIds.map((amenityId) => ({ amenityId })),
+        create: (amenityIds || []).map((amenityId) => ({ amenityId })),
       },
     },
     include,

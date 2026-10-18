@@ -80,17 +80,20 @@ export default function ProfilePage() {
     data: profile,
     isLoading,
     isError,
+    error,
+    refetch,
   } = useQuery<UserProfileData>({
     queryKey: ["userProfile"],
     queryFn: async () => {
       const res = await fetch("/api/user/profile");
-      if (!res.ok) {
-        throw new Error("Lỗi khi tải thông tin hồ sơ");
-      }
       const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.message || "Lỗi khi tải thông tin hồ sơ");
+      }
       return json.data;
     },
     enabled: status === "authenticated",
+    retry: 1,
   });
 
   // Edit Profile Form state
@@ -253,11 +256,16 @@ export default function ProfilePage() {
         <AlertCircle className="mx-auto size-10 text-destructive mb-3" />
         <h2 className="text-xl font-bold">Không thể tải thông tin hồ sơ</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Vui lòng thử lại sau hoặc đăng nhập lại tài khoản.
+          {error?.message || "Vui lòng thử lại sau hoặc đăng nhập lại tài khoản."}
         </p>
-        <Button onClick={() => router.push("/login")} className="mt-4">
-          Đăng nhập lại
-        </Button>
+        <div className="mt-4 flex items-center justify-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => refetch()}>
+            Thử lại
+          </Button>
+          <Button size="sm" onClick={() => router.push("/login")}>
+            Đăng nhập lại
+          </Button>
+        </div>
       </div>
     );
   }
