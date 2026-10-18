@@ -63,7 +63,9 @@ export async function POST(request: Request, { params }: Context) {
   for (const file of files) {
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
-        fail(`Định dạng không hỗ trợ (${file.name}). Vui lòng chọn JPEG, PNG hoặc WebP`),
+        fail(
+          `Định dạng không hỗ trợ (${file.name}). Vui lòng chọn JPEG, PNG hoặc WebP`
+        ),
         { status: 400 }
       );
     }
@@ -116,14 +118,15 @@ export async function DELETE(request: Request, { params }: Context) {
   const imageId = url.searchParams.get("imageId");
 
   if (!publicId && !imageId) {
-    return NextResponse.json(
-      fail("Thiếu publicId hoặc imageId"),
-      { status: 400 }
-    );
+    return NextResponse.json(fail("Thiếu publicId hoặc imageId"), {
+      status: 400,
+    });
   }
 
   const targetImage = imageId
-    ? await prisma.propertyImage.findUnique({ where: { id: imageId } })
+    ? await prisma.propertyImage.findFirst({
+        where: { id: imageId, propertyId: id },
+      })
     : await prisma.propertyImage.findFirst({
         where: { propertyId: id, publicId: publicId! },
       });
@@ -140,7 +143,9 @@ export async function DELETE(request: Request, { params }: Context) {
     }
   }
 
-  await prisma.propertyImage.delete({ where: { id: targetImage.id } });
+  await prisma.propertyImage.delete({
+    where: { id: targetImage.id, propertyId: id },
+  });
 
   // If deleted image was cover, promote another image to cover
   if (targetImage.isCover) {
@@ -150,7 +155,7 @@ export async function DELETE(request: Request, { params }: Context) {
     });
     if (nextImage) {
       await prisma.propertyImage.update({
-        where: { id: nextImage.id },
+        where: { id: nextImage.id, propertyId: id },
         data: { isCover: true },
       });
     }
@@ -168,13 +173,20 @@ export async function PATCH(request: Request, { params }: Context) {
   if (!imageId)
     return NextResponse.json(fail("Thiếu imageId"), { status: 400 });
 
+  const targetImage = await prisma.propertyImage.findFirst({
+    where: { id: imageId, propertyId: id },
+  });
+  if (!targetImage) {
+    return NextResponse.json(fail("Không tìm thấy hình ảnh"), { status: 404 });
+  }
+
   await prisma.$transaction([
     prisma.propertyImage.updateMany({
       where: { propertyId: id },
       data: { isCover: false },
     }),
     prisma.propertyImage.update({
-      where: { id: imageId },
+      where: { id: imageId, propertyId: id },
       data: { isCover: true },
     }),
   ]);

@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 
 import { fail, ok } from "@/lib/api-response";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { propertyQuerySchema, propertySchema } from "@/schemas/property.schema";
 import { createProperty, listProperties } from "@/services/property.service";
 
@@ -35,14 +34,6 @@ export async function POST(request: Request) {
     return NextResponse.json(fail("Dữ liệu không hợp lệ"), { status: 400 });
 
   const property = await createProperty(session.user.id, parsed.data);
-
-  // If user is currently a GUEST, upgrade their role to HOST upon publishing their first listing
-  if (session.user.role === "GUEST") {
-    await prisma.user.update({
-      where: { id: session.user.id },
-      data: { role: "HOST" },
-    });
-  }
 
   return NextResponse.json(ok(property, "Tạo property thành công"), {
     status: 201,

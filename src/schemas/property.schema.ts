@@ -23,6 +23,9 @@ export const propertySchema = z.object({
 });
 
 export const propertyUpdateSchema = propertySchema.partial().extend({
+  // PATCH omissions must not inherit create defaults and erase saved values.
+  cleaningFee: z.coerce.number().min(0).optional(),
+  amenityIds: z.array(z.string()).optional(),
   status: z.enum(["ACTIVE", "INACTIVE", "DRAFT"]).optional(),
 });
 

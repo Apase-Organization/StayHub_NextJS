@@ -36,7 +36,9 @@ export async function GET() {
   });
 
   if (!user) {
-    return NextResponse.json(fail("Không tìm thấy người dùng"), { status: 404 });
+    return NextResponse.json(fail("Không tìm thấy người dùng"), {
+      status: 404,
+    });
   }
 
   return NextResponse.json(
@@ -74,14 +76,18 @@ export async function PATCH(request: Request) {
   });
 
   if (!currentUser) {
-    return NextResponse.json(fail("Không tìm thấy người dùng"), { status: 404 });
+    return NextResponse.json(fail("Không tìm thấy người dùng"), {
+      status: 404,
+    });
   }
 
   let body;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json(fail("Dữ liệu JSON không hợp lệ"), { status: 400 });
+    return NextResponse.json(fail("Dữ liệu JSON không hợp lệ"), {
+      status: 400,
+    });
   }
 
   const parsed = updateProfileSchema.safeParse(body);
@@ -124,6 +130,7 @@ export async function PATCH(request: Request) {
     phone?: string | null;
     bio?: string | null;
     email?: string;
+    emailVerified?: null;
   } = {};
 
   if (parsed.data.fullName !== undefined) data.fullName = parsed.data.fullName;
@@ -131,22 +138,34 @@ export async function PATCH(request: Request) {
   if (parsed.data.bio !== undefined) data.bio = parsed.data.bio || null;
   if (currentUser.provider !== "GOOGLE" && parsed.data.email) {
     data.email = parsed.data.email.toLowerCase();
+    if (data.email !== currentUser.email.toLowerCase()) {
+      data.emailVerified = null;
+    }
   }
 
-  const updated = await prisma.user.update({
-    where: { id: currentUser.id },
-    data,
-    select: {
-      id: true,
-      email: true,
-      fullName: true,
-      phone: true,
-      avatarUrl: true,
-      bio: true,
-      role: true,
-      provider: true,
-      updatedAt: true,
-    },
+  const updated = await prisma.$transaction(async (tx) => {
+    // Codes sent to the previous address must not verify the new address.
+    if (data.emailVerified === null) {
+      await tx.verificationToken.updateMany({
+        where: { userId: currentUser.id, usedAt: null },
+        data: { usedAt: new Date() },
+      });
+    }
+    return tx.user.update({
+      where: { id: currentUser.id },
+      data,
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        phone: true,
+        avatarUrl: true,
+        bio: true,
+        role: true,
+        provider: true,
+        updatedAt: true,
+      },
+    });
   });
 
   return NextResponse.json(ok(updated, "Cập nhật thông tin hồ sơ thành công"));

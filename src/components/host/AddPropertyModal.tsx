@@ -55,16 +55,23 @@ export function AddPropertyModal({
   const [selectedFiles, setSelectedFiles] = React.useState<File[]>([]);
   const [previews, setPreviews] = React.useState<string[]>([]);
   const [coverIndex, setCoverIndex] = React.useState<number>(0);
-  const [uploadStepText, setUploadStepText] = React.useState<string | null>(null);
+  const [uploadStepText, setUploadStepText] = React.useState<string | null>(
+    null
+  );
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  // Clean up object URLs on unmount / change
+  const previewsRef = React.useRef(previews);
+  React.useEffect(() => {
+    previewsRef.current = previews;
+  }, [previews]);
+
+  // Retained previews must stay live when another photo is added or removed.
   React.useEffect(() => {
     return () => {
-      previews.forEach((p) => URL.revokeObjectURL(p));
+      previewsRef.current.forEach((p) => URL.revokeObjectURL(p));
     };
-  }, [previews]);
+  }, []);
 
   const handleFilesSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -74,7 +81,9 @@ export function AddPropertyModal({
     );
 
     if (validFiles.length < files.length) {
-      onSuccessToast("Một số file không đúng định dạng (chỉ hỗ trợ JPG, PNG, WebP)");
+      onSuccessToast(
+        "Một số file không đúng định dạng (chỉ hỗ trợ JPG, PNG, WebP)"
+      );
     }
 
     const newPreviews = validFiles.map((f) => URL.createObjectURL(f));
@@ -110,6 +119,7 @@ export function AddPropertyModal({
       }
 
       const createdProperty = json.data;
+      let imagesUploaded = selectedFiles.length === 0;
 
       // 2. Tải ảnh lên Cloudinary nếu có chọn ảnh
       if (selectedFiles.length > 0) {
@@ -127,27 +137,32 @@ export function AddPropertyModal({
         const imgFormData = new FormData();
         reorderedFiles.forEach((file) => imgFormData.append("files", file));
 
-        const imgRes = await fetch(
-          `/api/properties/${createdProperty.id}/images`,
-          {
-            method: "POST",
-            body: imgFormData,
-          }
-        );
-
-        const imgJson = await imgRes.json();
-        if (!imgRes.ok || !imgJson.success) {
-          // Upload failure handled gracefully without blocking creation
+        try {
+          const imgRes = await fetch(
+            `/api/properties/${createdProperty.id}/images`,
+            { method: "POST", body: imgFormData }
+          );
+          const imgJson = await imgRes.json();
+          imagesUploaded = imgRes.ok && imgJson.success === true;
+        } catch {
+          // The property already exists. Do not invite a duplicate creation retry.
+          imagesUploaded = false;
         }
       }
 
-      return createdProperty;
+      return { createdProperty, imagesUploaded };
     },
-    onSuccess: () => {
+    onSuccess: ({ imagesUploaded }) => {
       queryClient.invalidateQueries({ queryKey: ["hostProperties"] });
       queryClient.invalidateQueries({ queryKey: ["hostStats"] });
       onOpenChange(false);
-      onSuccessToast("Đăng chỗ ở mới và tải ảnh lên Cloudinary thành công!");
+      onSuccessToast(
+        !imagesUploaded
+          ? "Đã tạo chỗ ở, nhưng tải ảnh thất bại. Mở Chỉnh sửa chỗ ở để kiểm tra và tải lại ảnh."
+          : selectedFiles.length > 0
+            ? "Đăng chỗ ở mới và tải ảnh lên Cloudinary thành công!"
+            : "Đăng chỗ ở mới thành công!"
+      );
 
       // Reset form
       setFormData({
@@ -183,8 +198,8 @@ export function AddPropertyModal({
             Đăng thông tin chỗ ở mới
           </DialogTitle>
           <DialogDescription className="text-xs">
-            Điền thông tin và tải ảnh thực tế lên Cloudinary để hiển thị cho du khách
-            trên StayHub.
+            Điền thông tin và tải ảnh thực tế lên Cloudinary để hiển thị cho du
+            khách trên StayHub.
           </DialogDescription>
         </DialogHeader>
 
@@ -410,8 +425,9 @@ export function AddPropertyModal({
             {previews.length > 0 && (
               <div className="mt-3">
                 <p className="text-[11px] text-muted-foreground mb-2">
-                  <span className="font-semibold text-foreground">Gợi ý:</span> Bấm
-                  vào biểu tượng ngôi sao để chọn ảnh làm ảnh bìa chính (Cover).
+                  <span className="font-semibold text-foreground">Gợi ý:</span>{" "}
+                  Bấm vào biểu tượng ngôi sao để chọn ảnh làm ảnh bìa chính
+                  (Cover).
                 </p>
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
                   {previews.map((previewUrl, index) => {
@@ -445,7 +461,9 @@ export function AddPropertyModal({
                                 ? "bg-amber-400 text-slate-900 shadow-sm"
                                 : "bg-black/40 text-white hover:text-amber-300"
                             }`}
-                            title={isCover ? "Ảnh bìa chính" : "Đặt làm ảnh bìa"}
+                            title={
+                              isCover ? "Ảnh bìa chính" : "Đặt làm ảnh bìa"
+                            }
                           >
                             <Star className="size-3 fill-current" />
                           </button>

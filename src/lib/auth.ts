@@ -65,7 +65,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return true;
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger }) {
+      // Profile updates are persisted by our APIs. Never trust session.update
+      // payloads for identity or authorization claims.
+      if (trigger === "update" && typeof token.id === "string") {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id },
+          select: { fullName: true, email: true, avatarUrl: true },
+        });
+        if (dbUser) {
+          token.name = dbUser.fullName;
+          token.email = dbUser.email;
+          token.image = dbUser.avatarUrl;
+        }
+      }
       if (account?.provider === "google") {
         const email = (user?.email ?? token.email)?.toLowerCase();
         if (email) {
@@ -99,7 +112,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     session({ session, token }) {
       session.user.id = String(token.id);
       session.user.role = token.role as Role;
-      if (typeof token.image === "string") {
+      if (typeof token.image === "string" || token.image === null) {
         session.user.image = token.image;
       }
       return session;

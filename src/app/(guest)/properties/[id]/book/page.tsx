@@ -24,7 +24,13 @@ export default async function BookPropertyPage({
 
   const session = await auth();
   if (!session?.user) {
-    redirect(`/login?callbackUrl=/properties/${id}/book`);
+    const bookingParams = new URLSearchParams();
+    if (checkIn) bookingParams.set("checkIn", checkIn);
+    if (checkOut) bookingParams.set("checkOut", checkOut);
+    if (guests) bookingParams.set("guests", guests);
+    const query = bookingParams.toString();
+    const callbackUrl = `/properties/${id}/book${query ? `?${query}` : ""}`;
+    redirect(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
   }
 
   const property = await getProperty(id);

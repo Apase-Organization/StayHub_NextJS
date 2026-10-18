@@ -77,16 +77,24 @@ export async function createProperty(
   data: z.infer<typeof propertySchema>
 ) {
   const { amenityIds, ...propertyData } = data;
-  const property = await prisma.property.create({
-    data: {
-      ...propertyData,
-      status: "ACTIVE",
-      hostId,
-      amenities: {
-        create: (amenityIds || []).map((amenityId) => ({ amenityId })),
+  const property = await prisma.$transaction(async (tx) => {
+    const created = await tx.property.create({
+      data: {
+        ...propertyData,
+        status: "ACTIVE",
+        hostId,
+        amenities: {
+          create: (amenityIds || []).map((amenityId) => ({ amenityId })),
+        },
       },
-    },
-    include,
+      include,
+    });
+    // Publish and promote atomically; use the current DB role, not a stale JWT.
+    await tx.user.updateMany({
+      where: { id: hostId, role: "GUEST" },
+      data: { role: "HOST" },
+    });
+    return created;
   });
   return mapProperty(property);
 }
