@@ -15,7 +15,6 @@ import {
 import { getProperty } from "@/services/property.service";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { MOCK_PROPERTIES } from "@/lib/mock-data";
 import { AvailabilityChecker } from "@/components/property/AvailabilityChecker";
 import { PropertyHostActions } from "@/components/property";
 import { displayPlace } from "@/lib/auth-ui";
@@ -31,44 +30,11 @@ export default async function PropertyDetailPage({
 }: PropertyDetailPageProps) {
   const { id } = await params;
 
-  // 1. Fetch real property from Prisma or fallback to mock
-  const rawProperty = await getProperty(id);
-  const mockProp = !rawProperty
-    ? MOCK_PROPERTIES.find((p) => p.id === id)
-    : null;
-
-  if (!rawProperty && !mockProp) {
+  // 1. Fetch real property from Prisma
+  const property = await getProperty(id);
+  if (!property) {
     notFound();
   }
-
-  const property = rawProperty ?? {
-    id: mockProp!.id,
-    title: mockProp!.title,
-    description: mockProp!.description,
-    type: mockProp!.propertyType,
-    city: mockProp!.city,
-    address: mockProp!.address,
-    pricePerNight: mockProp!.pricePerNight,
-    cleaningFee: mockProp!.cleaningFee,
-    maxGuests: mockProp!.maxGuests,
-    bedrooms: mockProp!.bedrooms,
-    beds: mockProp!.beds,
-    bathrooms: mockProp!.bathrooms,
-    ratingAvg: mockProp!.rating,
-    status: "ACTIVE",
-    host: { id: "mock-host", fullName: mockProp!.host.name },
-    images: mockProp!.images.map((img, i) => ({
-      id: `img-${i}`,
-      url: img,
-      publicId: `pub-${i}`,
-      displayOrder: i,
-      isCover: i === 0,
-    })),
-    amenities: mockProp!.amenities.map((name, i) => ({
-      id: `amenity-${i}`,
-      name,
-    })),
-  };
 
   // 2. Fetch real reviews for this property from DB
   let reviews: Array<{
@@ -149,7 +115,9 @@ export default async function PropertyDetailPage({
         <div className="mt-2 flex flex-wrap items-center gap-3 text-xs sm:text-sm text-foreground">
           <div className="flex items-center gap-1 font-bold">
             <Star className="size-4 fill-amber-400 text-amber-400" />
-            <span>{property.ratingAvg.toFixed(1)}</span>
+            <span>
+              {property.ratingAvg > 0 ? property.ratingAvg.toFixed(1) : "Mới"}
+            </span>
             <span className="font-normal text-muted-foreground underline">
               ({reviews.length} đánh giá)
             </span>
@@ -362,6 +330,7 @@ export default async function PropertyDetailPage({
               cleaningFee={property.cleaningFee}
               maxGuests={property.maxGuests}
               ratingAvg={property.ratingAvg}
+              reviewCount={reviews.length}
             />
           </div>
         </div>
@@ -379,7 +348,7 @@ export default async function PropertyDetailPage({
           <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
             <Star className="size-3 fill-amber-400 text-amber-400" />
             <span className="font-semibold text-foreground">
-              {property.ratingAvg.toFixed(1)}
+              {property.ratingAvg > 0 ? property.ratingAvg.toFixed(1) : "Mới"}
             </span>
             <span>({reviews.length} đánh giá)</span>
           </div>
