@@ -30,6 +30,7 @@ export interface BookingFormProperty {
   pricePerNight: number;
   cleaningFee: number;
   ratingAvg: number;
+  reviewCount?: number;
   images: { url: string }[];
 }
 
@@ -323,8 +324,14 @@ export function BookingForm({
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Star className="size-3.5 fill-amber-400 text-amber-400" />
                 <span className="font-bold text-foreground">
-                  {property.ratingAvg.toFixed(1)}
+                  {property.ratingAvg > 0
+                    ? property.ratingAvg.toFixed(1)
+                    : "New"}
                 </span>
+                {property.reviewCount !== undefined &&
+                  property.reviewCount > 0 && (
+                    <span>({property.reviewCount})</span>
+                  )}
                 <span>• {displayPlace(property.city)}</span>
               </div>
               <h3 className="mt-1 truncate font-semibold text-foreground">

@@ -99,9 +99,6 @@ export function HeroSearchBar() {
                     <span className="font-semibold">
                       {displayPlace(dest.name)}
                     </span>
-                    <span className="text-xs text-muted-foreground">
-                      {dest.propertiesCount} stays
-                    </span>
                   </button>
                 ))}
               </div>

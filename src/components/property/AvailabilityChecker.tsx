@@ -15,6 +15,7 @@ interface AvailabilityCheckerProps {
   cleaningFee: number;
   maxGuests: number;
   ratingAvg: number;
+  reviewCount?: number;
 }
 
 export function AvailabilityChecker({
@@ -23,6 +24,7 @@ export function AvailabilityChecker({
   cleaningFee,
   maxGuests,
   ratingAvg,
+  reviewCount,
 }: AvailabilityCheckerProps) {
   const router = useRouter();
 
@@ -107,7 +109,18 @@ export function AvailabilityChecker({
         </div>
         <div className="flex items-center gap-1 text-xs font-semibold text-foreground">
           <Star className="size-3.5 fill-amber-400 text-amber-400" />
-          <span>{ratingAvg.toFixed(1)}</span>
+          {ratingAvg > 0 ? (
+            <>
+              <span>{ratingAvg.toFixed(1)}</span>
+              {reviewCount !== undefined && reviewCount > 0 && (
+                <span className="text-muted-foreground font-normal">
+                  ({reviewCount})
+                </span>
+              )}
+            </>
+          ) : (
+            <span className="text-muted-foreground font-normal">Mới</span>
+          )}
         </div>
       </div>
 

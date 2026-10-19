@@ -5,7 +5,6 @@ import { searchProperties } from "@/services/search.service";
 import { PropertyCard } from "@/components/property/PropertyCard";
 import { SearchFilterSidebar } from "@/components/property/SearchFilterSidebar";
 import { Button } from "@/components/ui/button";
-import { MOCK_PROPERTIES } from "@/lib/mock-data";
 
 interface SearchPageProps {
   searchParams: Promise<{
@@ -58,13 +57,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     properties = [];
     total = 0;
     totalPages = 1;
-  }
-
-  // Fallback to mock data if DB empty
-  if (total === 0 && !params.location && !params.type && !params.minPrice) {
-    properties = MOCK_PROPERTIES as unknown as typeof properties;
-    total = MOCK_PROPERTIES.length;
-    totalPages = Math.ceil(total / limit);
   }
 
   // Helper to build pagination links

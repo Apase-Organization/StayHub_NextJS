@@ -11,7 +11,7 @@ import {
 
 import { HeroSearchBar } from "@/components/property/HeroSearchBar";
 import { PropertyCard } from "@/components/property/PropertyCard";
-import { POPULAR_DESTINATIONS, MOCK_PROPERTIES } from "@/lib/mock-data";
+import { POPULAR_DESTINATIONS } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { listProperties } from "@/services/property.service";
 import { auth } from "@/lib/auth";
@@ -29,11 +29,6 @@ export default async function HomePage() {
   } catch {
     properties = [];
   }
-
-  const displayProperties =
-    properties.length > 0
-      ? properties
-      : (MOCK_PROPERTIES as unknown as typeof properties);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -154,11 +149,19 @@ export default async function HomePage() {
           </div>
 
           {/* Properties Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {displayProperties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
-            ))}
-          </div>
+          {properties.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-border p-12 text-center">
+              <p className="text-sm text-muted-foreground">
+                Hiện chưa có chỗ ở nào. Hãy quay lại sau!
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {properties.map((property) => (
+                <PropertyCard key={property.id} property={property} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
