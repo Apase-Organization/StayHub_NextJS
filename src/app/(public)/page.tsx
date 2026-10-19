@@ -13,7 +13,6 @@ import { HeroSearchBar } from "@/components/property/HeroSearchBar";
 import { PropertyCard } from "@/components/property/PropertyCard";
 import { POPULAR_DESTINATIONS, MOCK_PROPERTIES } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
-import { displayPlace } from "@/lib/auth-ui";
 import { listProperties } from "@/services/property.service";
 import { auth } from "@/lib/auth";
 
@@ -84,7 +83,7 @@ export default async function HomePage() {
               <span>Khám phá Việt Nam</span>
             </div>
             <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-foreground">
-              Điểm đến nổi bật (Popular Destinations)
+              Điểm đến nổi bật
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
               Các thành phố du lịch được yêu thích nhất với hàng trăm chỗ ở lý
@@ -115,7 +114,7 @@ export default async function HomePage() {
               <div className="relative aspect-[4/5] w-full overflow-hidden bg-muted">
                 <Image
                   src={dest.image}
-                  alt={displayPlace(dest.name)}
+                  alt={dest.name}
                   fill
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 12.5vw"
                   className="size-full object-cover transition-transform duration-500 group-hover:scale-110"
@@ -123,11 +122,8 @@ export default async function HomePage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute inset-x-3 bottom-3 text-white">
                   <h3 className="text-base font-bold leading-tight">
-                    {displayPlace(dest.name)}
+                    {dest.name}
                   </h3>
-                  <p className="mt-0.5 text-xs text-slate-200">
-                    {dest.propertiesCount} chỗ ở
-                  </p>
                 </div>
               </div>
             </Link>
@@ -144,7 +140,7 @@ export default async function HomePage() {
                 Gợi ý hàng đầu
               </p>
               <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-foreground">
-                Chỗ ở nổi bật (Featured Properties)
+                Chỗ ở nổi bật
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 Được đánh giá cao và đặt nhiều nhất bởi cộng đồng du lịch

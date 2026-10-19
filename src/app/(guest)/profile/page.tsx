@@ -364,7 +364,7 @@ export default function ProfilePage() {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploadingAvatar}
-                  title="Thay đổi ảnh đại diện (Cloudinary)"
+                  title="Thay đổi ảnh đại diện"
                   className="absolute bottom-1 right-1 size-9 rounded-full bg-primary text-primary-foreground shadow-md flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
                 >
                   <Camera className="size-4" />
@@ -392,7 +392,7 @@ export default function ProfilePage() {
                   variant={profile.role === "ADMIN" ? "destructive" : profile.role === "HOST" ? "default" : "secondary"}
                   className="text-[11px] font-bold"
                 >
-                  {profile.role === "ADMIN" ? "Quản trị viên" : profile.role === "HOST" ? "Chủ nhà (Host)" : "Khách du lịch"}
+                  {profile.role === "ADMIN" ? "Quản trị viên" : profile.role === "HOST" ? "Chủ nhà" : "Khách du lịch"}
                 </Badge>
 
                 {profile.isGoogleUser ? (

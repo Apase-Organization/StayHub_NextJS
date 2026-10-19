@@ -212,7 +212,7 @@ export function AvailabilityChecker({
           disabled={isAvailable === false}
           onClick={handleReserve}
         >
-          Đặt phòng ngay (Reserve)
+          Đặt phòng ngay
         </Button>
       </div>
 

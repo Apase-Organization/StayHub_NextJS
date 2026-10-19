@@ -387,12 +387,10 @@ export default function AdminDashboardPage() {
                 className="max-w-full rounded-lg border border-border bg-card px-3 py-2 text-xs text-foreground outline-none h-9"
               >
                 <option value="">Tất cả trạng thái</option>
-                <option value="CONFIRMED">Đã xác nhận (CONFIRMED)</option>
-                <option value="PENDING_PAYMENT">
-                  Chờ thanh toán (PENDING)
-                </option>
-                <option value="COMPLETED">Hoàn tất (COMPLETED)</option>
-                <option value="CANCELLED">Đã huỷ (CANCELLED)</option>
+                <option value="CONFIRMED">Đã xác nhận</option>
+                <option value="PENDING_PAYMENT">Chờ thanh toán</option>
+                <option value="COMPLETED">Hoàn tất</option>
+                <option value="CANCELLED">Đã huỷ</option>
               </select>
             </div>
           </div>

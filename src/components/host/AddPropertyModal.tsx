@@ -246,11 +246,11 @@ export function AddPropertyModal({
                 className="w-full rounded-md border border-border bg-card p-2 text-xs text-foreground outline-none"
               >
                 <option value="HOMESTAY">Homestay</option>
-                <option value="APARTMENT">Căn hộ (Apartment)</option>
-                <option value="VILLA">Biệt thự (Villa)</option>
-                <option value="HOUSE">Nhà nguyên căn (House)</option>
-                <option value="HOTEL_ROOM">Khách sạn (Hotel Room)</option>
-                <option value="RESORT">Khu nghỉ dưỡng (Resort)</option>
+                <option value="APARTMENT">Căn hộ</option>
+                <option value="VILLA">Biệt thự</option>
+                <option value="HOUSE">Nhà nguyên căn</option>
+                <option value="HOTEL_ROOM">Khách sạn</option>
+                <option value="RESORT">Khu nghỉ dưỡng</option>
               </select>
             </div>
 
@@ -386,7 +386,7 @@ export function AddPropertyModal({
             <div className="flex items-center justify-between mb-2">
               <label className="font-bold text-foreground flex items-center gap-1.5 text-xs">
                 <ImageIcon className="size-4 text-primary" />
-                Hình ảnh chỗ ở (Cloudinary)
+                Hình ảnh chỗ ở
               </label>
               <span className="text-[11px] text-muted-foreground">
                 Đã chọn {selectedFiles.length} ảnh
@@ -412,7 +412,7 @@ export function AddPropertyModal({
                 </div>
                 <div>
                   <p className="font-semibold text-foreground text-xs">
-                    Nhấn vào đây để tải ảnh lên Cloudinary
+                    Nhấn vào đây để tải ảnh lên
                   </p>
                   <p className="text-[11px] text-muted-foreground mt-0.5">
                     Hỗ trợ định dạng JPG, PNG, WebP (Tối đa 10MB/ảnh)
@@ -426,8 +426,7 @@ export function AddPropertyModal({
               <div className="mt-3">
                 <p className="text-[11px] text-muted-foreground mb-2">
                   <span className="font-semibold text-foreground">Gợi ý:</span>{" "}
-                  Bấm vào biểu tượng ngôi sao để chọn ảnh làm ảnh bìa chính
-                  (Cover).
+                  Bấm vào biểu tượng ngôi sao để chọn ảnh làm ảnh bìa chính.
                 </p>
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
                   {previews.map((previewUrl, index) => {
