@@ -1,13 +1,14 @@
 /* eslint-disable no-console */
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
-const REVIEWS_DATA = [
+const SHORT_COMMENTS_5_STAR = [
   "Phòng sạch sẽ, rất ưng ý",
   "Chỗ ở tuyệt vời, view đẹp",
   "Không gian yên tĩnh, thoải mái",
-  "Dịch vụ chu đáo, trải nghiệm tốt",
+  "Dịch vụ chu đáo, rất thích",
   "Cực kỳ hài lòng, sẽ quay lại",
   "Phòng đẹp, đầy đủ tiện nghi",
   "Chủ nhà nhiệt tình, thân thiện",
@@ -30,139 +31,194 @@ const REVIEWS_DATA = [
   "Nhà đẹp, nội thất sang trọng",
 ];
 
-async function main() {
-  console.log("=== Seeding Past Bookings and 5-Star Reviews ===");
+const SHORT_COMMENTS_4_STAR = [
+  "Phòng sạch đẹp, vị trí tốt",
+  "Chỗ ở tiện nghi, giá hợp lý",
+  "Không gian yên tĩnh, nghỉ ngơi tốt",
+  "Chủ nhà chu đáo, phòng ấm cúng",
+  "Dịch vụ tốt, trải nghiệm ổn",
+  "View ngắm cảnh đẹp, phòng rộng",
+  "Vị trí gần trung tâm, tiện lợi",
+  "Nội thất đầy đủ, ở thoải mái",
+];
 
-  // 1. Get user user@stayhub.com
-  const user = await prisma.user.findUnique({
+const ADDITIONAL_GUESTS = [
+  { email: "minhanh.nguyen@stayhub.com", fullName: "Nguyễn Minh Anh", phone: "0901234567" },
+  { email: "quocbao.tran@stayhub.com", fullName: "Trần Quốc Bảo", phone: "0902345678" },
+  { email: "thuha.le@stayhub.com", fullName: "Lê Thu Hà", phone: "0903456789" },
+];
+
+async function main() {
+  console.log("=== Seeding Real Bookings & Ratings Dataset ===");
+
+  // 1. Ensure user@stayhub.com exists
+  const primaryUser = await prisma.user.findUnique({
     where: { email: "user@stayhub.com" },
   });
 
-  if (!user) {
-    throw new Error("User user@stayhub.com not found in database!");
+  if (!primaryUser) {
+    throw new Error("User user@stayhub.com not found!");
   }
-  console.log(`Using Guest Account: ${user.fullName} (${user.email}, ID: ${user.id})`);
+  console.log(`Primary Guest: ${primaryUser.fullName} (${primaryUser.email})`);
 
-  // 2. Get all properties
+  // 2. Ensure additional guests exist
+  const dummyPasswordHash = await bcrypt.hash("Password123!", 10);
+  const guestPool = [primaryUser];
+
+  for (const g of ADDITIONAL_GUESTS) {
+    const user = await prisma.user.upsert({
+      where: { email: g.email },
+      update: { fullName: g.fullName },
+      create: {
+        email: g.email,
+        fullName: g.fullName,
+        phone: g.phone,
+        passwordHash: dummyPasswordHash,
+        role: "GUEST",
+        status: "ACTIVE",
+      },
+    });
+    guestPool.push(user);
+  }
+  console.log(`Total guest pool for realistic reviews: ${guestPool.length} users`);
+
+  // 3. Clear existing reviews, payments, and bookings cleanly
+  console.log("Resetting existing bookings & reviews...");
+  await prisma.review.deleteMany({});
+  await prisma.payment.deleteMany({});
+  await prisma.booking.deleteMany({});
+
+  // 4. Fetch all active properties
   const properties = await prisma.property.findMany({
     where: { status: "ACTIVE" },
     orderBy: { createdAt: "asc" },
   });
 
-  console.log(`Found ${properties.length} active properties to create bookings & reviews.`);
+  console.log(`Processing ${properties.length} properties...`);
 
-  // 3. Current base date for generating past dates
   const now = new Date();
+  let totalBookings = 0;
 
-  let createdCount = 0;
+  // Varied review pattern for each of the 24 properties:
+  // Array of target review counts [1 to 4] so the site looks alive and natural!
+  const reviewPattern = [
+    3, 2, 4, 1, 3, 2, 4, 2,
+    3, 1, 2, 4, 3, 2, 1, 4,
+    2, 3, 1, 4, 2, 3, 2, 1,
+  ];
 
-  for (let i = 0; i < properties.length; i++) {
-    const property = properties[i];
-    const comment = REVIEWS_DATA[i % REVIEWS_DATA.length];
+  for (let propIdx = 0; propIdx < properties.length; propIdx++) {
+    const property = properties[propIdx];
+    const targetCount = reviewPattern[propIdx % reviewPattern.length];
 
-    // Stagger dates in the past: 10 to 45 days ago
-    const daysAgo = 10 + (i % 20);
-    const nights = 2;
+    for (let r = 0; r < targetCount; r++) {
+      // First review is always from primary user (user@stayhub.com) with 5 stars
+      const isPrimary = r === 0;
+      const guest = isPrimary ? primaryUser : guestPool[(propIdx + r) % guestPool.length];
 
-    const checkIn = new Date(now.getTime() - (daysAgo + nights) * 24 * 60 * 60 * 1000);
-    const checkOut = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
-    const bookingCreated = new Date(checkIn.getTime() - 2 * 24 * 60 * 60 * 1000);
-    const reviewCreated = new Date(checkOut.getTime() + 1 * 24 * 60 * 60 * 1000);
+      // Ratings: primary is always 5; subsequent can be 5 or 4
+      const rating = isPrimary ? 5 : (r % 3 === 0 ? 4 : 5);
+      const comment =
+        rating === 5
+          ? SHORT_COMMENTS_5_STAR[(propIdx * 3 + r) % SHORT_COMMENTS_5_STAR.length]
+          : SHORT_COMMENTS_4_STAR[(propIdx + r) % SHORT_COMMENTS_4_STAR.length];
 
-    const nightlyPrice = Number(property.pricePerNight);
-    const cleaningFee = Number(property.cleaningFee);
-    const serviceFee = Math.round(nightlyPrice * nights * 0.1);
-    const subtotalPrice = nightlyPrice * nights + cleaningFee + serviceFee;
-    const totalPrice = subtotalPrice;
+      // Past dates: staggered between 5 and 60 days ago
+      const daysAgo = 5 + (propIdx * 2 + r * 7) % 50;
+      const nights = 2;
 
-    // Check if property already has a completed booking with review from this user
-    const existingBooking = await prisma.booking.findFirst({
-      where: {
-        propertyId: property.id,
-        guestId: user.id,
-        review: { isNot: null },
-      },
-      include: { review: true },
-    });
+      const checkIn = new Date(now.getTime() - (daysAgo + nights) * 24 * 60 * 60 * 1000);
+      const checkOut = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+      const bookingCreated = new Date(checkIn.getTime() - 2 * 24 * 60 * 60 * 1000);
+      const reviewCreated = new Date(checkOut.getTime() + 1 * 24 * 60 * 60 * 1000);
 
-    if (existingBooking) {
-      console.log(`- Property "${property.title}" already has review. Skipping.`);
-      continue;
+      const nightlyPrice = Number(property.pricePerNight);
+      const cleaningFee = Number(property.cleaningFee);
+      const serviceFee = Math.round(nightlyPrice * nights * 0.1);
+      const subtotalPrice = nightlyPrice * nights + cleaningFee + serviceFee;
+      const totalPrice = subtotalPrice;
+
+      await prisma.$transaction(async (tx) => {
+        const booking = await tx.booking.create({
+          data: {
+            propertyId: property.id,
+            guestId: guest.id,
+            checkInDate: checkIn,
+            checkOutDate: checkOut,
+            guests: 2,
+            nightlyPrice,
+            cleaningFee,
+            serviceFee,
+            subtotalPrice,
+            totalPrice,
+            status: "COMPLETED",
+            createdAt: bookingCreated,
+            updatedAt: checkOut,
+          },
+        });
+
+        await tx.payment.create({
+          data: {
+            bookingId: booking.id,
+            amount: totalPrice,
+            currency: "VND",
+            paymentMethod: "VNPAY",
+            status: "SUCCESS",
+            providerTxnRef: `VNPAY_${booking.id}`,
+            providerTransactionNo: `TRANS_${Date.now()}_${propIdx}_${r}`,
+            paidAt: bookingCreated,
+            createdAt: bookingCreated,
+          },
+        });
+
+        await tx.review.create({
+          data: {
+            bookingId: booking.id,
+            propertyId: property.id,
+            guestId: guest.id,
+            rating,
+            comment,
+            createdAt: reviewCreated,
+            updatedAt: reviewCreated,
+          },
+        });
+      });
+
+      totalBookings++;
     }
 
-    // Create booking, payment, and review in a transaction
-    await prisma.$transaction(async (tx) => {
-      const booking = await tx.booking.create({
-        data: {
-          propertyId: property.id,
-          guestId: user.id,
-          checkInDate: checkIn,
-          checkOutDate: checkOut,
-          guests: 2,
-          nightlyPrice,
-          cleaningFee,
-          serviceFee,
-          subtotalPrice,
-          totalPrice,
-          status: "COMPLETED",
-          createdAt: bookingCreated,
-          updatedAt: checkOut,
-        },
-      });
-
-      await tx.payment.create({
-        data: {
-          bookingId: booking.id,
-          amount: totalPrice,
-          currency: "VND",
-          paymentMethod: "VNPAY",
-          status: "SUCCESS",
-          providerTxnRef: `VNPAY_${booking.id}`,
-          providerTransactionNo: `TRANS_${Date.now()}_${i}`,
-          paidAt: bookingCreated,
-          createdAt: bookingCreated,
-        },
-      });
-
-      await tx.review.create({
-        data: {
-          bookingId: booking.id,
-          propertyId: property.id,
-          guestId: user.id,
-          rating: 5,
-          comment,
-          createdAt: reviewCreated,
-          updatedAt: reviewCreated,
-        },
-      });
-
-      // Update property rating average
-      await tx.property.update({
-        where: { id: property.id },
-        data: { ratingAvg: 5.0 },
-      });
+    // Recalculate true mathematical average for the property
+    const avg = await prisma.review.aggregate({
+      where: { propertyId: property.id },
+      _avg: { rating: true },
     });
 
-    createdCount++;
+    const realAvg = Number((avg._avg.rating ?? 5.0).toFixed(1));
+
+    await prisma.property.update({
+      where: { id: property.id },
+      data: { ratingAvg: realAvg },
+    });
+
     console.log(
-      `✓ [${i + 1}/${properties.length}] "${property.title}" -> 5★ Review: "${comment}" (${comment.split(" ").length} từ)`
+      `✓ [${propIdx + 1}/${properties.length}] "${property.title}" -> ${targetCount} reviews | Real Avg: ${realAvg.toFixed(1)}★`
     );
   }
 
-  const finalBookingCount = await prisma.booking.count({ where: { guestId: user.id } });
-  const finalReviewCount = await prisma.review.count({ where: { guestId: user.id } });
-  const totalReviewsInDb = await prisma.review.count();
+  const primaryBookings = await prisma.booking.count({ where: { guestId: primaryUser.id } });
+  const primaryReviews = await prisma.review.count({ where: { guestId: primaryUser.id } });
+  const allReviews = await prisma.review.count();
 
-  console.log("=== Completed Successfully ===");
-  console.log(`Newly created: ${createdCount}`);
-  console.log(`Bookings by user@stayhub.com: ${finalBookingCount}`);
-  console.log(`Reviews by user@stayhub.com: ${finalReviewCount}`);
-  console.log(`Total reviews in DB: ${totalReviewsInDb}`);
+  console.log("=== Seed Completed ===");
+  console.log(`Total Bookings: ${totalBookings}`);
+  console.log(`Total Reviews: ${allReviews}`);
+  console.log(`Bookings by user@stayhub.com: ${primaryBookings}`);
+  console.log(`Reviews by user@stayhub.com: ${primaryReviews}`);
 }
 
 main()
   .catch((err) => {
-    console.error("Error seeding bookings & reviews:", err);
+    console.error("Seed error:", err);
     process.exit(1);
   })
   .finally(async () => {

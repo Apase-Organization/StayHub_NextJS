@@ -16,6 +16,7 @@ export async function GET() {
       images: { orderBy: { displayOrder: "asc" } },
       amenities: { include: { amenity: true } },
       host: { select: { id: true, fullName: true } },
+      _count: { select: { reviews: true } },
     },
     orderBy: { createdAt: "desc" },
   });
