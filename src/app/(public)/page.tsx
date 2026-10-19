@@ -105,7 +105,7 @@ export default async function HomePage() {
         </div>
 
         {/* Destination Cards Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-4">
           {POPULAR_DESTINATIONS.map((dest) => (
             <Link
               key={dest.id}
@@ -117,7 +117,7 @@ export default async function HomePage() {
                   src={dest.image}
                   alt={displayPlace(dest.name)}
                   fill
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 12.5vw"
                   className="size-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />

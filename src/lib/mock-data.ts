@@ -63,59 +63,75 @@ export interface Booking {
 export const POPULAR_DESTINATIONS: Destination[] = [
   {
     id: "dest-1",
-    name: "Đà Nẵng",
-    slug: "da-nang",
-    image:
-      "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=800&q=80",
-    propertiesCount: 248,
-    description: "Thành phố biển đáng sống với bãi biển Mỹ Khê và Cầu Vàng",
+    name: "Hồ Chí Minh",
+    slug: "ho-chi-minh",
+    image: "/destinations/ho-chi-minh.jpg",
+    propertiesCount: 420,
+    description:
+      "Thành phố sôi động với Landmark 81, Cầu Sài Gòn và Bitexco hoa lệ",
   },
   {
     id: "dest-2",
-    name: "Đà Lạt",
-    slug: "da-lat",
-    image:
-      "https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=800&q=80",
-    propertiesCount: 312,
-    description: "Thành phố ngàn hoa với khí hậu se lạnh và đồi thông lãng mạn",
+    name: "Hà Nội",
+    slug: "ha-noi",
+    image: "/destinations/ha-noi.jpg",
+    propertiesCount: 295,
+    description:
+      "Thủ đô nghìn năm văn hiến, Tháp Rùa Hồ Gươm và 36 phố phường cổ kính",
   },
   {
     id: "dest-3",
-    name: "Nha Trang",
-    slug: "nha-trang",
-    image:
-      "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?auto=format&fit=crop&w=800&q=80",
-    propertiesCount: 185,
+    name: "Đà Nẵng",
+    slug: "da-nang",
+    image: "/destinations/da-nang.jpg",
+    propertiesCount: 248,
     description:
-      "Vịnh biển trong xanh, bãi cát dài cùng thiên đường nghỉ dưỡng",
+      "Thành phố biển đáng sống với Cầu Vàng Bà Nà Hills và biển Mỹ Khê",
   },
   {
     id: "dest-4",
-    name: "Hồ Chí Minh",
-    slug: "ho-chi-minh",
-    image:
-      "https://images.unsplash.com/photo-1583417654171-995b0f15c1e9?auto=format&fit=crop&w=800&q=80",
-    propertiesCount: 420,
-    description: "Trung tâm sôi động với các căn hộ cao cấp và văn hóa ẩm thực",
+    name: "Đà Lạt",
+    slug: "da-lat",
+    image: "/destinations/da-lat.jpg",
+    propertiesCount: 312,
+    description:
+      "Thành phố ngàn hoa với Hồ Xuân Hương và đồi thông se lạnh mộng mơ",
   },
   {
     id: "dest-5",
-    name: "Hà Nội",
-    slug: "ha-noi",
-    image:
-      "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80",
-    propertiesCount: 295,
+    name: "Nha Trang",
+    slug: "nha-trang",
+    image: "/destinations/nha-trang.jpg",
+    propertiesCount: 185,
     description:
-      "Nét đẹp nghìn năm văn hiến, phố cổ trầm mặc và ẩm thực tinh tế",
+      "Vịnh biển trong xanh, bãi cát dài cùng thiên đường nghỉ dưỡng nhiệt đới",
   },
   {
     id: "dest-6",
     name: "Phú Quốc",
     slug: "phu-quoc",
-    image:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+    image: "/destinations/phu-quoc.jpg",
     propertiesCount: 160,
-    description: "Đảo ngọc hoang sơ với hoàng hôn lộng lẫy và resort ven biển",
+    description:
+      "Đảo ngọc hoang sơ với hoàng hôn rực rỡ và các khu nghỉ dưỡng ven biển",
+  },
+  {
+    id: "dest-7",
+    name: "Hội An",
+    slug: "hoi-an",
+    image: "/destinations/hoi-an.jpg",
+    propertiesCount: 140,
+    description:
+      "Phố cổ di sản thế giới lung linh sắc màu đèn lồng bên bờ sông Hoài",
+  },
+  {
+    id: "dest-8",
+    name: "Hạ Long",
+    slug: "ha-long",
+    image: "/destinations/ha-long.jpg",
+    propertiesCount: 175,
+    description:
+      "Kỳ quan thiên nhiên thế giới với hàng ngàn đảo đá vôi tráng lệ trên vịnh",
   },
 ];
 
