@@ -50,8 +50,12 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
     });
   }, [property.images]);
 
-  const ratingVal = (property.ratingAvg ?? property.rating ?? 4.8).toFixed(1);
-  const reviewsCount = property.reviewCount ?? 12;
+  const reviewsCount = property.reviewCount ?? 0;
+  const rawRating = property.ratingAvg ?? property.rating;
+  const ratingVal =
+    rawRating !== undefined && rawRating !== null && Number(rawRating) > 0
+      ? Number(rawRating).toFixed(1)
+      : null;
   const pType = property.type || property.propertyType || "HOMESTAY";
 
   return (
@@ -140,11 +144,20 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground truncate">
             {displayPlace(property.city)} · {pType}
           </p>
-          <div className="flex items-center gap-1 text-xs font-semibold text-foreground shrink-0">
-            <Star className="size-3.5 fill-[#f59e0b] text-[#f59e0b]" />
-            <span>{ratingVal}</span>
-            <span className="text-muted-foreground">({reviewsCount})</span>
-          </div>
+          {reviewsCount > 0 && ratingVal ? (
+            <div className="flex items-center gap-1 text-xs font-semibold text-foreground shrink-0">
+              <Star className="size-3.5 fill-[#f59e0b] text-[#f59e0b]" />
+              <span>{ratingVal}</span>
+              <span className="text-muted-foreground font-normal">
+                ({reviewsCount})
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1 text-xs font-medium text-muted-foreground shrink-0">
+              <Star className="size-3.5 fill-muted text-muted-foreground/40" />
+              <span>Mới</span>
+            </div>
+          )}
         </div>
 
         {/* Title */}

@@ -82,6 +82,7 @@ export default async function BookPropertyPage({
           pricePerNight: property.pricePerNight,
           cleaningFee: property.cleaningFee,
           ratingAvg: property.ratingAvg,
+          reviewCount: (property as { reviewCount?: number }).reviewCount,
           images: property.images.map((img) => ({ url: img.url })),
         }}
         checkIn={effectiveCheckIn}
