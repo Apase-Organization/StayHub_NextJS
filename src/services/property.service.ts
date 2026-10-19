@@ -11,6 +11,7 @@ const include = {
   images: { orderBy: { displayOrder: "asc" as const } },
   amenities: { include: { amenity: true } },
   host: { select: { id: true, fullName: true } },
+  _count: { select: { reviews: true } },
 };
 
 export function mapProperty(
@@ -30,6 +31,7 @@ export function mapProperty(
     beds: property.beds,
     bathrooms: property.bathrooms,
     ratingAvg: Number(property.ratingAvg),
+    reviewCount: property._count?.reviews ?? 0,
     status: property.status,
     host: property.host,
     images: property.images.map((image) => ({
